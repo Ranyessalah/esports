@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up Coach | ClutchX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* HERO */
+        .hero_main {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .hero_main video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        /* CENTER */
+        .signup-page {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* CARD */
+        .signup-container {
+            width: 400px;
+            padding: 30px;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.55);
+            margin: 20px 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 22px;
+            font-weight: 600;
+        }
+
+        /* FLOATING LABELS */
+        .floating-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .floating-group input,
+        .floating-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            background: rgba(255,255,255,0.95);
+            font-size: 0.9rem;
+        }
+
+        .floating-group label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 0.85rem;
+            pointer-events: none;
+            transition: 0.25s ease;
+            background: transparent;
+        }
+
+        .floating-group input:focus + label,
+        .floating-group input:not(:placeholder-shown) + label,
+        .floating-group select:focus + label,
+        .floating-group select:not([value=""]) + label {
+            top: -6px;
+            left: 10px;
+            font-size: 0.7rem;
+            color: #ff6b6b;
+            background: rgba(0,0,0,0.7);
+            padding: 0 6px;
+            border-radius: 4px;
+        }
+
+        /* CHECKBOX */
+        .form-check {
+            margin-bottom: 16px;
+        }
+
+        .form-check-label {
+            font-size: 0.85rem;
+            margin-left: 8px;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+        }
+
+        /* BUTTON */
+        .btn-signup {
+            margin-top: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ff4c4c);
+            border: none;
+            padding: 11px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: 0.3s ease;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.35);
+        }
+
+        /* LINKS */
+        .signup-container a {
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .signup-container a:hover {
+            text-decoration: underline;
+        }
+
+        /* ERRORS */
+        .form-error-message {
+            color: #ff8c8c;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .invalid-feedback {
+            color: #ff8c8c;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .signup-container {
+                width: 92%;
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="hero_main">
+
+    <video autoplay loop muted playsinline>
+        <source src="{{ asset('assets/images/index/header-video.mp4') }}" type="video/mp4">
+    </video>
+
+    <div class="overlay"></div>
+
+    <div class="signup-page">
+        <div class="signup-container">
+
+            <h2>Sign Up as Coach</h2>
+
+            {{ form_start(form) }}
+
+            <div class="floating-group">
+                {{ form_widget(form.email, {'attr': {'placeholder': ' '}}) }}
+                {{ form_label(form.email) }}
+                <div id="email-error" class="form-error-message"></div>
+                {{ form_errors(form.email) }}
+            </div>
+
+            <div class="floating-group">
+                {{ form_widget(form.password, {'attr': {'placeholder': ' '}}) }}
+                {{ form_label(form.password) }}
+                {{ form_errors(form.password) }}
+            </div>
+
+            <div class="floating-group">
+                {{ form_widget(form.confirmPassword, {'attr': {'placeholder': ' '}}) }}
+                {{ form_label(form.confirmPassword) }}
+                <div id="confirm-password-error" class="form-error-message"></div>
+                {{ form_errors(form.confirmPassword) }}
+            </div>
+
+            <div class="floating-group">
+                {{ form_widget(form.specialite, {'attr': {'placeholder': ' '}}) }}
+                {{ form_label(form.specialite) }}
+                {{ form_errors(form.specialite) }}
+            </div>
+
+            <div class="floating-group">
+                {{ form_widget(form.pays, {'attr': {'placeholder': ' '}}) }}
+                {{ form_label(form.pays) }}
+                {{ form_errors(form.pays) }}
+            </div>
+
+            <div class="form-check">
+                {{ form_widget(form.disponibilite, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(form.disponibilite, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                {{ form_errors(form.disponibilite) }}
+            </div>
+
+            <button type="submit" class="btn btn-signup w-100">
+                Sign Up
+            </button>
+
+            {{ form_end(form) }}
+
+            <p class="mt-3 text-center">
+                Already have an account?
+                <a href="{{ path('app_login') }}">Login</a>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const confirmPasswordError = document.getElementById('confirm-password-error');
+    const form = document.querySelector('form');
+
+    // EMAIL FORMAT + AJAX CHECK
+    emailInput.addEventListener('blur', () => {
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            emailError.textContent = "Email obligatoire";
+            return;
+        }
+
+        if (!email.includes('@')) {
+            emailError.textContent = "Email invalide";
+            return;
+        }
+
+        fetch('{{ path("ajax_check_email") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.exists) {
+                emailError.textContent = "Cet email est déjà utilisé";
+            } else {
+                emailError.textContent = '';
+            }
+        })
+        .catch(err => {
+            console.error('Erreur lors de la vérification:', err);
+        });
+    });
+
+    // PASSWORD CONFIRMATION
+    confirmPasswordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPasswordError.textContent = "Les mots de passe ne correspondent pas";
+        } else {
+            confirmPasswordError.textContent = '';
+        }
+    });
+
+    // SUBMIT VALIDATION
+    form.addEventListener('submit', (e) => {
+        let hasError = false;
+
+        // Vérifier les erreurs affichées
+        document.querySelectorAll('.form-error-message').forEach(el => {
+            if (el.textContent !== '') {
+                hasError = true;
+            }
+        });
+
+        // Vérifier la correspondance des mots de passe
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordError.textContent = "Les mots de passe ne correspondent pas";
+            hasError = true;
+        }
+
+        if (hasError) {
+            e.preventDefault();
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Backoffice{% endblock %}</title>
+
+    {# Vendor CSS #}
+    <link href="{{ asset('lib/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/typicons.font/typicons.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/flag-icon-css/css/flag-icon.min.css') }}" rel="stylesheet">
+
+    {# Azia CSS #}
+    <link rel="stylesheet" href="{{ asset('css/azia.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+
+    <style>
+        /* Custom Styles for Layout */
+        body {
+            background-color: #f4f5f8;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .az-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #e1e5eb;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .az-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 25px;
+        }
+
+        .az-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #560bd0;
+            text-decoration: none;
+        }
+
+        .az-header-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .az-header-menu .nav {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .az-header-menu .nav-link {
+            color: #596882;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .az-header-menu .nav-link:hover {
+            background: #f4f5f8;
+            color: #560bd0;
+        }
+
+        .az-header-menu .nav-link.active {
+            color: #560bd0;
+            background: #f4f5f8;
+        }
+
+        .az-header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .az-header-right .dropdown-link {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f4f5f8;
+            color: #596882;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .az-header-right .dropdown-link:hover {
+            background: #e1e5eb;
+        }
+
+        .az-sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            width: 240px;
+            background: #1d273b;
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 999;
+        }
+
+        .az-sidebar .nav {
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .az-sidebar .nav-item {
+            list-style: none;
+        }
+
+        .az-sidebar .nav-link {
+            color: #8392a5;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .az-sidebar .nav-link i {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 24px;
+        }
+
+        .az-sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .az-sidebar .nav-link.active {
+            color: #fff;
+            background: rgba(86,11,208,0.15);
+            border-left-color: #560bd0;
+        }
+
+        .az-content {
+            margin-left: 240px;
+            margin-top: 60px;
+            padding: 25px;
+            min-height: calc(100vh - 100px);
+        }
+
+        .az-footer {
+            margin-left: 240px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-top: 1px solid #e1e5eb;
+            font-size: 13px;
+            color: #8392a5;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .az-sidebar {
+                transform: translateX(-240px);
+                transition: transform 0.3s;
+            }
+
+            .az-sidebar.show {
+                transform: translateX(0);
+            }
+
+            .az-content,
+            .az-footer {
+                margin-left: 0;
+            }
+
+            .az-header-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  {# ================== HEADER ================== #}
+  <div class="az-header">
+    <div class="container-fluid">
+      <div class="az-header-left">
+        <a href="{{ path('backoffice_home') }}" class="az-logo">azia</a>
+        <a href="#" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+      </div>
+
+      <div class="az-header-menu">
+        <ul class="nav">
+          <li class="nav-item">
+            <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
+              <i class="typcn typcn-chart-area-outline"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="typcn typcn-document"></i> Pages
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="az-header-right">
+        <div class="dropdown-link">
+          <i class="typcn typcn-bell"></i>
+        </div>
+        <div class="dropdown-link">
+          <i class="typcn typcn-user"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ================== SIDEBAR ================== #}
+  <div class="az-sidebar">
+    <ul class="nav">
+      <li class="nav-item">
+        <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
+          <i class="typcn typcn-chart-area-outline"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-group"></i> Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-document"></i> Pages
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-cog"></i> Settings
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  {# ================== CONTENT ================== #}
+  <div class="az-content">
+    {% block content %}
+    <h2>Welcome to Backoffice</h2>
+    <p>This is the main content area.</p>
+    {% endblock %}
+  </div>
+
+  {# ================== FOOTER ================== #}
+  <div class="az-footer">
+    <div class="container-fluid">
+      <span>Copyright © bootstrapdash.com 2020</span>
+    </div>
+  </div>
+
+  {# ================== JS ================== #}
+  <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
+  <script src="{{ asset('lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('lib/ionicons/ionicons.js') }}"></script>
+  <script src="{{ asset('js/azia.js') }}"></script>
+
+  <script>
+    // Toggle sidebar on mobile
+    document.getElementById('azMenuShow')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector('.az-sidebar').classList.toggle('show');
+    });
+  </script>
+
+  {% block javascripts %}{% endblock %}
+
+</body>
+</html>

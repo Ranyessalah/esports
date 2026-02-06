@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home | ClutchX{% endblock %}
+
+{% block body %}
+
+<!-- ===== HERO ===== -->
+ <div>
+            <div class="hero_main">
+                <video class="video" autoplay loop muted data-aos="fade" data-aos-delay="150">
+                    <source src="assets/images/index/header-video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="overlay">
+                <div class="header-content">
+                    <section id="hero">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-11 col-md-12 text-center" data-aos="fade" data-aos-delay="200">
+                                    <div>
+                                        <h2>Beyond the Screen. Master Your Multiverse.</h2>
+                                        <h4>UNLEASH YOUR INNER CHAMPION</h4>
+                                        <div class="d-flex justify-content-center gap-4">
+<div class="dropdown-btn">
+    <button class="btnTwoActive">Become a Member</button>
+    <div class="dropdown-content">
+        <a href="signup_player">Player</a>
+        <a href="signup_coach">Coach</a>
+    </div>
+</div>
+                                            <a href="contact.html" class="btnTwo">Contact Us</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+<!-- ===== PARTNER ===== -->
+<section id="partner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <h5>Our Partner:</h5>
+            </div>
+            <div class="col-md-9">
+                <div class="partner-slider d-flex justify-content-between">
+                    <img src="{{ asset('assets/images/index/logo_1.png') }}">
+                    <img src="{{ asset('assets/images/index/logo_2.svg') }}">
+                    <img src="{{ asset('assets/images/index/logo_3.svg') }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== TESTIMONIAL ===== -->
+<section class="testimonial">
+    <div class="container">
+        <h3>WHAT GAMERS SAY ABOUT US</h3>
+
+        <div class="testimonial_slider">
+            <div class="testimonial-item">
+                <p>Best gaming platform ever!</p>
+                <span>~ Hector Salamanca</span>
+            </div>
+            <div class="testimonial-item">
+                <p>Amazing experience.</p>
+                <span>~ Steve Burr</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq">
+    <div class="container">
+        <h3>ANSWERS TO YOUR GAMING QUERIES</h3>
+
+        <div class="faq_main">
+            <div class="col">
+                <h5>
+                    <button class="faq_btn">
+                        <span>What does the platform offer?</span>
+                        <i class="fa-solid fa-angle-down"></i>
+                    </button>
+                </h5>
+                <p>Tournaments, teams, players.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+/* Dropdown sur hover */
+.dropdown-btn {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* juste en dessous du bouton */
+    left: 0;
+    background-color: rgba(0,0,0,0.9);
+    min-width: 160px;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 10;
+    text-align: center;
+}
+
+.dropdown-btn .dropdown-content a {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown-btn .dropdown-content a:hover {
+    background-color: #ff6b6b;
+}
+
+.dropdown-btn:hover .dropdown-content {
+    display: block;
+}
+</style>
+
+
+{% endblock %}
