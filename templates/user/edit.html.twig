@@ -1,0 +1,87 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Modifier Utilisateur{% endblock %}
+
+{% block content %}
+<h2 class="az-content-title">Modifier {{ user.email|split('@')[0]|title }}</h2>
+
+<!-- CSS intégré -->
+<style>
+/* Conteneur du formulaire */
+.az-content-body {
+    max-width: 600px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Champs du formulaire */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Boutons */
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff; /* bleu principal */
+    transition: background 0.3s;
+}
+
+.btn-add i {
+    font-size: 16px;
+}
+
+.btn-add:hover {
+    background-color: #0056b3;
+}
+
+/* Bouton Retour */
+.btn-back {
+    background-color: #8392a5;
+    color: #fff;
+}
+
+.btn-back:hover {
+    background-color: #62707a;
+}
+</style>
+
+<div class="az-content-body">
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_widget(form) }}
+        </div>
+
+        <button type="submit" class="btn-add">
+            <i class="typcn typcn-tick"></i> Enregistrer
+        </button>
+
+        <a href="{{ path('backoffice_user_index') }}" class="btn-add btn-back">
+            <i class="typcn typcn-arrow-left-outline"></i> Retour
+        </a>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

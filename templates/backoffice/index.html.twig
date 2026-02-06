@@ -1,0 +1,660 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Dashboard - Backoffice{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .az-content-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #1d273b;
+        margin-bottom: 25px;
+    }
+
+    /* Flash messages */
+    .alert {
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .alert-success {
+        background: rgba(16,183,89,0.1);
+        color: #10b759;
+        border-left: 4px solid #10b759;
+    }
+    
+    .alert-error {
+        background: rgba(220,53,69,0.1);
+        color: #dc3545;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .alert i {
+        font-size: 20px;
+    }
+
+    .az-dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border-left: 4px solid #560bd0;
+    }
+
+    .stat-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+    }
+
+    .stat-card.purple { border-left-color: #560bd0; }
+    .stat-card.blue { border-left-color: #0168fa; }
+    .stat-card.success { border-left-color: #10b759; }
+    .stat-card.orange { border-left-color: #ff9920; }
+
+    .stat-card h6 {
+        font-size: 13px;
+        color: #8392a5;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .stat-card h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1d273b;
+        margin: 0;
+    }
+
+    .stat-card .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .stat-card.purple .stat-icon {
+        background: rgba(86,11,208,0.1);
+        color: #560bd0;
+    }
+
+    .stat-card.blue .stat-icon {
+        background: rgba(1,104,250,0.1);
+        color: #0168fa;
+    }
+
+    .stat-card.success .stat-icon {
+        background: rgba(16,183,89,0.1);
+        color: #10b759;
+    }
+
+    .stat-card.orange .stat-icon {
+        background: rgba(255,153,32,0.1);
+        color: #ff9920;
+    }
+
+    .az-content-body {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .az-content-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #e1e5eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .az-content-header h5 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1d273b;
+        margin: 0;
+    }
+
+    .btn-add {
+        background: #560bd0;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-add:hover {
+        background: #4709ab;
+        color: #fff;
+    }
+
+    .table-responsive {
+        padding: 0;
+        overflow-x: auto;
+    }
+
+    .table {
+        margin: 0;
+        width: 100%;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        color: #596882;
+        font-weight: 600;
+        font-size: 13px;
+        text-transform: uppercase;
+        padding: 15px 25px;
+        border: none;
+        border-bottom: 2px solid #e1e5eb;
+    }
+
+    .table tbody td {
+        padding: 18px 25px;
+        color: #1d273b;
+        font-size: 14px;
+        border-bottom: 1px solid #e1e5eb;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-admin {
+        background: rgba(86,11,208,0.1);
+        color: #560bd0;
+    }
+
+    .badge-coach {
+        background: rgba(1,104,250,0.1);
+        color: #0168fa;
+    }
+
+    .badge-player {
+        background: rgba(16,183,89,0.1);
+        color: #10b759;
+    }
+
+    .badge-user {
+        background: rgba(255,153,32,0.1);
+        color: #ff9920;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 14px;
+        background: transparent;
+        padding: 0;
+    }
+
+    .btn-edit {
+        background: rgba(1,104,250,0.1);
+        color: #0168fa;
+    }
+
+    .btn-edit:hover {
+        background: #0168fa;
+        color: #fff;
+    }
+
+    .btn-delete {
+        background: rgba(220,53,69,0.1);
+        color: #dc3545;
+    }
+
+    .btn-delete:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #560bd0;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-details h6 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1d273b;
+    }
+
+    .user-details p {
+        margin: 0;
+        font-size: 13px;
+        color: #8392a5;
+    }
+
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        color: #8392a5;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .delete-form {
+        display: inline;
+        margin: 0;
+    }
+
+    /* Modal de confirmation */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .modal-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(220,53,69,0.1);
+        color: #dc3545;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        font-size: 20px;
+        color: #1d273b;
+    }
+
+    .modal-body {
+        margin-bottom: 25px;
+        color: #596882;
+        line-height: 1.6;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn-modal {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel {
+        background: #f4f5f8;
+        color: #596882;
+    }
+
+    .btn-cancel:hover {
+        background: #e1e5eb;
+    }
+
+    .btn-confirm {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-confirm:hover {
+        background: #c82333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="az-content-title">Dashboard</h2>
+
+{# Flash Messages #}
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }}">
+            <i class="typcn typcn-{{ type == 'success' ? 'tick' : 'warning' }}"></i>
+            <span>{{ message }}</span>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+{# Statistics Cards #}
+<div class="az-dashboard-stats">
+    <div class="stat-card purple">
+        <div class="stat-icon">
+            <i class="typcn typcn-group"></i>
+        </div>
+        <h6>Total Users</h6>
+        <h2>{{ stats.total }}</h2>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-icon">
+            <i class="typcn typcn-user-add"></i>
+        </div>
+        <h6>Coaches</h6>
+        <h2>{{ stats.coaches }}</h2>
+    </div>
+
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="typcn typcn-user"></i>
+        </div>
+        <h6>Players</h6>
+        <h2>{{ stats.players }}</h2>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-icon">
+            <i class="typcn typcn-star"></i>
+        </div>
+        <h6>Admins</h6>
+        <h2>{{ stats.admins }}</h2>
+    </div>
+</div>
+
+{# Users Table #}
+<div class="az-content-body">
+    <div class="az-content-header">
+        <h5>Recent Users</h5>
+        <a href="{{ path('signup_coach') }}" class="btn-add">
+            <i class="typcn typcn-plus"></i> Add User
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        {% if recentUsers|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in recentUsers %}
+                        {% set initials = user.email|slice(0, 2)|upper %}
+                        {% set avatarColors = ['#560bd0', '#0168fa', '#10b759', '#ff9920', '#dc3545'] %}
+                        {% set avatarColor = avatarColors[loop.index0 % 5] %}
+                        
+                        {# Déterminer le rôle principal #}
+                        {% set mainRole = 'User' %}
+                        {% set badgeClass = 'badge-user' %}
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            {% set mainRole = 'Admin' %}
+                            {% set badgeClass = 'badge-admin' %}
+                        {% elseif 'ROLE_COACH' in user.roles %}
+                            {% set mainRole = 'Coach' %}
+                            {% set badgeClass = 'badge-coach' %}
+                        {% elseif 'ROLE_PLAYER' in user.roles %}
+                            {% set mainRole = 'Player' %}
+                            {% set badgeClass = 'badge-player' %}
+                        {% endif %}
+                        
+                        <tr>
+                            <td>#{{ user.id }}</td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar" style="background: {{ avatarColor }};">
+                                        {{ initials }}
+                                    </div>
+                                    <div class="user-details">
+                                        <h6>{{ user.email|split('@')[0]|title }}</h6>
+                                        <p>ID: {{ user.id }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge {{ badgeClass }}">{{ mainRole }}</span></td>
+                            <td>{{ user.email }}</td>
+                            <td><span class="badge badge-player">Active</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                   <button class="btn-action btn-edit" title="Edit" onclick="window.location.href='{{ path('backoffice_user_edit', {id: user.id}) }}'">
+    <i class="typcn typcn-edit"></i>
+</button>
+
+                                    <form method="post" action="{{ path('backoffice_user_delete', {id: user.id}) }}" class="delete-form" data-user-email="{{ user.email }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                                        <button type="button" class="btn-action btn-delete btn-delete-trigger" title="Delete">
+                                            <i class="typcn typcn-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <i class="typcn typcn-user-outline"></i>
+                <h5>Aucun utilisateur trouvé</h5>
+                <p>Commencez par ajouter des utilisateurs à votre système.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{# ⚠️ CETTE PARTIE ÉTAIT MANQUANTE - Modal de confirmation de suppression #}
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <i class="typcn typcn-warning"></i>
+            </div>
+            <h3>Confirmer la suppression</h3>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <strong id="userEmailToDelete"></strong> ?</p>
+            <p style="color: #dc3545; font-size: 13px; margin-top: 10px;">
+                <i class="typcn typcn-info"></i> Cette action est irréversible.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-modal btn-cancel" onclick="closeDeleteModal()">Annuler</button>
+            <button type="button" class="btn-modal btn-confirm" onclick="confirmDelete()">Supprimer</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    let currentDeleteForm = null;
+
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            alert.style.transition = 'opacity 0.5s';
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 500);
+        });
+    }, 5000);
+
+    // Gestion de la suppression avec modal
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM chargé');
+        
+        const deleteButtons = document.querySelectorAll('.btn-delete-trigger');
+        console.log('Nombre de boutons delete trouvés:', deleteButtons.length);
+        
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Bouton delete cliqué !');
+                
+                // Récupérer le formulaire parent
+                currentDeleteForm = this.closest('.delete-form');
+                const userEmail = currentDeleteForm.getAttribute('data-user-email');
+                console.log('Email:', userEmail);
+                
+                // Afficher l'email dans le modal
+                document.getElementById('userEmailToDelete').textContent = userEmail;
+                
+                // Afficher le modal
+                document.getElementById('deleteModal').classList.add('show');
+            });
+        });
+    });
+
+    // Fermer le modal
+    function closeDeleteModal() {
+        console.log('Fermeture du modal');
+        document.getElementById('deleteModal').classList.remove('show');
+        currentDeleteForm = null;
+    }
+
+    // Confirmer la suppression
+    function confirmDelete() {
+        console.log('Confirmation de suppression');
+        if (currentDeleteForm) {
+            console.log('Soumission du formulaire');
+            currentDeleteForm.submit();
+        } else {
+            console.log('Aucun formulaire à soumettre');
+        }
+    }
+
+    // Fermer le modal en cliquant en dehors
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+
+    // Fermer le modal avec la touche Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ClutchX{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/slick.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
+</head>
+
+<body>
+
+<div class="site-wrapper">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <nav class="navbar container navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand p-0" href="{{ path('app_home') }}">
+                    <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="logo">
+                </a>
+
+                <button class="navbar-toggler" id="sidebarEvent" type="button">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto mx-5 d-flex align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ path('app_home') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Games</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== CONTENU ===== -->
+    {% block body %}{% endblock %}
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="row py-5">
+                <div class="col-lg-4">
+                    <h6>About Us</h6>
+                    <p>ClutchX is a competitive gaming platform.</p>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Quick Links</h6>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Games</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Follow Us</h6>
+                </div>
+            </div>
+
+            <div class="footer-bottom text-center">
+                <p>© 2026 ClutchX</p>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<!-- ===== LOGIN FIXÉ ===== -->
+<a href="{{ path('app_login') }}" class="login-link-fixed">Login</a>
+
+<style>
+/* Bouton Login cliquable au-dessus de tout */
+.login-link-fixed {
+    position: fixed; /* reste visible au-dessus de tout */
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background-color: #5606d8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link-fixed:hover {
+    background-color: #9731c7;
+}
+</style>
+
+<!-- JS -->
+<script src="{{ asset('assets/js/jquery.js') }}"></script>
+<script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/js/slick.min.js') }}"></script>
+<script src="{{ asset('assets/js/custom.js') }}"></script>
+<script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
+<script src="{{ asset('assets/js/aos.js') }}"></script>
+
+<script>
+    AOS.init({ once: true, duration: 1000 });
+</script>
+
+</body>
+</html>
