@@ -1,137 +1,311 @@
-{{ form_start(form) }}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un match</title>
 
-<div style="
-    max-width:1100px;
-    margin:120px auto 80px;
-    background:linear-gradient(180deg,#1f2437,#161a2b);
-    border-radius:16px;
-    padding:40px;
-    color:#fff;
-">
+    <style>
+        * {
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+        }
 
-    <h2 style="margin-bottom:30px;">
-        <span style="border-left:4px solid #ff4d4f; padding-left:12px;">
-            Configuration du match
-        </span>
-    </h2>
+        body {
+            background:#f9fafb;
+            color:#111827;
+            min-height:100vh;
+        }
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-bottom:40px;">
-        <div>
-            <label>Statut</label>
-            {{ form_widget(form.statut, {
-                attr: {
-                    class: 'form-control',
-                    style: 'background:#0f172a;color:#fff;border-radius:10px;padding:12px'
-                }
-            }) }}
-        </div>
+        .main-content {
+            max-width:1200px;
+            margin:auto;
+            padding:2rem;
+        }
 
-        <div>
-            <label>Date et heure de fin</label>
-            {{ form_widget(form.dateFinMatch, {
-                attr: {
-                    class: 'form-control',
-                    style: 'background:#0f172a;color:#fff;border-radius:10px;padding:12px'
-                }
-            }) }}
-        </div>
-    </div>
+        .page-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:2rem;
+        }
 
-    <h2 style="margin-bottom:30px;">
-        <span style="border-left:4px solid #ff4d4f; padding-left:12px;">
-            Équipes et score
-        </span>
-    </h2>
-
-    <div style="display:grid; grid-template-columns:1fr 120px 1fr; align-items:center; gap:20px;">
-
-        <!-- ÉQUIPE 1 -->
-        <div style="background:#0f172a; padding:30px; border-radius:14px;">
-            <h3>Équipe 1</h3>
-
-            {{ form_widget(form.equipe1, {
-                attr: {
-                    style: 'margin-bottom:20px;background:#020617;color:#fff;border-radius:8px;padding:10px'
-                }
-            }) }}
-
-            <div style="display:flex; justify-content:center; align-items:center; gap:20px;">
-                <button type="button" onclick="dec('score1')" style="background:#ef4444;border:none;color:#fff;width:40px;height:40px;border-radius:50%;">−</button>
-                {{ form_widget(form.scoreEquipe1, {
-                    attr: {
-                        id: 'score1',
-                        style: 'width:60px;text-align:center;font-size:32px;background:none;border:none;color:#fff'
-                    }
-                }) }}
-                <button type="button" onclick="inc('score1')" style="background:#10b981;border:none;color:#fff;width:40px;height:40px;border-radius:50%;">+</button>
-            </div>
-        </div>
-
-        <!-- VS -->
-        <div style="text-align:center;">
-            <div style="
-                background:radial-gradient(circle,#ff4d8d,#7c3aed);
-                width:60px;height:60px;
-                border-radius:50%;
-                display:flex;
-                justify-content:center;
-                align-items:center;
-                font-weight:700;
-            ">
-                VS
-            </div>
-        </div>
-
-        <!-- ÉQUIPE 2 -->
-        <div style="background:#0f172a; padding:30px; border-radius:14px;">
-            <h3>Équipe 2</h3>
-
-            {{ form_widget(form.equipe2, {
-                attr: {
-                    style: 'margin-bottom:20px;background:#020617;color:#fff;border-radius:8px;padding:10px'
-                }
-            }) }}
-
-            <div style="display:flex; justify-content:center; align-items:center; gap:20px;">
-                <button type="button" onclick="dec('score2')" style="background:#ef4444;border:none;color:#fff;width:40px;height:40px;border-radius:50%;">−</button>
-                {{ form_widget(form.scoreEquipe2, {
-                    attr: {
-                        id: 'score2',
-                        style: 'width:60px;text-align:center;font-size:32px;background:none;border:none;color:#fff'
-                    }
-                }) }}
-                <button type="button" onclick="inc('score2')" style="background:#10b981;border:none;color:#fff;width:40px;height:40px;border-radius:50%;">+</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div style="display:flex; justify-content:flex-end; gap:20px; margin-top:40px;">
-        <a href="{{ path('app_matchs_index_admin') }}" style="
-            background:#374151;
-            padding:12px 30px;
-            border-radius:10px;
-            color:#fff;
+        .back-btn {
+            background:#e5e7eb;
+            color:#111827;
+            padding:.6rem 1.3rem;
+            border-radius:8px;
             text-decoration:none;
-        ">Annuler</a>
+            font-weight:500;
+        }
 
-        <button type="submit" style="
-            background:linear-gradient(90deg,#ec4899,#8b5cf6);
-            padding:12px 40px;
+        .match-creation-form {
+            background:#ffffff;
+            border-radius:16px;
+            padding:2.5rem;
+            border:1px solid #e5e7eb;
+            box-shadow:0 10px 30px rgba(0,0,0,.08);
+        }
+
+        .form-section {
+            margin-bottom:3rem;
+        }
+
+        .form-section h3 {
+            font-size:1.3rem;
+            margin-bottom:1.5rem;
+            border-left:4px solid #4f46e5;
+            padding-left:.7rem;
+            color:#111827;
+        }
+
+        label {
+            display:block;
+            margin-bottom:.5rem;
+            color:#374151;
+            font-weight:500;
+        }
+
+        /* INPUTS */
+        .form-select,
+        .team-input,
+        .datetime-input {
+            width:100%;
+            padding:1rem;
+            background:#ffffff;
+            color:#111827;
+            border:1.8px solid #d1d5db;
+            border-radius:12px;
+            font-size:1rem;
+            transition:.2s;
+        }
+
+        .datetime-input {
+            cursor:pointer;
+            text-align:center;
+        }
+
+        .form-select:focus,
+        .team-input:focus,
+        .datetime-input:focus {
+            outline:none;
+            border-color:#4f46e5;
+            box-shadow:0 0 0 3px rgba(79,70,229,.2);
+        }
+
+        .form-error {
+            color:#dc2626;
+            font-size:.85rem;
+            margin-top:.4rem;
+        }
+
+        .dates-container,
+        .teams-container {
+            display:flex;
+            gap:2rem;
+            align-items:center;
+        }
+
+        .team-card {
+            flex:1;
+            background:#f9fafb;
+            padding:2rem;
+            border-radius:16px;
+            border:1.5px solid #e5e7eb;
+        }
+
+        .team-card h4 {
+            margin-bottom:1rem;
+            color:#111827;
+        }
+
+        /* SCORE */
+        .score-controls {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            gap:1.5rem;
+            margin-top:1.2rem;
+        }
+
+        .score-display {
+            font-size:3rem;
+            font-weight:800;
+            min-width:60px;
+            text-align:center;
+            color:#111827;
+        }
+
+        .score-btn {
+            width:48px;
+            height:48px;
+            border-radius:50%;
             border:none;
+            font-size:1.8rem;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .score-btn.plus {
+            background:#16a34a;
+            color:white;
+        }
+
+        .score-btn.minus {
+            background:#dc2626;
+            color:white;
+        }
+
+        .vs span {
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.4rem;
+            font-weight:800;
+            color:white;
+        }
+
+        .form-actions {
+            display:flex;
+            justify-content:flex-end;
+            gap:1.5rem;
+            border-top:1px solid #e5e7eb;
+            padding-top:2rem;
+        }
+
+        .btn {
+            padding:1rem 2.5rem;
             border-radius:10px;
-            color:#fff;
             font-weight:600;
-        ">
-            Créer le match
-        </button>
+            border:none;
+            cursor:pointer;
+        }
+
+        .btn-secondary {
+            background:#e5e7eb;
+            color:#111827;
+        }
+
+        .btn-primary {
+            background:linear-gradient(135deg,#4f46e5,#9333ea);
+            color:white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="page-header">
+        <h2>Créer un match</h2>
+        <a href="{{ path('app_matchs_index_admin') }}" class="back-btn">← Retour</a>
     </div>
+
+    {{ form_start(form, { attr:{ class:'match-creation-form', novalidate:'novalidate' } }) }}
+
+    <!-- CONFIG -->
+    <div class="form-section">
+        <h3>Configuration du match</h3>
+        <label>Statut</label>
+        {{ form_widget(form.statut, { attr:{ class:'form-select' } }) }}
+        <div class="form-error">{{ form_errors(form.statut) }}</div>
+    </div>
+
+    <!-- DATE -->
+    <div class="form-section">
+        <h3>Date et heure</h3>
+
+        <div class="dates-container">
+
+            <div class="team-card">
+                <h4>Début</h4>
+                {{ form_widget(form.dateMatch, {
+                    attr: {
+                        class: 'datetime-input',
+                        type: 'datetime-local'
+                    }
+                }) }}
+                <div class="form-error">{{ form_errors(form.dateMatch) }}</div>
+            </div>
+
+            <div class="team-card">
+                <h4>Fin</h4>
+                {{ form_widget(form.dateFinMatch, {
+                    attr: {
+                        class: 'datetime-input',
+                        type: 'datetime-local'
+                    }
+                }) }}
+                <div class="form-error">{{ form_errors(form.dateFinMatch) }}</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ÉQUIPES & SCORE -->
+    <div class="form-section">
+        <h3>Équipes & score</h3>
+
+        <div class="teams-container">
+
+            <div class="team-card">
+                <h4>Équipe 1</h4>
+                {{ form_widget(form.equipe1, { attr:{ class:'team-input' } }) }}
+
+                <div class="score-controls">
+                    <button type="button" class="score-btn minus" onclick="changeScore(1,-1)">−</button>
+                    <div class="score-display" id="display1">0</div>
+                    <button type="button" class="score-btn plus" onclick="changeScore(1,1)">+</button>
+                </div>
+
+                {{ form_widget(form.scoreEquipe1, { attr:{ id:'scoreInput1', type:'hidden' } }) }}
+            </div>
+
+            <div class="vs"><span>VS</span></div>
+
+            <div class="team-card">
+                <h4>Équipe 2</h4>
+                {{ form_widget(form.equipe2, { attr:{ class:'team-input' } }) }}
+
+                <div class="score-controls">
+                    <button type="button" class="score-btn minus" onclick="changeScore(2,-1)">−</button>
+                    <div class="score-display" id="display2">0</div>
+                    <button type="button" class="score-btn plus" onclick="changeScore(2,1)">+</button>
+                </div>
+
+                {{ form_widget(form.scoreEquipe2, { attr:{ id:'scoreInput2', type:'hidden' } }) }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('app_matchs_index_admin') }}" class="btn btn-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary">Créer le match</button>
+    </div>
+
+    {{ form_end(form) }}
 
 </div>
 
-{{ form_end(form) }}
-
 <script>
-function inc(id){let i=document.getElementById(id);i.value=parseInt(i.value||0)+1}
-function dec(id){let i=document.getElementById(id);if(i.value>0)i.value--}
+function changeScore(team, delta) {
+    const display = document.getElementById('display'+team);
+    const input = document.getElementById('scoreInput'+team);
+
+    let value = parseInt(display.textContent) || 0;
+    value = Math.max(0, value + delta);
+
+    display.textContent = value;
+    input.value = value;
+}
 </script>
+
+</body>
+</html>

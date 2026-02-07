@@ -1,146 +1,138 @@
-{% extends 'base.html.twig' %}
+{% extends 'backoffice/base.html.twig' %}
 
-{% block title %}List Matches{% endblock %}
+{% block title %}Matchs{% endblock %}
 
-{% block body %}
+{% block content %}
 
-<div style="
-    min-height: calc(100vh - 300px);
-    padding-top: 120px;
-    padding-left: 60px;
-    padding-right: 60px;
-    color:#fff;
-">
+<div style="padding:30px;">
 
-    <!-- TITLE + BUTTON -->
+    <!-- HEADER -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2 style="font-weight:600; margin:0;">
-            <span style="border-left:4px solid purple; padding-left:10px;">List Matches</span>
-        </h2>
+        <h2 style="margin:0; font-weight:600;">Gestion des matchs</h2>
 
         <a href="{{ path('app_matchs_new_admin') }}"
            style="
-            background:linear-gradient(90deg,#ec4899,#8b5cf6);
+            background:#4f46e5;
             color:#fff;
-            padding:12px 26px;
-            border-radius:12px;
+            padding:10px 22px;
+            border-radius:8px;
             text-decoration:none;
-            font-weight:600;
-            box-shadow:0 10px 25px rgba(0,0,0,0.4);
+            font-weight:500;
            ">
-            ➕
+            ➕ Nouveau match
         </a>
     </div>
 
-    <div style="display:flex; gap:30px; flex-wrap:wrap;">
+    <!-- GRID -->
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+        gap:24px;
+    ">
 
         {% for match in matchs %}
 
         <div style="
-            width:320px;
-            background:linear-gradient(180deg,#2a3547,#1b2433);
+            background:#ffffff;
             border-radius:12px;
             padding:20px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.4);
+            box-shadow:0 8px 20px rgba(0,0,0,.08);
+            border-left:6px solid
+                {% if match.statut == 'En Cours' %}#22c55e
+                {% elseif match.statut == 'Terminé' %}#6366f1
+                {% else %}#f59e0b{% endif %}
         ">
 
+            <!-- TOP -->
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4 style="margin:0;">
-                    {{ match.statut|upper }}
-                </h4>
+                <strong>Match #{{ match.id }}</strong>
+
                 <span style="
-                    background:#6c4c3b;
-                    padding:4px 12px;
-                    border-radius:20px;
                     font-size:12px;
-                    color:orange;
+                    padding:4px 10px;
+                    border-radius:20px;
+                    color:#fff;
+                    background:
+                        {% if match.statut == 'En Cours' %}#22c55e
+                        {% elseif match.statut == 'Terminé' %}#6366f1
+                        {% else %}#f59e0b{% endif %}
                 ">
-                    Match #{{ match.id }}
+                    {{ match.statut }}
                 </span>
             </div>
 
+            <!-- SCORE -->
             <div style="
                 margin:20px 0;
-                background:#111827;
+                padding:16px;
+                background:#f9fafb;
                 border-radius:10px;
-                padding:20px;
                 text-align:center;
             ">
+               <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+">
 
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size:14px;">Team</div>
-                        <div style="font-weight:600;">{{ match.equipe1.nom }}</div>
-                    </div>
+    <span style="font-size:11px; color:#9ca3af;">
+        {{ match.equipe1.nom }}
+    </span>
 
-                    <div style="font-size:40px; font-weight:700;">
-                        {{ match.scoreEquipe1 ?? 0 }}
-                        <span style="font-size:18px; opacity:0.6;">VS</span>
-                        {{ match.scoreEquipe2 ?? 0 }}
-                    </div>
+    <span style="font-size:24px; font-weight:600;">
+        {{ match.scoreEquipe1 ?? 0 }}
+        <span style="font-size:14px; opacity:.5;">VS</span>
+        {{ match.scoreEquipe2 ?? 0 }}
+    </span>
 
-                    <div>
-                        <div style="font-size:14px;">Team</div>
-                        <div style="font-weight:600;">{{ match.equipe2.nom }}</div>
-                    </div>
-                </div>
+    <span style="font-size:11px; color:#9ca3af; text-align:right;">
+        {{ match.equipe2.nom }}
+    </span>
+
+</div>
 
             </div>
 
-            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:15px;">
-                <div>
-                    <div style="opacity:0.6;">Date</div>
-                    {{ match.dateMatch|date('Y-m-d') }}
-                </div>
-                <div>
-                    <div style="opacity:0.6;">Heure</div>
-                    {{ match.dateMatch|date('H:i') }}
-                </div>
-                <div>
-                    <div style="opacity:0.6;">Statut</div>
-                    <span style="
-                        color:
-                        {% if match.statut == 'En Cours' %}#2ecc71
-                        {% elseif match.statut == 'Terminé' %}#9b59b6
-                        {% else %}#f1c40f{% endif %}
-                    ">
-                        {{ match.statut }}
-                    </span>
-                </div>
+            <!-- DATES -->
+            <div style="font-size:13px; color:#6b7280; margin-bottom:14px;">
+                <div>📅 {{ match.dateMatch|date('d/m/Y') }}</div>
+                <div>⏰ {{ match.dateMatch|date('H:i') }}</div>
             </div>
 
+            <!-- ACTIONS -->
             <div style="display:flex; gap:10px;">
                 <a href="{{ path('app_matchs_show_admin', {'id': match.id}) }}"
                    style="
                     flex:1;
                     text-align:center;
-                    background:#3b82f6;
-                    color:#fff;
-                    padding:10px;
-                    border-radius:8px;
+                    padding:8px;
+                    background:#e5e7eb;
+                    border-radius:6px;
                     text-decoration:none;
+                    color:#111827;
                    ">
-                    👁 Show
+                    Voir
                 </a>
 
                 <a href="{{ path('app_matchs_edit_admin', {'id': match.id}) }}"
                    style="
                     flex:1;
                     text-align:center;
-                    background:#374151;
-                    color:#fff;
-                    padding:10px;
-                    border-radius:8px;
+                    padding:8px;
+                    background:#4f46e5;
+                    border-radius:6px;
                     text-decoration:none;
+                    color:#fff;
                    ">
-                    ✏ Edit
+                    Modifier
                 </a>
             </div>
 
         </div>
 
         {% else %}
-            <p>No matches found</p>
+            <p>Aucun match trouvé.</p>
         {% endfor %}
 
     </div>
