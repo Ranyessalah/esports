@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List Matches{% endblock %}
+
+{% block body %}
+
+<div style="
+    min-height: calc(100vh - 300px);
+    padding-top: 120px;
+    padding-left: 60px;
+    padding-right: 60px;
+    color:#fff;
+">
+
+    <!-- TITLE + BUTTON -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <h2 style="font-weight:600; margin:0;">
+            <span style="border-left:4px solid purple; padding-left:10px;">List Matches</span>
+        </h2>
+
+        <a href="{{ path('app_matchs_new_admin') }}"
+           style="
+            background:linear-gradient(90deg,#ec4899,#8b5cf6);
+            color:#fff;
+            padding:12px 26px;
+            border-radius:12px;
+            text-decoration:none;
+            font-weight:600;
+            box-shadow:0 10px 25px rgba(0,0,0,0.4);
+           ">
+            ➕
+        </a>
+    </div>
+
+    <div style="display:flex; gap:30px; flex-wrap:wrap;">
+
+        {% for match in matchs %}
+
+        <div style="
+            width:320px;
+            background:linear-gradient(180deg,#2a3547,#1b2433);
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.4);
+        ">
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="margin:0;">
+                    {{ match.statut|upper }}
+                </h4>
+                <span style="
+                    background:#6c4c3b;
+                    padding:4px 12px;
+                    border-radius:20px;
+                    font-size:12px;
+                    color:orange;
+                ">
+                    Match #{{ match.id }}
+                </span>
+            </div>
+
+            <div style="
+                margin:20px 0;
+                background:#111827;
+                border-radius:10px;
+                padding:20px;
+                text-align:center;
+            ">
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:14px;">Team</div>
+                        <div style="font-weight:600;">{{ match.equipe1.nom }}</div>
+                    </div>
+
+                    <div style="font-size:40px; font-weight:700;">
+                        {{ match.scoreEquipe1 ?? 0 }}
+                        <span style="font-size:18px; opacity:0.6;">VS</span>
+                        {{ match.scoreEquipe2 ?? 0 }}
+                    </div>
+
+                    <div>
+                        <div style="font-size:14px;">Team</div>
+                        <div style="font-weight:600;">{{ match.equipe2.nom }}</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:15px;">
+                <div>
+                    <div style="opacity:0.6;">Date</div>
+                    {{ match.dateMatch|date('Y-m-d') }}
+                </div>
+                <div>
+                    <div style="opacity:0.6;">Heure</div>
+                    {{ match.dateMatch|date('H:i') }}
+                </div>
+                <div>
+                    <div style="opacity:0.6;">Statut</div>
+                    <span style="
+                        color:
+                        {% if match.statut == 'En Cours' %}#2ecc71
+                        {% elseif match.statut == 'Terminé' %}#9b59b6
+                        {% else %}#f1c40f{% endif %}
+                    ">
+                        {{ match.statut }}
+                    </span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <a href="{{ path('app_matchs_show_admin', {'id': match.id}) }}"
+                   style="
+                    flex:1;
+                    text-align:center;
+                    background:#3b82f6;
+                    color:#fff;
+                    padding:10px;
+                    border-radius:8px;
+                    text-decoration:none;
+                   ">
+                    👁 Show
+                </a>
+
+                <a href="{{ path('app_matchs_edit_admin', {'id': match.id}) }}"
+                   style="
+                    flex:1;
+                    text-align:center;
+                    background:#374151;
+                    color:#fff;
+                    padding:10px;
+                    border-radius:8px;
+                    text-decoration:none;
+                   ">
+                    ✏ Edit
+                </a>
+            </div>
+
+        </div>
+
+        {% else %}
+            <p>No matches found</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -36,10 +36,10 @@
                             <a class="nav-link active" href="{{ path('app_home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Games</a>
+                            <a class="nav-link" href="{{ path('app_matchs_index') }}">Matchs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
+                            <a class="nav-link" href="{{ path('app_equipe_index') }}">Equipes</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
@@ -55,30 +55,33 @@
 
     <!-- ===== FOOTER ===== -->
     <footer>
-        <div class="container">
-            <div class="row py-5">
-                <div class="col-lg-4">
-                    <h6>About Us</h6>
-                    <p>ClutchX is a competitive gaming platform.</p>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Quick Links</h6>
-                    <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Games</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Follow Us</h6>
-                </div>
+    <div class="container">
+        <div class="row py-5">
+            <div class="col-lg-4">
+                <h6 style="color:#fff;">About Us</h6>
+                <p style="color:#fff;">ClutchX is a competitive gaming platform.</p>
             </div>
 
-            <div class="footer-bottom text-center">
-                <p>© 2026 ClutchX</p>
+            <div class="col-lg-4">
+                <h6 style="color:#fff;">Quick Links</h6>
+                <ul>
+                    <li><a href="#" style="color:#fff;">About</a></li>
+                    <li><a href="#" style="color:#fff;">Games</a></li>
+                    <li><a href="#" style="color:#fff;">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4">
+                <h6 style="color:#fff;">Follow Us</h6>
             </div>
         </div>
-    </footer>
+
+        <div class="footer-bottom text-center">
+            <p style="color:#fff;">© 2026 ClutchX</p>
+        </div>
+    </div>
+</footer>
+
 
 </div>
 

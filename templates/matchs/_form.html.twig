@@ -1,0 +1,475 @@
+{{ form_start(form) }}
+
+<div style="
+    max-width: 900px;
+    margin: 60px auto 40px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 0;
+    color: #1f2937;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+">
+
+    <!-- Titre principal -->
+    <div style="padding: 32px 40px 0;">
+        <h1 style="
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+            letter-spacing: -0.025em;
+        ">
+            Créer un match
+        </h1>
+    </div>
+
+    <!-- Section Configuration -->
+    <div style="padding: 32px 40px; border-bottom: 1px solid #e5e7eb;">
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <div style="width: 4px; height: 20px; background: #dc2626; border-radius: 2px; margin-right: 12px;"></div>
+            <h2 style="
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+            ">
+                Configuration du match
+            </h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+            <!-- Statut -->
+            <div>
+                <div style="margin-bottom: 8px;">
+                    <span style="
+                        display: inline-block;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #374151;
+                        margin-bottom: 6px;
+                    ">
+                        Statut
+                    </span>
+                </div>
+                <div style="
+                    padding: 12px 16px;
+                    background: #f9fafb;
+                    border: 1px solid #d1d5db;
+                    border-radius: 8px;
+                    color: #111827;
+                    font-size: 14px;
+                    min-height: 44px;
+                    display: flex;
+                    align-items: center;
+                ">
+                    Planifié
+                </div>
+            </div>
+
+            <!-- Date et heure de fin -->
+            <div>
+                <div style="margin-bottom: 8px;">
+                    <span style="
+                        display: inline-block;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #374151;
+                        margin-bottom: 6px;
+                    ">
+                        Date et heure de fin
+                    </span>
+                </div>
+                {{ form_widget(form.dateFinMatch, {
+                    attr: {
+                        style: '
+                            width: 100%;
+                            padding: 12px 16px;
+                            background: #ffffff;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            color: #111827;
+                            font-size: 14px;
+                            min-height: 44px;
+                            box-sizing: border-box;
+                        '
+                    }
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Séparateur -->
+    <div style="padding: 0 40px;">
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 0;">
+    </div>
+
+    <!-- Section Équipes et score -->
+    <div style="padding: 32px 40px;">
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <div style="width: 4px; height: 20px; background: #dc2626; border-radius: 2px; margin-right: 12px;"></div>
+            <h2 style="
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+            ">
+                Équipes et score
+            </h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 40px;">
+
+            <!-- ÉQUIPE 1 -->
+            <div>
+                <div style="margin-bottom: 16px;">
+                    <h3 style="
+                        margin: 0 0 16px 0;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #111827;
+                    ">
+                        Équipe 1
+                    </h3>
+                </div>
+
+                <!-- Score -->
+                <div style="
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 16px;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                    ">
+                        Score:
+                    </div>
+                    <div style="
+                        font-size: 32px;
+                        font-weight: 600;
+                        color: #111827;
+                        text-align: center;
+                        margin-bottom: 16px;
+                    ">
+                        0
+                    </div>
+                    {{ form_widget(form.scoreEquipe1, {
+                        attr: {
+                            id: 'score1',
+                            style: 'display: none;'
+                        }
+                    }) }}
+                </div>
+
+                <!-- Sélection équipe -->
+                <div>
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                    ">
+                        Sélectionner l'équipe
+                    </div>
+                    {{ form_widget(form.equipe1, {
+                        attr: {
+                            style: '
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #ffffff;
+                                border: 1px solid #d1d5db;
+                                border-radius: 8px;
+                                color: #111827;
+                                font-size: 14px;
+                                min-height: 44px;
+                                box-sizing: border-box;
+                            '
+                        }
+                    }) }}
+                </div>
+
+                <!-- Boutons + et - -->
+                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
+                    <button type="button" onclick="dec('score1')" style="
+                        width: 40px;
+                        height: 40px;
+                        background: #ef4444;
+                        border: none;
+                        border-radius: 50%;
+                        color: white;
+                        font-size: 24px;
+                        font-weight: 400;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0;
+                        line-height: 1;
+                    ">
+                        −
+                    </button>
+                    
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        display: flex;
+                        align-items: center;
+                        font-weight: 500;
+                    ">
+                        VS
+                    </div>
+                    
+                    <button type="button" onclick="inc('score1')" style="
+                        width: 40px;
+                        height: 40px;
+                        background: #10b981;
+                        border: none;
+                        border-radius: 50%;
+                        color: white;
+                        font-size: 24px;
+                        font-weight: 400;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0;
+                        line-height: 1;
+                    ">
+                        +
+                    </button>
+                </div>
+            </div>
+
+            <!-- VS (centré) -->
+            <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                padding-top: 60px;
+            ">
+                <div style="
+                    font-size: 14px;
+                    color: #64748b;
+                    font-weight: 500;
+                    writing-mode: vertical-lr;
+                    transform: rotate(180deg);
+                    letter-spacing: 2px;
+                ">
+                    VS
+                </div>
+            </div>
+
+            <!-- ÉQUIPE 2 -->
+            <div>
+                <div style="margin-bottom: 16px;">
+                    <h3 style="
+                        margin: 0 0 16px 0;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #111827;
+                    ">
+                        Équipe 2
+                    </h3>
+                </div>
+
+                <!-- Score -->
+                <div style="
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 16px;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                    ">
+                        Score:
+                    </div>
+                    <div style="
+                        font-size: 32px;
+                        font-weight: 600;
+                        color: #111827;
+                        text-align: center;
+                        margin-bottom: 16px;
+                    ">
+                        0
+                    </div>
+                    {{ form_widget(form.scoreEquipe2, {
+                        attr: {
+                            id: 'score2',
+                            style: 'display: none;'
+                        }
+                    }) }}
+                </div>
+
+                <!-- Sélection équipe -->
+                <div>
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                    ">
+                        Sélectionner l'équipe
+                    </div>
+                    {{ form_widget(form.equipe2, {
+                        attr: {
+                            style: '
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #ffffff;
+                                border: 1px solid #d1d5db;
+                                border-radius: 8px;
+                                color: #111827;
+                                font-size: 14px;
+                                min-height: 44px;
+                                box-sizing: border-box;
+                            '
+                        }
+                    }) }}
+                </div>
+
+                <!-- Boutons + et - -->
+                <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
+                    <button type="button" onclick="dec('score2')" style="
+                        width: 40px;
+                        height: 40px;
+                        background: #ef4444;
+                        border: none;
+                        border-radius: 50%;
+                        color: white;
+                        font-size: 24px;
+                        font-weight: 400;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0;
+                        line-height: 1;
+                    ">
+                        −
+                    </button>
+                    
+                    <div style="
+                        font-size: 14px;
+                        color: #64748b;
+                        display: flex;
+                        align-items: center;
+                        font-weight: 500;
+                    ">
+                        VS
+                    </div>
+                    
+                    <button type="button" onclick="inc('score2')" style="
+                        width: 40px;
+                        height: 40px;
+                        background: #10b981;
+                        border: none;
+                        border-radius: 50%;
+                        color: white;
+                        font-size: 24px;
+                        font-weight: 400;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0;
+                        line-height: 1;
+                    ">
+                        +
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div style="
+        padding: 24px 40px;
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+    ">
+        <a href="{{ path('app_matchs_index') }}" style="
+            padding: 10px 24px;
+            background: #6b7280;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        " onmouseover="this.style.backgroundColor='#4b5563'" 
+        onmouseout="this.style.backgroundColor='#6b7280'">
+            Annuler
+        </a>
+        
+        <button type="submit" style="
+            padding: 10px 32px;
+            background: #111827;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        " onmouseover="this.style.backgroundColor='#374151'" 
+        onmouseout="this.style.backgroundColor='#111827'">
+            Créer le match
+        </button>
+    </div>
+
+</div>
+
+{{ form_end(form) }}
+
+<script>
+function inc(id) {
+    let input = document.getElementById(id);
+    let display = input.closest('div').querySelector('div[style*="font-size: 32px"]');
+    let currentValue = parseInt(display.textContent) || 0;
+    display.textContent = currentValue + 1;
+    input.value = currentValue + 1;
+}
+
+function dec(id) {
+    let input = document.getElementById(id);
+    let display = input.closest('div').querySelector('div[style*="font-size: 32px"]');
+    let currentValue = parseInt(display.textContent) || 0;
+    if (currentValue > 0) {
+        display.textContent = currentValue - 1;
+        input.value = currentValue - 1;
+    }
+}
+</script>
+
+<style>
+input:focus, select:focus {
+    outline: none;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+</style>

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le match{% endblock %}
+
+{% block body %}
+
+    {{ include('matchs/admin/_form.html.twig', {
+        button_label: 'Mettre à jour'
+    }) }}
+
+    <div style="max-width:1100px; margin:0 auto 60px; text-align:right;">
+        {{ include('matchs/admin/_delete_form.html.twig') }}
+    </div>
+
+{% endblock %}
