@@ -27,7 +27,6 @@ class Equipe
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le logo est obligatoire")]
     private ?string $logo = null;
 
     #[ORM\Column(length: 255)]
@@ -79,4 +78,31 @@ class Equipe
     public function getCoach(): ?User { return $this->coach; }
     public function setCoach(?User $coach): static { $this->coach = $coach; return $this; }
     public function getJoueurs(): Collection { return $this->joueurs; }
+
+public function getPlayers(): Collection
+{
+    return $this->joueurs->filter(
+        fn ($user) => $user instanceof Player
+    );
 }
+
+    
+  
+
+    public function addJoueur(User $joueur): static
+    {
+        if (!$this->joueurs->contains($joueur)) {
+            $this->joueurs->add($joueur);
+        }
+
+        return $this;
+    }
+
+    public function removeJoueur(User $joueur): static
+    {
+        $this->joueurs->removeElement($joueur);
+
+        return $this;
+    }
+}
+    

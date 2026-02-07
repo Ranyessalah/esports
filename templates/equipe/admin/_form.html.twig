@@ -1,4 +1,144 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {
+    attr: { class: 'team-form', novalidate: 'novalidate' },
+    enctype: 'multipart/form-data'
+}) }}
+
+<style>
+.team-form {
+    max-width:900px;
+    margin:auto;
+    background:#ffffff;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 25px 60px rgba(0,0,0,.08);
+    color:#111827;
+}
+
+/* GROUP */
+.form-group {
+    margin-bottom:25px;
+}
+
+.form-group label {
+    display:block;
+    margin-bottom:10px;
+    font-weight:700;
+    color:#374151;
+}
+
+/* INPUTS */
+.form-control {
+    width:100%;
+    border-radius:12px;
+    border:1px solid #d1d5db;
+    background:#ffffff;
+    color:#111827;
+    transition:.2s;
+}
+
+.form-control:focus {
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,.15);
+}
+
+/* ERRORS */
+.form-error {
+    margin-top:6px;
+    font-size:13px;
+    color:#dc2626;
+}
+
+/* MULTI SELECT */
+.select-multiple {
+    min-height:130px;
+}
+
+/* ACTIONS */
+.form-actions {
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+    margin-top:30px;
+    border-top:1px solid #e5e7eb;
+    padding-top:25px;
+}
+
+/* BUTTONS */
+.btn-primary {
+    padding:14px 30px;
+    border-radius:14px;
+    font-weight:700;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:#ffffff;
+    border:none;
+    cursor:pointer;
+}
+
+.btn-secondary {
+    padding:14px 30px;
+    border-radius:14px;
+    background:#e5e7eb;
+    color:#111827;
+    text-decoration:none;
+    font-weight:600;
+}
+</style>
+
+<h4 style="margin-bottom:20px; font-weight:700;">
+    {{ button_label|default('Créer une équipe') }}
+</h4>
+
+<div class="form-error" style="margin-bottom:15px;">
+    {{ form_errors(form) }}
+</div>
+
+<div class="form-group">
+    {{ form_label(form.nom) }}
+    {{ form_widget(form.nom, { attr:{ class:'form-control' } }) }}
+    <div class="form-error">{{ form_errors(form.nom) }}</div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.logoFile) }}
+    {{ form_widget(form.logoFile, { attr:{ class:'form-control' } }) }}
+    <div class="form-error">{{ form_errors(form.logoFile) }}</div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.game) }}
+    {{ form_widget(form.game, { attr:{ class:'form-control' } }) }}
+    <div class="form-error">{{ form_errors(form.game) }}</div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.categorie) }}
+    {{ form_widget(form.categorie, { attr:{ class:'form-control' } }) }}
+    <div class="form-error">{{ form_errors(form.categorie) }}</div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.coach) }}
+    {{ form_widget(form.coach, { attr:{ class:'form-control' } }) }}
+    <div class="form-error">{{ form_errors(form.coach) }}</div>
+</div>
+
+<div class="form-group">
+    {{ form_label(form.joueurs) }}
+    {{ form_widget(form.joueurs, {
+        attr:{ class:'form-control select-multiple' }
+    }) }}
+    <div class="form-error">{{ form_errors(form.joueurs) }}</div>
+</div>
+
+<div class="form-actions">
+    <a href="{{ path('app_equipe_index_admin') }}" class="btn-secondary">
+        Annuler
+    </a>
+    <button type="submit" class="btn-primary">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_rest(form) }}
 {{ form_end(form) }}

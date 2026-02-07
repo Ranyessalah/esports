@@ -4,147 +4,190 @@
 
 {% block body %}
 
-<div style="
+<style>
+.page {
     min-height: calc(100vh - 300px);
-    padding-top: 120px;
-    padding-left: 60px;
-    padding-right: 60px;
+    padding: 120px 60px;
+    color: #fff;
+}
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+.header h2 span {
+    border-left:4px solid #a855f7;
+    padding-left:12px;
+}
+.add-btn {
+    background: linear-gradient(90deg,#a855f7,#a855A2);
     color:#fff;
-">
+    padding:12px 26px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:600;
+}
+.cards {
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+}
+.card {
+    width:390px;
+    background: linear-gradient(180deg,#2a3547,#1b2433);
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 20px 40px rgba(0,0,0,.45);
+}
+.card-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+.badge {
+    background:#6c4c3b;
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:12px;
+    color:orange;
+}
+.statut {
+    font-size:13px;
+    font-weight:600;
+}
+.planifie { color:#f1c40f; }
+.encours { color:#2ecc71; }
+.termine { color:#9b59b6; }
+.score-box {
+    background:#0b1220;
+    border-radius:14px;
+    padding:15px;
+    margin-bottom:18px;
+}
 
-    <!-- TITLE + BUTTON -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2 style="font-weight:600; margin:0;">
-            <span style="border-left:4px solid purple; padding-left:10px;">List Matches</span>
-        </h2>
+.score-line {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+}
 
-        <a href="{{ path('app_matchs_new') }}"
-           style="
-            background:linear-gradient(90deg,#ec4899,#8b5cf6);
-            color:#fff;
-            padding:12px 26px;
-            border-radius:12px;
-            text-decoration:none;
-            font-weight:600;
-            box-shadow:0 10px 25px rgba(0,0,0,0.4);
-           ">
-            ➕ Créer un match
-        </a>
+.team-name {
+    font-size:14px;
+    font-weight:600;
+    color:#e5e7eb;
+    min-width:110px;
+    text-align:center;
+}
+
+.score-number {
+    font-size:34px;
+    font-weight:800;
+    color:#ffffff;
+}
+
+.vs-text {
+    font-size:14px;
+    opacity:.5;
+    margin:0 4px;
+}
+
+.meta {
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:16px;
+}
+.meta span {
+    display:block;
+    opacity:.5;
+}
+.actions {
+    display:flex;
+    gap:10px;
+}
+.actions a {
+    flex:1;
+    text-align:center;
+    padding:10px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:600;
+}
+.show { background:#3b82f6; color:#fff; }
+.edit { background:#374151; color:#fff; }
+</style>
+
+<div class="page">
+
+    <div class="header">
+        <h2><span>List Matches</span></h2>
+        <a href="{{ path('app_matchs_new') }}" class="add-btn">➕</a>
     </div>
 
-    <div style="display:flex; gap:30px; flex-wrap:wrap;">
+    <div class="cards">
 
         {% for match in matchs %}
 
-        <div style="
-            width:320px;
-            background:linear-gradient(180deg,#2a3547,#1b2433);
-            border-radius:12px;
-            padding:20px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.4);
-        ">
+        <div class="card">
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4 style="margin:0;">
-                    {{ match.statut|upper }}
-                </h4>
-                <span style="
-                    background:#6c4c3b;
-                    padding:4px 12px;
-                    border-radius:20px;
-                    font-size:12px;
-                    color:orange;
+            <div class="card-top">
+                <strong>Match #{{ match.id }}</strong>
+
+                <span class="statut
+                    {% if match.statut == 'En Cours' %}encours
+                    {% elseif match.statut == 'Terminé' %}termine
+                    {% else %}planifie{% endif %}
                 ">
-                    Match #{{ match.id }}
+                    {{ match.statut }}
                 </span>
             </div>
 
-            <div style="
-                margin:20px 0;
-                background:#111827;
-                border-radius:10px;
-                padding:20px;
-                text-align:center;
-            ">
+            <!-- SCORE LINE -->
+           <div class="score-box">
+    <div class="score-line">
+        <span class="team-name">{{ match.equipe1.nom }}</span>
 
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size:14px;">Team</div>
-                        <div style="font-weight:600;">{{ match.equipe1.nom }}</div>
-                    </div>
+        <span class="score-number">{{ match.scoreEquipe1 ?? 0 }}</span>
+        <span class="vs-text">VS</span>
+        <span class="score-number">{{ match.scoreEquipe2 ?? 0 }}</span>
 
-                    <div style="font-size:40px; font-weight:700;">
-                        {{ match.scoreEquipe1 ?? 0 }}
-                        <span style="font-size:18px; opacity:0.6;">VS</span>
-                        {{ match.scoreEquipe2 ?? 0 }}
-                    </div>
+        <span class="team-name">{{ match.equipe2.nom }}</span>
+    </div>
+</div>
 
-                    <div>
-                        <div style="font-size:14px;">Team</div>
-                        <div style="font-weight:600;">{{ match.equipe2.nom }}</div>
-                    </div>
-                </div>
 
-            </div>
-
-            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:15px;">
+            <!-- META -->
+            <div class="meta">
                 <div>
-                    <div style="opacity:0.6;">Date</div>
+                    <span>Date</span>
                     {{ match.dateMatch|date('Y-m-d') }}
                 </div>
                 <div>
-                    <div style="opacity:0.6;">Heure</div>
+                    <span>Heure</span>
                     {{ match.dateMatch|date('H:i') }}
                 </div>
                 <div>
-                    <div style="opacity:0.6;">Statut</div>
-                    <span style="
-                        color:
-                        {% if match.statut == 'En Cours' %}#2ecc71
-                        {% elseif match.statut == 'Terminé' %}#9b59b6
-                        {% else %}#f1c40f{% endif %}
-                    ">
-                        {{ match.statut }}
-                    </span>
+                    <span>Statut</span>
+                    {{ match.statut }}
                 </div>
             </div>
 
-            <div style="display:flex; gap:10px;">
-                <a href="{{ path('app_matchs_show', {'id': match.id}) }}"
-                   style="
-                    flex:1;
-                    text-align:center;
-                    background:#3b82f6;
-                    color:#fff;
-                    padding:10px;
-                    border-radius:8px;
-                    text-decoration:none;
-                   ">
-                    👁 Show
-                </a>
-
-                <a href="{{ path('app_matchs_edit', {'id': match.id}) }}"
-                   style="
-                    flex:1;
-                    text-align:center;
-                    background:#374151;
-                    color:#fff;
-                    padding:10px;
-                    border-radius:8px;
-                    text-decoration:none;
-                   ">
-                    ✏ Edit
-                </a>
+            <!-- ACTIONS -->
+            <div class="actions">
+                <a href="{{ path('app_matchs_show', {'id': match.id}) }}" class="show">👁 Show</a>
+                <a href="{{ path('app_matchs_edit', {'id': match.id}) }}" class="edit">✏ Edit</a>
             </div>
 
         </div>
 
         {% else %}
-            <p>No matches found</p>
+            <p>Aucun match trouvé.</p>
         {% endfor %}
 
     </div>
-
 </div>
 
 {% endblock %}

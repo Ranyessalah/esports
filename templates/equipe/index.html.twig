@@ -1,41 +1,186 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Equipe index{% endblock %}
+{% block title %}Equipes{% endblock %}
 
 {% block body %}
-    <h1>Equipe index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Logo</th>
-                <th>Game</th>
-                <th>Categorie</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
+<style>
+/* ===== PAGE ===== */
+.page-wrapper {
+    min-height: calc(100vh - 200px);
+    padding: 120px 60px 60px;
+    color:#fff;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+.page-header h1 {
+    font-size:42px;
+    font-weight:800;
+}
+
+.add-btn {
+    background: linear-gradient(90deg,#a855f7,#a855A2);
+    color:#fff;
+    padding:14px 30px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:600;
+    box-shadow:0 15px 35px rgba(0,0,0,.45);
+}
+
+/* ===== GRID ===== */
+.team-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:30px;
+}
+
+/* ===== CARD ===== */
+.team-card {
+    background:linear-gradient(180deg,#1f2937,#111827);
+    border-radius:18px;
+    padding:26px;
+    box-shadow:0 20px 45px rgba(0,0,0,.6);
+    transition:.3s;
+}
+
+.team-card:hover {
+    transform:translateY(-6px);
+}
+
+/* ===== LOGO ===== */
+.team-logo {
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#0b1220;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    font-weight:800;
+    font-size:22px;
+    color:#8b5cf6;
+}
+
+/* ===== INFO ===== */
+.team-name {
+    text-align:center;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.team-meta {
+    text-align:center;
+    font-size:13px;
+    opacity:.6;
+    margin-bottom:18px;
+}
+
+/* ===== DETAILS ===== */
+.team-details {
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+.team-details span {
+    opacity:.7;
+}
+
+/* ===== ACTIONS ===== */
+.card-actions {
+    display:flex;
+    gap:12px;
+}
+
+.card-actions a {
+    flex:1;
+    text-align:center;
+    padding:12px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.btn-show {
+    background:#3b82f6;
+    color:#fff;
+}
+
+.btn-edit {
+    background:#374151;
+    color:#fff;
+}
+</style>
+
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h1>Teams</h1>
+
+        <a href="{{ path('app_equipe_new') }}" class="add-btn">
+            ➕ 
+        </a>
+    </div>
+
+    <!-- GRID -->
+    <div class="team-grid">
+
         {% for equipe in equipes %}
-            <tr>
-                <td>{{ equipe.id }}</td>
-                <td>{{ equipe.nom }}</td>
-                <td>{{ equipe.logo }}</td>
-                <td>{{ equipe.game }}</td>
-                <td>{{ equipe.categorie }}</td>
-                <td>
-                    <a href="{{ path('app_equipe_show', {'id': equipe.id}) }}">show</a>
-                    <a href="{{ path('app_equipe_edit', {'id': equipe.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <a href="{{ path('app_equipe_new') }}">Create new</a>
+        <div class="team-card">
+
+            <!-- LOGO -->
+            <div class="team-logo">
+<img src="{{ asset(equipe.logo) }}"
+     alt="Logo équipe"
+     style="width:60px; height:60px; object-fit:contain;">
+</div>
+            <!-- NAME -->
+            <div class="team-name">
+                {{ equipe.nom }}
+            </div>
+
+            <div class="team-meta">
+                {{ equipe.game }} • {{ equipe.categorie }}
+            </div>
+
+            <!-- DETAILS -->
+            <div class="team-details">
+                <span>Coach</span>
+                <strong>{{ equipe.coach.email }}</strong>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="card-actions">
+                <a href="{{ path('app_equipe_show', {'id': equipe.id}) }}" class="btn-show">
+                    👁 Show
+                </a>
+
+                <a href="{{ path('app_equipe_edit', {'id': equipe.id}) }}" class="btn-edit">
+                    ✏ Edit
+                </a>
+            </div>
+
+        </div>
+
+        {% else %}
+            <p>No teams found.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}
