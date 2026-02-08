@@ -4,95 +4,83 @@ namespace App\Form;
 
 use App\Entity\Coach;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
 
 class CoachType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'attr' => [
-                    'id' => 'email',
-                    'placeholder' => ' '
-                ],
-                'constraints' => [
-                    new NotBlank(['message' => 'Email obligatoire']),
-                    new Email(['message' => 'Email invalide'])
-                ]
-            ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Password',
-                'attr' => [
-                    'id' => 'password',
-                    'placeholder' => ' '
-                ],
-                'constraints' => [
-                    new NotBlank(['message' => 'Mot de passe obligatoire']),
-                    new Length(['min' => 8, 'minMessage' => 'Le mot de passe doit contenir au moins 8 caractères'])
-                ]
-            ])
+            ->add('email', EmailType::class)
+          ->add('plainPassword', PasswordType::class, [
+    'label' => 'Mot de passe',
+    'mapped' => false,
+    'required' => true,
+    'attr' => ['placeholder' => ' '],
+    'constraints' => [
+        new Assert\NotBlank([
+            'message' => 'Mot de passe obligatoire'
+        ]),
+        new Assert\Length([
+            'min' => 8,
+            'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères'
+        ]),
+        new Assert\Regex([
+            'pattern' => '/[A-Z].*[!@#$%^&*(),.?":{}|<>]/',
+            'message' => 'Le mot de passe doit commencer par une majuscule et contenir au moins un caractère spécial',
+        ]),
+    ],
+])
             ->add('confirmPassword', PasswordType::class, [
-                'label' => 'Confirm Password',
                 'mapped' => false,
-                'attr' => [
-                    'id' => 'confirm-password',
-                    'placeholder' => ' '
-                ],
-                'constraints' => [
-                    new NotBlank(['message' => 'Veuillez confirmer votre mot de passe'])
-                ]
+                'label' => 'Confirmer le mot de passe',
+                'required' => true,
+                'attr' => ['placeholder' => ' '],
             ])
-            ->add('specialite', ChoiceType::class, [
-                'label' => 'Spécialité',
+            ->add('pays', ChoiceType::class, [
                 'choices' => [
-                    'League of Legends' => 'League of Legends',
-                    'Valorant' => 'Valorant',
-                    'Counter-Strike 2' => 'Counter-Strike 2',
-                    'Dota 2' => 'Dota 2',
-                    'Fortnite' => 'Fortnite',
-                    'Rocket League' => 'Rocket League',
-                    'Overwatch 2' => 'Overwatch 2',
-                    'FIFA/FC' => 'FIFA/FC',
+                    'Tunisie' => 'Tunisie',
+                    'France' => 'France',
+                    'Maroc' => 'Maroc',
+                    'Algérie' => 'Algérie',
                 ],
-                'placeholder' => 'Choisir une spécialité',
-                'attr' => [
-                    'placeholder' => ' '
-                ]
             ])
-            ->add('pays', TextType::class, [
-                'label' => 'Pays',
-                'attr' => [
-                    'placeholder' => ' '
-                ],
-                'constraints' => [
-                    new NotBlank(['message' => 'Pays obligatoire'])
-                ]
-            ])
-            ->add('disponibilite', CheckboxType::class, [
-                'label' => 'Je suis disponible pour du coaching',
-                'required' => false,
-                'attr' => [
-                    'class' => 'form-check-input'
-                ]
-            ])
-        ;
+           ->add('specialite', ChoiceType::class, [
+    'label' => 'Spécialité',
+    'choices' => [
+        'Football' => 'Football',
+        'Basketball' => 'Basketball',
+        'Tennis' => 'Tennis',
+        'Natation' => 'Natation',
+        'Autre' => 'Autre',
+    ],
+    'placeholder' => 'Sélectionnez une spécialité',
+    'required' => true,
+])
+
+->add('disponibilite', ChoiceType::class, [
+    'label' => 'Disponible ?',
+    'choices' => [
+        'Oui' => true,
+        'Non' => false,
+    ],
+    'expanded' => true,   // radio buttons
+    'multiple' => false,
+    'required' => true,
+]);
+
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Coach::class,
-        ]);
+        $resolver->setDefaults(['data_class' => Coach::class]);
     }
 }

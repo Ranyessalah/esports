@@ -203,18 +203,19 @@
                 {{ form_errors(form.email) }}
             </div>
 
-            <div class="floating-group">
-                {{ form_widget(form.password, {'attr': {'placeholder': ' '}}) }}
-                {{ form_label(form.password) }}
-                {{ form_errors(form.password) }}
-            </div>
+           <div class="floating-group">
+        {{ form_widget(form.plainPassword, {'attr': {'placeholder': ' '}}) }}
+        {{ form_label(form.plainPassword) }}
+        {{ form_errors(form.plainPassword) }}
+    </div>
 
-            <div class="floating-group">
-                {{ form_widget(form.confirmPassword, {'attr': {'placeholder': ' '}}) }}
-                {{ form_label(form.confirmPassword) }}
-                <div id="confirm-password-error" class="form-error-message"></div>
-                {{ form_errors(form.confirmPassword) }}
-            </div>
+    <div class="floating-group">
+        {{ form_widget(form.confirmPassword, {'attr': {'placeholder': ' '}}) }}
+        {{ form_label(form.confirmPassword) }}
+        {{ form_errors(form.confirmPassword) }}
+    </div>
+
+
 
             <div class="floating-group">
                 {{ form_widget(form.specialite, {'attr': {'placeholder': ' '}}) }}

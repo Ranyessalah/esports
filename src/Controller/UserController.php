@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Symfony\Component\Form\FormError;
 
 final class UserController extends AbstractController
 {
@@ -38,46 +39,62 @@ final class UserController extends AbstractController
     }
 
     #[Route('/signup_coach', name: 'signup_coach')]
-    public function signupCoach(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
-    {
-        $coach = new Coach();
-        $form = $this->createForm(CoachType::class, $coach);
-        $form->handleRequest($request);
+public function signupCoach(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+{
+    $coach = new Coach();
+    $form = $this->createForm(CoachType::class, $coach);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $coach->setPassword($hasher->hashPassword($coach, $coach->getPassword()));
+    if ($form->isSubmitted() && $form->isValid()) {
+        $plainPassword = $form->get('plainPassword')->getData();
+        $confirmPassword = $form->get('confirmPassword')->getData();
+
+        if ($plainPassword !== $confirmPassword) {
+            $form->get('confirmPassword')->addError(new FormError('Les mots de passe ne correspondent pas'));
+        } else {
+            $hashedPassword = $hasher->hashPassword($coach, $plainPassword);
+            $coach->setPassword($hashedPassword);
             $coach->setRoles(['ROLE_COACH']);
             $em->persist($coach);
             $em->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_home'); // ou la route souhaitée après signup
         }
-
-        return $this->render('user/signup_coach.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
 
-#[Route('/signup_player', name: 'signup_player')]
-    public function signupPlayer(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
-    {
-        $player = new Player();
-        $form = $this->createForm(PlayerType::class, $player);
-        $form->handleRequest($request);
+    return $this->render('user/signup_coach.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $player->setPassword($hasher->hashPassword($player, $player->getPassword()));
+
+#[Route('/signup_player', name: 'signup_player')]
+public function signupPlayer(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+{
+    $player = new Player();
+    $form = $this->createForm(PlayerType::class, $player);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+        $plainPassword = $form->get('plainPassword')->getData();
+        $confirmPassword = $form->get('confirmPassword')->getData();
+
+        if ($plainPassword !== $confirmPassword) {
+            $form->get('confirmPassword')->addError(new FormError('Les mots de passe ne correspondent pas'));
+        } else {
+            $hashedPassword = $hasher->hashPassword($player, $plainPassword);
+            $player->setPassword($hashedPassword);
             $player->setRoles(['ROLE_PLAYER']);
             $em->persist($player);
             $em->flush();
 
             return $this->redirectToRoute('app_home');
         }
-
-        return $this->render('user/signup_player.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
+
+    return $this->render('user/signup_player.html.twig', ['form' => $form->createView()]);
+}
 
 #[Route('/ajax-check-email', name: 'ajax_check_email', methods: ['POST'])]
 public function checkEmail(Request $request, UserRepository $userRepository): JsonResponse
@@ -100,31 +117,47 @@ public function checkEmail(Request $request, UserRepository $userRepository): Js
         'exists' => $emailExists,
     ]);
 }
-   #[Route('/edit/{id}', name: 'backoffice_user_edit')]
-    public function edit(User $user, Request $request, EntityManagerInterface $em): Response
-    {
-        // Déterminer le formulaire selon le type
-        if ($user instanceof Coach) {
-            $form = $this->createForm(CoachType::class, $user);
-        } elseif ($user instanceof Player) {
-            $form = $this->createForm(PlayerType::class, $user);
-        } else {
-            $this->addFlash('error', 'Impossible de modifier cet utilisateur.');
-            return $this->redirectToRoute('backoffice_user_index');
-        }
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Utilisateur modifié avec succès !');
-            return $this->redirectToRoute('backoffice_user_index');
-        }
-
-        return $this->render('user/edit.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user
-        ]);
+  #[Route('/edit/{id}', name: 'backoffice_user_edit')]
+public function edit(
+    User $user, 
+    Request $request, 
+    EntityManagerInterface $em,
+    UserPasswordHasherInterface $passwordHasher  // ✅ Ajouté
+): Response
+{
+    // Déterminer le formulaire selon le type
+    if ($user instanceof Coach) {
+        $form = $this->createForm(CoachType::class, $user);
+    } elseif ($user instanceof Player) {
+        $form = $this->createForm(PlayerType::class, $user);
+    } else {
+        $this->addFlash('error', 'Impossible de modifier cet utilisateur.');
+        return $this->redirectToRoute('backoffice_home');  // ✅ Corrigé
     }
-    
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // ✅ NOUVEAU : Hachage du mot de passe
+        $plainPassword = $form->get('plainPassword')->getData();
+        
+        if (!empty($plainPassword)) {
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $plainPassword
+            );
+            $user->setPassword($hashedPassword);
+        }
+        // ✅ FIN NOUVEAU
+        
+        $em->flush();
+        $this->addFlash('success', 'Utilisateur modifié avec succès !');
+        return $this->redirectToRoute('backoffice_home');
+    }
+
+    return $this->render('user/edit.html.twig', [
+        'form' => $form->createView(),
+        'user' => $user
+    ]);
+}
 }
