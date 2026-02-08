@@ -1,0 +1,157 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Fixture Details{% endblock %}
+
+{% block stylesheets %}
+<style>
+.detail-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.detail-table {
+    width: 100%;
+}
+
+.detail-table tr {
+    border-bottom: 1px solid #f4f5f8;
+}
+
+.detail-table tr:last-child {
+    border-bottom: none;
+}
+
+.detail-table th {
+    padding: 15px 20px;
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #374151;
+    width: 200px;
+    font-size: 14px;
+}
+
+.detail-table td {
+    padding: 15px 20px;
+    color: #596882;
+    font-size: 14px;
+}
+
+.btn-action {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-edit {
+    background: rgba(1, 104, 250, 0.1);
+    color: #0168fa;
+}
+
+.btn-edit:hover {
+    background: #0168fa;
+    color: #fff;
+}
+
+.badge-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-completed {
+    background: rgba(16, 183, 89, 0.1);
+    color: #10b759;
+}
+
+.badge-live {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+}
+
+.badge-scheduled {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    {# Page Header #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Fixture Details</h2>
+            <p class="text-muted mb-0">View fixture information</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-secondary">
+                <i class="typcn typcn-arrow-back"></i> Back to List
+            </a>
+            <a href="{{ path('app_fixture_admin_edit', {'id': fixture.id}) }}" class="btn-action btn-edit">
+                <i class="typcn typcn-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+
+    {# Details Card #}
+    <div class="card">
+        <div class="card-body p-0">
+            <table class="detail-table">
+                <tbody>
+                    <tr>
+                        <th>Fixture ID</th>
+                        <td><strong>#{{ fixture.id }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Match Date</th>
+                        <td>{{ fixture.matchDate ? fixture.matchDate|date('F j, Y - H:i') : '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Score Team 1</th>
+                        <td><strong>{{ fixture.scoreTeam1 ?? 0 }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Score Team 2</th>
+                        <td><strong>{{ fixture.scoreTeam2 ?? 0 }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge-status badge-{{ fixture.status == 'completed' ? 'completed' : (fixture.status == 'live' ? 'live' : 'scheduled') }}">
+                                {{ fixture.status|upper }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Round</th>
+                        <td>Round {{ fixture.round }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {# Delete Section #}
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="text-danger mb-3">Danger Zone</h5>
+            <p class="text-muted mb-3">Once you delete a fixture, there is no going back. Please be certain.</p>
+            
+            <form method="post" 
+                  action="{{ path('app_fixture_admin_delete', {'id': fixture.id}) }}" 
+                  onsubmit="return confirm('Are you sure you want to delete this fixture? This action cannot be undone.');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ fixture.id) }}">
+                <button type="submit" class="btn btn-danger">
+                    <i class="typcn typcn-trash"></i> Delete Fixture
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

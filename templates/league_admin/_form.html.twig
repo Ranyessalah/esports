@@ -1,0 +1,18 @@
+{{ form_start(form) }}
+
+<div class="form-card">
+    {{ form_row(form.name) }}
+    {{ form_row(form.game) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+    {{ form_row(form.numTeams) }}
+    {{ form_row(form.format) }}
+    {{ form_row(form.status) }}
+    {{ form_row(form.prizePool) }}
+
+    <button class="btn-save">
+        {{ button_label|default('Save') }}
+    </button>
+</div>
+
+{{ form_end(form) }}

@@ -1,121 +1,232 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}ClutchX{% endblock %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}clutchx – Beyond the Screen. Master Your Multiverse.{% endblock %}</title>
+    
+    <link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}" type="image/x-icon">
 
-    <link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}">
+    {# Framework CSS #}
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
+    
+    {# Font Awesome / Icon Fonts #}
     <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
+    
+    {# Style Theme #}
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    
+    {# Responsive Theme #}
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    
+    {# Slider #}
     <link rel="stylesheet" href="{{ asset('assets/css/slick.min.css') }}">
+    
+    {# AOS Animation #}
     <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
+
+    {% block stylesheets %}{% endblock %}
 </head>
 
 <body>
+    <div class="site-wrapper">
+        
+        {# ====== HEADER ====== #}
+        {% block header %}
+        <header>
+            <nav class="navbar container navbar-expand-lg">
+                <div class="container-fluid">
+                    {# Logo #}
+                    <a class="navbar-brand p-0" href="{{ path('app_home') }}">
+                        <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="ClutchX Logo">
+                    </a>
 
-<div class="site-wrapper">
+                    {# Mobile Toggle #}
+                    <button class="navbar-toggler" id="sidebarEvent" type="button">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
 
-    <!-- ===== HEADER ===== -->
-    <header>
-        <nav class="navbar container navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand p-0" href="{{ path('app_home') }}">
-                    <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="logo">
-                </a>
-
-                <button class="navbar-toggler" id="sidebarEvent" type="button">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ms-auto mx-5 d-flex align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ path('app_home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Games</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                    </ul>
+                    {# Navigation Menu #}
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav ms-auto mx-5 d-flex align-items-center">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_home' ? 'active' : '' }}" 
+                                   href="{{ path('app_home') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Games</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Pricing</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'app_league' ? 'active' : '' }}" 
+                                   href="{{ path('app_league_index') }}">Leagues</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
+        {% endblock %}
 
-    <!-- ===== CONTENU ===== -->
-    {% block body %}{% endblock %}
 
-    <!-- ===== FOOTER ===== -->
-    <footer>
-        <div class="container">
-            <div class="row py-5">
-                <div class="col-lg-4">
-                    <h6>About Us</h6>
-                    <p>ClutchX is a competitive gaming platform.</p>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Quick Links</h6>
-                    <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Games</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Follow Us</h6>
-                </div>
-            </div>
+ 
+    <div>
+        <div class="hero_main">
+            <video class="video" autoplay loop muted data-aos="fade" data-aos-delay="150">
+                <source src="{{ asset('assets/images/index/header-video.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+        <div class="overlay">
+            <div class="header-content">
+                <section id="hero">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-11 col-md-12 text-center" data-aos="fade" data-aos-delay="200">
+                                <div class="hero-content">
+                                    <h1>Beyond the Screen. Master Your Multiverse.</h1>
+                                    <p>Join the ultimate competitive gaming platform</p>
+                                    <div class="hero-buttons mt-4">
+                                        <a href="#" class="btnOne">Get Started</a>
+                                        <a href="#" class="btnTwo">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {# End of Hero Section #}
 
-            <div class="footer-bottom text-center">
-                <p>© 2026 ClutchX</p>
+                {# ====== Our Partner Section ====== #}
+                <section id="partner">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 col-sm-3 col-5">
+                                <div class="partner-title">
+                                    <h6>OUR PARTNERS</h6>
+                                </div>
+                            </div>
+                            <div class="col-md-9 col-sm-9 col-7">
+                                <div class="partner-slider">
+                                    {# Add your partner logos here #}
+                                    <div><img src="{{ asset('assets/images/partners/partner-1.png') }}" alt="Partner 1"></div>
+                                    <div><img src="{{ asset('assets/images/partners/partner-2.png') }}" alt="Partner 2"></div>
+                                    <div><img src="{{ asset('assets/images/partners/partner-3.png') }}" alt="Partner 3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {# End of Our Partner Section #}
             </div>
         </div>
-    </footer>
+    </div>
 
-</div>
+    {# ====== Now Playing Section ====== #}
+        <section id="playing" style="background-color: transparent; color: #ffffff;">
+            <div class="container">
+                {% block body %}{% endblock %}
+            </div>
+        </section>
 
-<!-- ===== LOGIN FIXÉ ===== -->
-<a href="{{ path('app_login') }}" class="login-link-fixed">Login</a>
 
-<style>
-/* Bouton Login cliquable au-dessus de tout */
-.login-link-fixed {
-    position: fixed; /* reste visible au-dessus de tout */
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    background-color: #5606d8;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-}
+    {# End of Now Playing Section #}
+ 
+    
+    
+  
 
-.login-link-fixed:hover {
-    background-color: #9731c7;
-}
-</style>
+   
+ 
+ 
 
-<!-- JS -->
-<script src="{{ asset('assets/js/jquery.js') }}"></script>
-<script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/slick.min.js') }}"></script>
-<script src="{{ asset('assets/js/custom.js') }}"></script>
-<script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-<script src="{{ asset('assets/js/aos.js') }}"></script>
+        {# ====== MAIN CONTENT ====== #}
+     
 
-<script>
-    AOS.init({ once: true, duration: 1000 });
-</script>
+        {# ====== FOOTER ====== #}
+        {% block footer %}
+        <footer>
+            <div class="container">
+                <div class="row py-5 px-0">
+                    <div class="col-lg-4 col-md-6 mb-3 px-3">
+                        <h6>About Us</h6>
+                        <p>clutchx is a competitive gaming platform connecting players, teams, and esports enthusiasts globally.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3 px-3">
+                        <h6>Quick Links</h6>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Games</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-3 px-3">
+                        <h6>Follow Us</h6>
+                        <ul class="social-links">
+                            <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                            <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+                            <li><a href="#"><i class="fa-brands fa-youtube"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom text-center">
+                    <p>Copyright © {{ 'now'|date('Y') }} clutchx</p>
+                </div>
+            </div>
+        </footer>
+        {% endblock %}
 
+    </div>
+    {# End of site-wrapper #}
+
+    {# Login Button Fixed #}
+    {% if not app.user %}
+    <a href="{{ path('app_login') }}" class="login-link-fixed">Login</a>
+    {% else %}
+    <a href="{{ path('app_logout') }}" class="login-link-fixed">Logout</a>
+    {% endif %}
+
+    <style>
+    /* Fixed Login Button */
+    .login-link-fixed {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background-color: #5606d8;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .login-link-fixed:hover {
+        background-color: #9731c7;
+        color: white;
+        transform: scale(1.05);
+    }
+    </style>
+
+    {# ====== Scripts ====== #}
+    <script src="{{ asset('assets/js/jquery.js') }}"></script>
+    <script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/slick.min.js') }}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
+    <script src="{{ asset('assets/js/aos.js') }}"></script>
+
+    <script>
+        AOS.init({ once: true, duration: 1000 });
+    </script>
+
+    {% block javascripts %}{% endblock %}
 </body>
 </html>

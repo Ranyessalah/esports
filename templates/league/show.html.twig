@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}League: {{ league.name }}{% endblock %}
+
+{% block body %}
+<section id="upcoming" style="background-color: transparent; color: #fff;">
+    <div class="container">
+        <div data-aos="fade">
+            <h3>{{ league.name }} - MATCH SCHEDULES</h3>
+            <p>One platform. Endless competitive gaming opportunities.</p>
+        </div>
+
+        <div class="matches">
+            <div class="matches_buttons d-flex justify-content-md-start justify-content-center gap-lg-4 gap-md-3 gap-2">
+                <button data-name="all" class="activeTwo">All Matches</button>
+                <button data-name="past">Past Matches</button>
+                <button data-name="live">Live Stream</button>
+                <button data-name="upcoming">Upcoming Matches</button>
+            </div>
+
+            <div class="match_date">
+                {% if fixtures is not empty %}
+                    {% for fixture in fixtures %}
+                        {# Determine match type for filtering #}
+                        {% set matchType = fixture.status|lower %}
+
+                        <div data-name="{{ matchType }}" class="match_card row justify-content-between align-items-center {% if matchType == 'upcoming' %}active{% endif %}">
+                            <div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+                                <div>
+                                    <img src="{{ asset('assets/images/index/game-logo-1.webp') }}" alt="{{ league.game }}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+                                    <p>
+                                        {{ fixture.matchDate ? fixture.matchDate|date('l, d M Y H:i') : 'TBD' }}
+                                    </p>
+                                    <div class="d-flex gap-4">
+                                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                                        <a href="#"><i class="fa-brands fa-twitch"></i></a>
+                                        <a href="#"><i class="fa-brands fa-discord"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+                                    <div>
+                                        <figure>
+                                            <img src="{{ asset('assets/images/index/player-logo-1.webp') }}" alt="Team 1">
+                                        </figure>
+                                        <p>{{ fixture.scoreTeam1 is not null ? 'Team 1: ' ~ fixture.scoreTeam1 : 'Team 1 TBD' }}</p>
+                                    </div>
+                                    <div><img src="{{ asset('assets/images/index/vs.webp') }}" alt="vs"></div>
+                                    <div>
+                                        <figure>
+                                            <img src="{{ asset('assets/images/index/player-logo-2.webp') }}" alt="Team 2">
+                                        </figure>
+                                        <p>{{ fixture.scoreTeam2 is not null ? 'Team 2: ' ~ fixture.scoreTeam2 : 'Team 2 TBD' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center mt-5">
+                        <p>No fixtures scheduled yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-sm-5 mt-4">
+            <a href="#" class="btnTwo">View More</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
