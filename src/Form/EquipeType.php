@@ -45,7 +45,7 @@ class EquipeType extends AbstractType
                 'choice_label' => 'email',
                 'multiple' => true,
                 'expanded' => false,
-                'by_reference' => false, // 🔥 OBLIGATOIRE
+                'by_reference' => false, 
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                         ->where('u.roles LIKE :role')

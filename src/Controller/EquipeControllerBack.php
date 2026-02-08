@@ -30,6 +30,12 @@ final class EquipeControllerBack extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+                $logoFile = $form->get('logoFile')->getData();
+        if ($logoFile) {
+            $newName = uniqid().'.'.$logoFile->guessExtension();
+            $logoFile->move($this->getParameter('kernel.project_dir').'/public/uploads/logos/', $newName);
+            $equipe->setLogo('/uploads/logos/'.$newName);
+        }
             $entityManager->persist($equipe);
             $entityManager->flush();
 
