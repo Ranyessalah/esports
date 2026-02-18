@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Backoffice{% endblock %}</title>
+    <title>{% block title %}Back-office{% endblock %}</title>
 
     {# Vendor CSS #}
     <link href="{{ asset('lib/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
@@ -285,7 +285,7 @@
         <ul class="nav">
           <li class="nav-item">
             <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-              <i class="typcn typcn-chart-area-outline"></i> Dashboard
+              <i class="typcn typcn-chart-area-outline"></i> Tableau de bord
             </a>
           </li>
           <li class="nav-item">
@@ -312,12 +312,12 @@
     <ul class="nav">
       <li class="nav-item">
         <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-          <i class="typcn typcn-chart-area-outline"></i> Dashboard
+          <i class="typcn typcn-chart-area-outline"></i> Tableau de bord
         </a>
       </li>
       <li class="nav-item">
         <a href="#" class="nav-link">
-          <i class="typcn typcn-group"></i> Users
+          <i class="typcn typcn-group"></i> Utilisateurs
         </a>
       </li>
       <li class="nav-item">
@@ -327,7 +327,7 @@
       </li>
       <li class="nav-item">
         <a href="#" class="nav-link">
-          <i class="typcn typcn-cog"></i> Settings
+          <i class="typcn typcn-cog"></i> Paramètres
         </a>
       </li>
     </ul>
@@ -336,8 +336,8 @@
   {# ================== CONTENT ================== #}
   <div class="az-content">
     {% block content %}
-    <h2>Welcome to Backoffice</h2>
-    <p>This is the main content area.</p>
+    <h2>Bienvenue au Back-office</h2>
+    <p>Ceci est la zone de contenu principale.</p>
     {% endblock %}
   </div>
 

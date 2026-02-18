@@ -2,47 +2,41 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Sign Up Coach | ClutchX</title>
+    <title>Inscription Coach | ClutchX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>function onRecaptchaSuccess(token){var w=document.getElementById('recaptcha-wrap');if(w){var h=document.createElement('input');h.type='hidden';h.name='g-recaptcha-response';h.value=token;w.parentNode.appendChild(h);w.style.transition='opacity 0.4s ease, transform 0.4s ease';w.style.opacity='0';w.style.transform='scale(0.95)';setTimeout(function(){w.innerHTML='<div style="display:flex;align-items:center;gap:8px;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#22c55e"/><path d="M7 13l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="color:#86efac;font-size:0.85rem;font-weight:500;">Vérifié</span></div>';w.style.opacity='1';w.style.transform='scale(1)';},400);}}</script>
 
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         html, body {
             height: 100%;
             margin: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        /* HERO */
-        .hero_main {
-            position: relative;
-            min-height: 100vh;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .hero_main video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-
-        .overlay {
+        /* ── VIDEO BG ── */
+        .bg-video {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1;
+            z-index: 0;
+        }
+        .bg-video video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .bg-video .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(16,10,46,0.88) 0%, rgba(30,10,60,0.92) 100%);
         }
 
-        /* CENTER */
+        /* ── PAGE ── */
         .signup-page {
             position: relative;
             z-index: 2;
@@ -50,130 +44,250 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 40px 16px;
         }
 
-        /* CARD */
-        .signup-container {
-            width: 400px;
-            padding: 30px;
-            background: rgba(0,0,0,0.65);
-            backdrop-filter: blur(8px);
-            border-radius: 14px;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 20px 45px rgba(0,0,0,0.55);
-            margin: 20px 0;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 1.6rem;
-            margin-bottom: 22px;
-            font-weight: 600;
-        }
-
-        /* FLOATING LABELS */
-        .floating-group {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .floating-group input,
-        .floating-group select {
+        /* ── CARD ── */
+        .signup-card {
             width: 100%;
-            padding: 10px 12px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-            background: rgba(255,255,255,0.95);
-            font-size: 0.9rem;
+            max-width: 440px;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 36px 32px 28px;
+            color: #fff;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
         }
 
-        .floating-group label {
-            position: absolute;
-            top: 50%;
-            left: 12px;
-            transform: translateY(-50%);
-            color: #777;
+        /* ── HEADER ── */
+        .signup-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .signup-header .icon-circle {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            font-size: 1.4rem;
+        }
+        .signup-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 4px;
+            letter-spacing: -0.02em;
+        }
+        .signup-header p {
             font-size: 0.85rem;
-            pointer-events: none;
-            transition: 0.25s ease;
-            background: transparent;
+            color: rgba(255,255,255,0.55);
+            margin: 0;
         }
 
-        .floating-group input:focus + label,
-        .floating-group input:not(:placeholder-shown) + label,
-        .floating-group select:focus + label,
-        .floating-group select:not([value=""]) + label {
-            top: -6px;
-            left: 10px;
-            font-size: 0.7rem;
-            color: #ff6b6b;
-            background: rgba(0,0,0,0.7);
-            padding: 0 6px;
-            border-radius: 4px;
+        /* ── FORM GROUP ── */
+        .field-group {
+            margin-bottom: 18px;
         }
-
-        /* CHECKBOX */
-        .form-check {
-            margin-bottom: 16px;
-        }
-
-        .form-check-label {
-            font-size: 0.85rem;
-            margin-left: 8px;
-        }
-
-        .form-check-input {
-            cursor: pointer;
-        }
-
-        /* BUTTON */
-        .btn-signup {
-            margin-top: 10px;
-            background: linear-gradient(135deg, #ff6b6b, #ff4c4c);
-            border: none;
-            padding: 11px;
-            font-weight: 600;
-            border-radius: 10px;
-            transition: 0.3s ease;
-        }
-
-        .btn-signup:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 25px rgba(255,107,107,0.35);
-        }
-
-        /* LINKS */
-        .signup-container a {
-            color: #ff6b6b;
-            text-decoration: none;
-        }
-
-        .signup-container a:hover {
-            text-decoration: underline;
-        }
-
-        /* ERRORS */
-        .form-error-message {
-            color: #ff8c8c;
-            font-size: 0.75rem;
-            margin-top: 4px;
-        }
-
-        .invalid-feedback {
-            color: #ff8c8c;
-            font-size: 0.75rem;
-            margin-top: 4px;
+        .field-group label {
             display: block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .field-group input,
+        .field-group select {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            font-size: 0.92rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+        }
+        .field-group input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+        .field-group input:focus,
+        .field-group select:focus {
+            border-color: #a855f7;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+        }
+        .field-group select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+        .field-group select option {
+            background: #1e1e2e;
+            color: #fff;
         }
 
-        /* MOBILE */
-        @media (max-width: 768px) {
-            .signup-container {
-                width: 92%;
-                padding: 22px;
+        /* ── ERROR STATE ── */
+        .field-group.has-error input,
+        .field-group.has-error select {
+            border-color: #ef4444;
+            background: rgba(239,68,68,0.06);
+        }
+        .field-group.has-error input:focus,
+        .field-group.has-error select:focus {
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+        }
+
+        .field-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin-top: 6px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .field-error i {
+            color: #f87171;
+            font-size: 0.72rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .field-error span,
+        .field-error li {
+            color: #fca5a5;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            list-style: none;
+        }
+        .field-error ul {
+            margin: 0; padding: 0;
+        }
+
+        /* ── RADIO GROUP ── */
+        .radio-group {
+            margin-bottom: 18px;
+        }
+        .radio-group > label.group-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .radio-options {
+            display: flex;
+            gap: 10px;
+        }
+        .radio-options label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+        }
+        .radio-options label:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .radio-options input[type="radio"] {
+            accent-color: #a855f7;
+        }
+        .radio-options input[type="radio"]:checked + span,
+        .radio-options label:has(input:checked) {
+            color: #e9d5ff;
+            border-color: #a855f7;
+            background: rgba(168,85,247,0.1);
+        }
+
+        /* ── SUBMIT ── */
+        .btn-signup {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.01em;
+        }
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(124,58,237,0.35);
+        }
+        .btn-signup:active {
+            transform: translateY(0);
+        }
+
+        /* ── FOOTER ── */
+        .signup-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.84rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .signup-footer a {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .signup-footer a:hover {
+            color: #e9d5ff;
+        }
+
+        /* ── GLOBAL ERROR ── */
+        .global-error {
+            margin-bottom: 18px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .global-error i { color: #f87171; }
+        .global-error span,
+        .global-error li {
+            color: #fca5a5;
+            font-size: 0.82rem;
+            list-style: none;
+        }
+        .global-error ul { margin: 0; padding: 0; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 480px) {
+            .signup-card {
+                padding: 28px 20px 22px;
+                border-radius: 16px;
+            }
+            .radio-options {
+                flex-direction: column;
             }
         }
     </style>
@@ -181,156 +295,145 @@
 
 <body>
 
-<div class="hero_main">
-
+<div class="bg-video">
     <video autoplay loop muted playsinline>
         <source src="{{ asset('assets/images/index/header-video.mp4') }}" type="video/mp4">
     </video>
-
     <div class="overlay"></div>
-
-    <div class="signup-page">
-        <div class="signup-container">
-
-            <h2>Sign Up as Coach</h2>
-
-            {{ form_start(form) }}
-
-            <div class="floating-group">
-                {{ form_widget(form.email, {'attr': {'placeholder': ' '}}) }}
-                {{ form_label(form.email) }}
-                <div id="email-error" class="form-error-message"></div>
-                {{ form_errors(form.email) }}
-            </div>
-
-           <div class="floating-group">
-        {{ form_widget(form.plainPassword, {'attr': {'placeholder': ' '}}) }}
-        {{ form_label(form.plainPassword) }}
-        {{ form_errors(form.plainPassword) }}
-    </div>
-
-    <div class="floating-group">
-        {{ form_widget(form.confirmPassword, {'attr': {'placeholder': ' '}}) }}
-        {{ form_label(form.confirmPassword) }}
-        {{ form_errors(form.confirmPassword) }}
-    </div>
-
-
-
-            <div class="floating-group">
-                {{ form_widget(form.specialite, {'attr': {'placeholder': ' '}}) }}
-                {{ form_label(form.specialite) }}
-                {{ form_errors(form.specialite) }}
-            </div>
-
-            <div class="floating-group">
-                {{ form_widget(form.pays, {'attr': {'placeholder': ' '}}) }}
-                {{ form_label(form.pays) }}
-                {{ form_errors(form.pays) }}
-            </div>
-
-            <div class="form-check">
-                {{ form_widget(form.disponibilite, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(form.disponibilite, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                {{ form_errors(form.disponibilite) }}
-            </div>
-
-            <button type="submit" class="btn btn-signup w-100">
-                Sign Up
-            </button>
-
-            {{ form_end(form) }}
-
-            <p class="mt-3 text-center">
-                Already have an account?
-                <a href="{{ path('app_login') }}">Login</a>
-            </p>
-
-        </div>
-    </div>
-
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+<div class="signup-page">
+    <div class="signup-card">
 
-    const emailInput = document.getElementById('email');
-    const emailError = document.getElementById('email-error');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm-password');
-    const confirmPasswordError = document.getElementById('confirm-password-error');
-    const form = document.querySelector('form');
+        <div class="signup-header">
+            <div class="icon-circle">
+                <i class="fa fa-trophy" style="color:#fff"></i>
+            </div>
+            <h2>Rejoindre en tant que Coach</h2>
+            <p>Partagez votre expertise sur ClutchX</p>
+        </div>
 
-    // EMAIL FORMAT + AJAX CHECK
-    emailInput.addEventListener('blur', () => {
-        const email = emailInput.value.trim();
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        if (!email) {
-            emailError.textContent = "Email obligatoire";
-            return;
-        }
+        {# ── Global password mismatch error ── #}
+        {% if form.plainPassword.vars.errors|length > 0 %}
+            <div class="global-error">
+                <i class="fa fa-exclamation-circle"></i>
+                {{ form_errors(form.plainPassword) }}
+            </div>
+        {% endif %}
 
-        if (!email.includes('@')) {
-            emailError.textContent = "Email invalide";
-            return;
-        }
+        {# ── Email ── #}
+        <div class="field-group {{ form.email.vars.errors|length > 0 ? 'has-error' }}">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email, {'attr': {'placeholder': 'exemple@email.com'}}) }}
+            {% if form.email.vars.errors|length > 0 %}
+                <div class="field-error">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.email) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-        fetch('{{ path("ajax_check_email") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.exists) {
-                emailError.textContent = "Cet email est déjà utilisé";
-            } else {
-                emailError.textContent = '';
-            }
-        })
-        .catch(err => {
-            console.error('Erreur lors de la vérification:', err);
-        });
-    });
+        {# ── Password ── #}
+        <div class="field-group {{ form.plainPassword.first.vars.errors|length > 0 ? 'has-error' }}">
+            {{ form_label(form.plainPassword.first) }}
+            {{ form_widget(form.plainPassword.first, {'attr': {'placeholder': 'Min. 8 caractères, 1 majuscule, 1 spécial'}}) }}
+            {% if form.plainPassword.first.vars.errors|length > 0 %}
+                <div class="field-error">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.plainPassword.first) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-    // PASSWORD CONFIRMATION
-    confirmPasswordInput.addEventListener('input', () => {
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
+        {# ── Confirm Password ── #}
+        <div class="field-group {{ form.plainPassword.second.vars.errors|length > 0 ? 'has-error' }}">
+            {{ form_label(form.plainPassword.second) }}
+            {{ form_widget(form.plainPassword.second, {'attr': {'placeholder': 'Retapez votre mot de passe'}}) }}
+            {% if form.plainPassword.second.vars.errors|length > 0 %}
+                <div class="field-error">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.plainPassword.second) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-        if (confirmPassword && password !== confirmPassword) {
-            confirmPasswordError.textContent = "Les mots de passe ne correspondent pas";
-        } else {
-            confirmPasswordError.textContent = '';
-        }
-    });
+        {# ── Spécialité ── #}
+        <div class="field-group {{ form.specialite.vars.errors|length > 0 ? 'has-error' }}">
+            {{ form_label(form.specialite) }}
+            {{ form_widget(form.specialite) }}
+            {% if form.specialite.vars.errors|length > 0 %}
+                <div class="field-error">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.specialite) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-    // SUBMIT VALIDATION
-    form.addEventListener('submit', (e) => {
-        let hasError = false;
+        {# ── Pays ── #}
+        <div class="field-group {{ form.pays.vars.errors|length > 0 ? 'has-error' }}">
+            {{ form_label(form.pays) }}
+            {{ form_widget(form.pays) }}
+            {% if form.pays.vars.errors|length > 0 %}
+                <div class="field-error">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.pays) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-        // Vérifier les erreurs affichées
-        document.querySelectorAll('.form-error-message').forEach(el => {
-            if (el.textContent !== '') {
-                hasError = true;
-            }
-        });
+        {# ── Disponibilité ── #}
+        <div class="radio-group">
+            <label class="group-label">Disponibilité</label>
+            <div class="radio-options">
+                {% for child in form.disponibilite %}
+                    <label>
+                        {{ form_widget(child) }}
+                        <span>{{ child.vars.label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {% if form.disponibilite.vars.errors|length > 0 %}
+                <div class="field-error" style="margin-top:8px">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <div>{{ form_errors(form.disponibilite) }}</div>
+                </div>
+            {% endif %}
+        </div>
 
-        // Vérifier la correspondance des mots de passe
-        if (passwordInput.value !== confirmPasswordInput.value) {
-            confirmPasswordError.textContent = "Les mots de passe ne correspondent pas";
-            hasError = true;
-        }
+        <div id="recaptcha-wrap" style="display:flex;justify-content:center;margin-bottom:18px;">
+            <div class="g-recaptcha" data-theme="dark" data-sitekey="{{ recaptcha_site_key }}" data-callback="onRecaptchaSuccess"></div>
+        </div>
 
-        if (hasError) {
-            e.preventDefault();
-        }
-    });
+        {% if recaptcha_error is defined and recaptcha_error %}
+            <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:16px;padding:7px 10px;border-radius:8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);">
+                <i class="fa fa-exclamation-triangle" style="color:#f87171;font-size:0.72rem;margin-top:2px;"></i>
+                <span style="color:#fca5a5;font-size:0.78rem;line-height:1.4;">{{ recaptcha_error }}</span>
+            </div>
+        {% endif %}
 
-});
-</script>
+        <button type="submit" class="btn-signup">
+            <i class="fa fa-rocket" style="margin-right:6px"></i> Créer mon compte
+        </button>
+
+        {{ form_end(form) }}
+
+        <div style="display:flex;align-items:center;gap:12px;margin:18px 0;color:rgba(255,255,255,0.35);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em">
+            <span style="flex:1;height:1px;background:rgba(255,255,255,0.12)"></span>ou<span style="flex:1;height:1px;background:rgba(255,255,255,0.12)"></span>
+        </div>
+
+        <a href="{{ path('connect_google', {type: 'coach'}) }}" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;background:rgba(255,255,255,0.06);color:#fff;font-size:0.92rem;font-weight:500;text-decoration:none;transition:all 0.25s">
+            <svg viewBox="0 0 48 48" width="20" height="20"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.9 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
+            S'inscrire avec Google (Coach)
+        </a>
+
+        <div class="signup-footer">
+            Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

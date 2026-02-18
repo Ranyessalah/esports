@@ -1,121 +1,1471 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}ClutchX{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}ClutchX
+			{% endblock %}
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/slick.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
-</head>
+		<link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/slick.min.css') }}">
+		<link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
+	</head>
 
-<body>
+	<body>
 
-<div class="site-wrapper">
+		<div
+			class="site-wrapper">
 
-    <!-- ===== HEADER ===== -->
-    <header>
-        <nav class="navbar container navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand p-0" href="{{ path('app_home') }}">
-                    <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="logo">
-                </a>
+			<!-- ===== HEADER ===== -->
+			<header>
+				<nav class="navbar container navbar-expand-lg">
+					<div class="container-fluid">
+						<a class="navbar-brand p-0" href="{{ path('app_home') }}">
+							<img src="{{ asset('assets/images/clutch_logo.png') }}" alt="logo">
+						</a>
 
-                <button class="navbar-toggler" id="sidebarEvent" type="button">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+						<button class="navbar-toggler" id="sidebarEvent" type="button">
+							<i class="fa-solid fa-bars"></i>
+						</button>
 
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ms-auto mx-5 d-flex align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ path('app_home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Games</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+						<div class="collapse navbar-collapse">
+							<ul class="navbar-nav ms-auto d-flex align-items-center">
+								<li class="nav-item">
+									<a class="nav-link active" href="{{ path('app_home') }}">Accueil</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="#">Jeux</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="#">Tarifs</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="#">A propos</a>
+								</li>
 
-    <!-- ===== CONTENU ===== -->
-    {% block body %}{% endblock %}
+								{% if app.user %}
+									<li class="nav-item">
+										{% if is_granted('ROLE_PLAYER') %}
+											<a class="nav-link" href="{{ path('dashboard_player') }}">Dashboard</a>
+										{% elseif is_granted('ROLE_COACH') %}
+											<a class="nav-link" href="{{ path('dashboard_coach') }}">Dashboard</a>
+										{% endif %}
+									</li>
+								{% endif %}
+							</ul>
 
-    <!-- ===== FOOTER ===== -->
-    <footer>
-        <div class="container">
-            <div class="row py-5">
-                <div class="col-lg-4">
-                    <h6>About Us</h6>
-                    <p>ClutchX is a competitive gaming platform.</p>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Quick Links</h6>
-                    <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Games</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h6>Follow Us</h6>
-                </div>
-            </div>
+							{# <div class="dropdown-btn">
+								<button class="btnTwoActive">Devenir Membre</button>
+								<div class="dropdown-content">
+									<a href="signup_player">Joueur</a>
+									<a href="signup_coach">Coach</a>
+								</div>
+							</div> #}
 
-            <div class="footer-bottom text-center">
-                <p>© 2026 ClutchX</p>
-            </div>
-        </div>
-    </footer>
+							<div class="navbar-auth ms-4 d-flex align-items-center">
+								{% if app.user %}
+									<div class="dropdown-btn">
+										<div class="user-badge">
+											<div class="user-avatar">
+												<i class="fa fa-user"></i>
+											</div>
+											<span class="user-email">{{ app.user.email }}</span>
+											<i class="fa fa-chevron-down dropdown-arrow"></i>
+										</div>
 
-</div>
+										<div class="dropdown-content">
+											{% if is_granted('ROLE_PLAYER') %}
+												<a href="{{ path('app_home_profile') }}">
+													<i class="fa fa-id-card"></i>
+													<span>Mon Profil</span>
+												</a>
+											{% elseif is_granted('ROLE_COACH') %}
+												<a href="{{ path('app_home_profile') }}">
+													<i class="fa fa-id-card"></i>
+													<span>Mon Profil</span>
+												</a>
+											{% endif %}
+											<div class="dropdown-divider "></div>
+											<a href="{{ path('app_logout') }}" class="logout-link">
+												<i class="fa fa-sign-out"></i>
+												<span>Déconnexion</span>
+											</a>
+										</div>
+									</div>
+								{% else %}
+									
+									<a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</nav>
+			</header>
 
-<!-- ===== LOGIN FIXÉ ===== -->
-<a href="{{ path('app_login') }}" class="login-link-fixed">Login</a>
 
-<style>
-/* Bouton Login cliquable au-dessus de tout */
-.login-link-fixed {
-    position: fixed; /* reste visible au-dessus de tout */
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    background-color: #5606d8;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-}
+			<!-- ===== CONTENU ===== -->
+			{% block body %}{% endblock %}
 
-.login-link-fixed:hover {
-    background-color: #9731c7;
-}
-</style>
+			<section id="playing">
+				<div class="container">
+					<div class="content" data-aos="fade">
+						<h3>PLANIFIEZ VOS MATCHS ÉPIQUES</h3>
+						<h4>Diffusion en direct</h4>
+						<p></p>
+					</div>
+					<div class="row justify-content-center gap-md-0 gap-4">
+						<div class="col-md-6 col-sm-9 d-flex" data-aos="fade-up">
+							<div class="playCard px-1">
+								<div class="position-relative">
+									<figure><img src="assets/images/index/playing-img-1.webp" alt="playImg"></figure>
+									<figure><img src="assets/images/index/game-logo-1.webp" alt="playLogo"></figure>
+								</div>
+								<div class="players">
+									<div class="p-name">
+										<div>
+											<div class="player_logo"><img src="assets/images/index/player-logo-1.webp" alt="player"></div>
+											<h6>Bare Killers</h6>
+										</div>
+										<img src="assets/images/index/vs.webp" alt="vs">
+										<div>
+											<div class="player_logo"><img src="assets/images/index/player-logo-2.webp" alt="player"></div>
+											<h6>Pro Slayer</h6>
+										</div>
+									</div>
+									<div id="countdown">
+										<ul class="d-flex justify-content-between px-sm-3 px-0">
+											<li>
+												<h3 id="days">&nbsp;</h3>
+												<h6>jours</h6>
+											</li>
+											<li>
+												<h3 id="hours">&nbsp;</h3>
+												<h6>Heures</h6>
+											</li>
+											<li>
+												<h3 id="minutes">&nbsp;</h3>
+												<h6>Minutes</h6>
+											</li>
+											<li>
+												<h3 id="seconds">&nbsp;</h3>
+												<h6>Secondes</h6>
+											</li>
+										</ul>
+									</div>
+									<div id="content_2" class="text-center pt-5 pb-5">
+										<h5>Cliquez pour rejoindre</h5>
+									</div>
+									<div class="btnOne mt-4">
+										<a href="#">Rejoindre</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-sm-9 d-flex" data-aos="fade-up">
+							<div class="playCard px-1">
+								<div class="position-relative">
+									<figure><img src="assets/images/index/playing-img-2.webp" alt="playImg"></figure>
+									<figure><img src="assets/images/index/game-logo-2.webp" alt="playLogo"></figure>
+								</div>
+								<div class="players">
+									<div class="p-name">
+										<div>
+											<div class="player_logo"><img src="assets/images/index/player-logo-3.webp" alt="player"></div>
+											<h6>Pro falcons</h6>
+										</div>
+										<img src="assets/images/index/vs.webp" alt="vs">
+										<div>
+											<div class="player_logo"><img src="assets/images/index/player-logo-4.webp" alt="player"></div>
+											<h6>Top Dogs</h6>
+										</div>
+									</div>
+									<div id="countdown_2">
+										<ul class="d-flex justify-content-between px-sm-3 px-0">
+											<li>
+												<h3 id="days_2">&nbsp;</h3>
+												<h6>jours</h6>
+											</li>
+											<li>
+												<h3 id="hours_2">&nbsp;</h3>
+												<h6>Heures</h6>
+											</li>
+											<li>
+												<h3 id="minutes_2">&nbsp;</h3>
+												<h6>Minutes</h6>
+											</li>
+											<li>
+												<h3 id="seconds_2">&nbsp;</h3>
+												<h6>Secondes</h6>
+											</li>
+										</ul>
+									</div>
+									<div id="content_3" class="text-center pt-5 pb-5">
+										<h5>Cliquez pour rejoindre</h5>
+									</div>
 
-<!-- JS -->
-<script src="{{ asset('assets/js/jquery.js') }}"></script>
-<script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/slick.min.js') }}"></script>
-<script src="{{ asset('assets/js/custom.js') }}"></script>
-<script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-<script src="{{ asset('assets/js/aos.js') }}"></script>
+									<div class="btnOne mt-4">
+										<a href="#">Rejoindre</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.4 now playing section ====== -->
 
-<script>
-    AOS.init({ once: true, duration: 1000 });
-</script>
+			<!-- ====== 1.5 game crafters section ====== -->
+			<section id="crafters">
+				<div class="container">
+					<div class="row align-items-center">
+						<div class="col-md-6">
+							<div data-aos="fade">
+								<h3>ARTISANS DU JEU FAÇONNANT DES MONDES NUMÉRIQUES</h3>
+								<p>
+									Une plateforme. Des opportunités de jeu compétitif infinies.</p>
+							</div>
+							<div class="counter d-flex justify-content-md-between justify-content-evenly align-items-center">
+								<div>
+									<h3 class="count">800</h3>
+									<p>Victoires</p>
+								</div>
+								<hr>
+								<div>
+									<h3 class="count">935</h3>
+									<p>Matchs joués</p>
+								</div>
+								<hr>
+								<div>
+									<h3 class="count">24</h3>
+									<p>Tournois gagnés</p>
+								</div>
+							</div>
+							<div class="d-flex justify-content-md-start justify-content-center mt-lg-5 mt-sm-4 mt-3 mb-md-0 mb-4">
+								<a href="contact.html" class="btnTwo">Contactez-nous</a>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row gap-sm-0 gap-5">
+								<div class="col-sm-6 mt-5">
+									<div class="imgLeft position-relative">
+										<h1 data-aos="fade-up" class="moving">TESTEZ</h1>
+										<img src="assets/images/index/crafter-1.webp" alt="craftImg">
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="imgRight position-relative d-flex flex-column gap-5">
+										<h1 data-aos="fade-down" class="moving">Vos</h1>
+										<img src="assets/images/index/crafter-2.webp" alt="craftImg">
+										<img src="assets/images/index/crafter-3.webp" alt="craftImg">
+										<h1 data-aos="fade-up" class="moving">LIMITES</h1>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.5 game crafters section ====== -->
 
-</body>
+			<!-- ====== 1.6 facilities section ====== -->
+			<section id="facilities">
+				<div class="facilities-bg">
+					<img src="assets/images/index/shapes-bg.png" alt="anticlockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="anticlockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="clockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="anticlockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="clockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="anticlockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="clockwise">
+					<img src="assets/images/index/shapes-bg.png" alt="anticlockwise">
+				</div>
+				<div class="container">
+					<div class="row d-flex justify-content-md-between justify-content-center gap-md-0 gap-3">
+						<div data-aos="fade">
+							<h3>NOS SERVICES</h3>
+							<p>
+								Une plateforme. Des opportunités de jeu compétitif infinies.</p>
+						</div>
+						<div class="col-md-4 col-sm-9 d-flex" data-aos="fade-up" data-aos-delay="50">
+							<div class="btnTwo">
+								<figure><img src="assets/images/icon/facilities-1.svg" alt="facilitiesIcon"></figure>
+								<h5>Compétitions Esport</h5>
+								<p></p>
+								<a href="#">En savoir plus</a>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-9 d-flex" data-aos="fade-up" data-aos-delay="250">
+							<div class="btnTwo">
+								<figure><img src="assets/images/icon/facilities-2.svg" alt="facilitiesIcon_2"></figure>
+								<h5>Technologie Gaming Dernière Génération</h5>
+								<p></p>
+								<a href="#">En savoir plus</a>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-9 d-flex" data-aos="fade-up" data-aos-delay="450">
+							<div class="btnTwo">
+								<figure><img src="assets/images/icon/facilities-3.svg" alt="facilitiesIcon_3"></figure>
+								<h5>Environnement Confortable</h5>
+								<p></p>
+								<a href="#">En savoir plus</a>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-center mt-sm-5 mt-4">
+						<a href="about.html" class="btnTwo">Voir plus</a>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.6 facilities section ====== -->
+
+			<!-- ====== 1.7 upcoming matches section ====== -->
+			<section id="upcoming">
+				<div class="container">
+					<div data-aos="fade">
+						<h3>CALENDRIER DES MATCHS</h3>
+						<p>
+							Une plateforme. Des opportunités de jeu compétitif infinies.</p>
+					</div>
+					<div class="matches">
+						<div class="matches_buttons d-flex justify-content-md-start justify-content-center gap-lg-4 gap-md-3 gap-2">
+							<button data-name="all" class="activeTwo">Tous les matchs</button>
+							<button data-name="past">Matchs passés</button>
+							<button data-name="live">En direct</button>
+							<button data-name="upcoming">Matchs à venir</button>
+						</div>
+						<div class="match_date">
+							<div data-name="upcoming" class="match_card row justify-content-between align-items-center active">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-1.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Monday ,22nd Feb 2026 Live At 04:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-2.webp" alt="player"></figure>
+											<p>Pro Slayer</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-1.webp" alt="player"></figure>
+											<p>Bare Killer</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="upcoming" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-2.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Tuesday ,23rd Feb 2026 Live At 05:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-4.webp" alt="player"></figure>
+											<p>Top Dogs</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-3.webp" alt="player"></figure>
+											<p>Pro Falcons</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="upcoming" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-1.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Wednesday ,24th Feb 2026 Live At 09:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-2.webp" alt="player"></figure>
+											<p>Pro Slayer</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-3.webp" alt="player"></figure>
+											<p>Pro Falcons</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="upcoming" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-3.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Friday ,25th Feb 2026 Live At 10:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-4.webp" alt="player"></figure>
+											<p>Top Dogs</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-1.webp" alt="player"></figure>
+											<p>Bare Killer</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="live" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-2.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Monday ,28th Feb 2026 Live At 5:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-4.webp" alt="player"></figure>
+											<p>Top Dogs</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-3.webp" alt="player"></figure>
+											<p>Pro Falcons</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="past" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-1.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Tuesday ,23rd Feb 2026 Live At 4:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-2.webp" alt="player"></figure>
+											<p>Pro Slayer</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-1.webp" alt="player"></figure>
+											<p>Bare Killer</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="past" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-3.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Thursday ,25th Feb 2026 Live At 10:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-4.webp" alt="player"></figure>
+											<p>Top Dogs</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-1.webp" alt="player"></figure>
+											<p>Bare Killer</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div data-name="past" class="match_card row justify-content-between align-items-center">
+								<div class="col-md-2 d-flex justify-content-md-start justify-content-center">
+									<div><img src="assets/images/index/game-logo-1.webp" alt="gameLogo"></div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex flex-column justify-content-center align-items-center gap-4 p-md-0 pt-4 pb-md-0 pb-3">
+										<p>Thursday ,25th Feb 2026 Live At 10:00 pm</p>
+										<div class="d-flex gap-4">
+											<a href="#">
+												<i class="fa-brands fa-youtube"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-twitch"></i>
+											</a>
+											<a href="#">
+												<i class="fa-brands fa-discord"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="d-flex justify-content-md-between justify-content-evenly align-items-center">
+										<div>
+											<figure><img src="assets/images/index/player-logo-2.webp" alt="player"></figure>
+											<p>Pro Slayer</p>
+										</div>
+										<div><img src="assets/images/index/vs.webp" alt="vs_2"></div>
+										<div>
+											<figure><img src="assets/images/index/player-logo-3.webp" alt="player"></figure>
+											<p>Pro Falcons</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+					<div class="d-flex justify-content-center mt-sm-5 mt-4">
+						<a href="matchschedule.html" class="btnTwo">Voir plus</a>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.7 upcoming matches section ====== -->
+
+			<!-- ====== 1.8 games section ====== -->
+			<section id="games">
+				<div class="container">
+					<div data-aos="fade">
+						<h3>PLONGEZ DANS DES UNIVERS DE JEU VARIES</h3>
+						<p>
+							L� o� les gamers se connectent, s'affrontent et progressent.</p>
+					</div>
+					<div class="row gap-md-0 gap-4">
+						<div class="col-md-6" data-aos="fade-up">
+							<div class="games g-one">
+								<div class="tags d-flex justify-content-end gap-lg-4 gap-md-2 gap-sm-5 gap-3">
+									<a href="#">Action</a>
+									<a href="#">FPP</a>
+									<a href="#">TPP</a>
+								</div>
+								<figure><img src="assets/images/index/g-1.webp" alt="csgo"></figure>
+								<h5>Explorez une multitude d'expériences gaming en un seul endroit.</h5>
+								<p>
+									Le texte standard de l'industrie.</p>
+								<div class="globalBtn">
+									<ul>
+										<li><a href="#">Voir l'équipe<span></span><span></span><span></span><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6" data-aos="fade-up">
+							<div class="games g-two">
+								<div class="tags d-flex justify-content-end gap-lg-4 gap-md-2 gap-sm-5 gap-3">
+									<a href="#">Action</a>
+									<a href="#">FPP</a>
+									<a href="#">TPP</a>
+								</div>
+								<figure><img src="assets/images/index/g-2.webp" alt="dota2"></figure>
+								<h5>Engagez les joueurs avec des visuels dynamiques et interactifs.</h5>
+								<p>
+									Le texte standard de l'industrie.</p>
+								<div class="globalBtn">
+									<ul>
+										<li><a href="#">Voir l'équipe<span></span><span></span><span></span><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 mt-md-4 mt-0" data-aos="fade-up">
+							<div class="games g-three">
+								<div class="tags d-flex justify-content-end gap-lg-4 gap-md-2 gap-sm-5 gap-3">
+									<a href="#">Action</a>
+									<a href="#">FPP</a>
+									<a href="#">TPP</a>
+								</div>
+								<figure><img src="assets/images/index/g-3.webp" alt="pubg"></figure>
+								<h5>Présentez une collection de jeux variée pour un plaisir sans fin.</h5>
+								<p>
+									Le texte standard de l'industrie.</p>
+								<div class="globalBtn">
+									<ul>
+										<li><a href="#">Voir l'équipe<span></span><span></span><span></span><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 mt-md-4 mt-0" data-aos="fade-up">
+							<div class="games g-four">
+								<div class="tags d-flex justify-content-end gap-lg-4 gap-md-2 gap-5gap-sm-5 gap-3">
+									<a href="#">Action</a>
+									<a href="#">FPP</a>
+									<a href="#">TPP</a>
+								</div>
+								<figure><img src="assets/images/index/g-4.webp" alt="callofduty"></figure>
+								<h5>Créez des liens entre les joueurs de votre communauté gaming.</h5>
+								<p>
+									Le texte standard de l'industrie.</p>
+								<div class="globalBtn">
+									<ul>
+										<li><a href="#">Voir l'équipe<span></span><span></span><span></span><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.8 games section ====== -->
+
+			<!-- ====== 1.9 Watch Tournament Matches section ====== -->
+			<section id="tournament">
+				<div class="container">
+					<div class="watch" data-aos="fade">
+						<h3>REGARDER LES MATCHS DE TOURNOI</h3>
+						<p>
+							Restez connectés !</p>
+					</div>
+					<div class="row justify-content-center gap-md-0 gap-4">
+						<div class="col-md-6 col-sm-11 d-flex" data-aos="fade-up" data-aos-delay="50">
+							<div class="watch_match watch_1">
+								<div>
+									<h5>Dota 2 Inter-Championship</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-11 d-flex" data-aos="fade-up" data-aos-delay="200">
+							<div class="watch_match watch_2">
+								<div>
+									<h5>Modern Warfare</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-11 d-flex" data-aos="fade-up" data-aos-delay="350">
+							<div class="watch_match watch_3">
+								<div>
+									<h5>Need For Speed</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-11 d-flex mt-md-4 mt-0" data-aos="fade-up" data-aos-delay="350">
+							<div class="watch_match watch_4">
+								<div>
+									<h5>Action de tournoi en direct. Assistez a des combats gaming palpitants.</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-11 d-flex mt-md-4 mt-0" data-aos="fade-up" data-aos-delay="200">
+							<div class="watch_match watch_5">
+								<div>
+									<h5>Temps forts des anciens champions. Revivez des moments épiques.</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-11 d-flex mt-md-4 mt-0" data-aos="fade-up" data-aos-delay="50">
+							<div class="watch_match watch_6">
+								<div>
+									<h5>Affrontez et triomphez. Rejoignez les prochains tournois et visez la victoire.</h5>
+									<p></p>
+									<div class="d-flex justify-content-md-start justify-content-center gap-md-4 gap-5">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-center mt-sm-5 mt-4">
+						<a href="matchschedule.html" class="btnTwo">Voir plus</a>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.9 Watch Touranment Matches section ====== -->
+
+			<!-- ====== 1.10 Our Team section ====== -->
+			<section id="team">
+				<div class="container">
+					<div class="teamContent" data-aos="fade">
+						<h3>RENCONTREZ NOS EXPERTS</h3>
+						<p></p>
+					</div>
+					<div class="row">
+						<div class="col-md-4 col-12" data-aos="fade-up" data-aos-delay="50">
+							<div class="team d-flex justify-content-between align-items-end">
+								<div class="col-6">
+									<h6>Malik AK-47</h6>
+									<p>Pro Gamer CS:GO</p>
+									<div class="d-flex justify-content-md-start justify-content-start gap-lg-4 gap-3">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch active"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+								<div class="col-6">
+									<figure><img src="assets/images/index/team-1.webp" alt="team"></figure>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+							<div class="team active d-flex justify-content-between align-items-end">
+								<div class="col-6">
+									<h6>Choco Taco</h6>
+									<p>Pro Gamer CS:GO</p>
+									<div class="d-flex justify-content-md-start justify-content-start gap-lg-4 gap-3">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch active"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+								<div class="col-6">
+									<figure><img src="assets/images/index/team-2.webp" alt="team"></figure>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4" data-aos="fade-up" data-aos-delay="350">
+							<div class="team d-flex justify-content-between align-items-end">
+								<div class="col-6">
+									<h6>Shroud Khans</h6>
+									<p>Pro Gamer CS:GO</p>
+									<div class="d-flex justify-content-md-start justify-content-start gap-lg-4 gap-3">
+										<a href="#">
+											<i class="fa-brands fa-youtube"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-twitch active"></i>
+										</a>
+										<a href="#">
+											<i class="fa-brands fa-discord"></i>
+										</a>
+									</div>
+								</div>
+								<div class="col-6 d-flex">
+									<figure><img src="assets/images/index/team-3.webp" alt="team"></figure>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-center mt-sm-5 mt-4">
+						<a href="team.html" class="btnTwo">Voir plus</a>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.10 Our Team section ====== -->
+
+			<!-- ====== 1.11 Become a part of us section ====== -->
+			<section id="join">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-6 d-flex">
+							<div class="join_cont" data-aos="fade">
+								<h3>Rejoignez-nous</h3>
+								<p>
+									Faites équipe avec des joueurs, participez a des tournois passionnants et améliorez vos compétences gaming a le tout sur une seule plateforme conéue pour les passionnés d'esport.</p>
+								<div class="d-flex flex-sm-row flex-column justify-content-md-start justify-content-center gap-md-4 gap-2">
+									<a href="#" class="btnTwoActive">Devenir membre</a>
+									<a href="contact.html" class="btnTwo">Contactez-nous</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 d-flex justify-content-center flex-column">
+							<div class="join_img">
+								<div>
+									<a class="video-play-button btnTwo" href="#">
+										<span class="fa-solid fa-play" data-aos="zoom-in"></span>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.11 Become a part of us section ====== -->
+
+			<!-- ====== 1.12 Pricing plan section ====== -->
+			<section id="pricing">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-6" data-aos="fade-up">
+							<div>
+								<figure><img src="assets/images/index/pricing.webp" alt="pricing"></figure>
+							</div>
+						</div>
+						<h1 class="moving">REVEZ PLUS GRAND</h1>
+						<div class="col-md-6">
+							<div class="price_content" data-aos="fade">
+								<h3>Grille Tarifaire</h3>
+								<p>Rejoignez des tournois de différents niveaux, créez ou rejoignez des équipes, gérez votre profil de joueur et accédez a du contenu de coaching conéu pour améliorer votre gameplay. Tout ce dont vous avez besoin pour progresser est disponible sur une seule plateforme.</p>
+							</div>
+							<div class="row justify-content-center gap-md-0 gap-4">
+								<div class="col-md-6 col-sm-10" data-aos="fade-up">
+									<div class="price_card">
+										<h5>Forfait Premium</h5>
+										<div>
+											<h2>$350</h2>
+											<h6>/month</h6>
+										</div>
+										<div>
+											<i class="fa-solid fa-circle"></i>
+											<p>ne ratez pas</p>
+										</div>
+										<div class="globalBtn mt-3">
+											<ul>
+												<li><a href="pricing.html">Commencer<span></span><span></span><span></span><span></span></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6 col-sm-10" data-aos="fade-up" data-aos-delay="200">
+									<div class="price_card scnd">
+										<h5>Forfait Basique</h5>
+										<div>
+											<h2>$150</h2>
+											<h6>/month</h6>
+										</div>
+										<div>
+											<i class="fa-solid fa-circle"></i>
+											<p>ne ratez pas</p>
+										</div>
+										<div class="globalBtn mt-3">
+											<ul>
+												<li><a href="pricing.html">Commencer<span></span><span></span><span></span><span></span></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="pricing-bg">
+						<img src="assets/images/index/shapes-bg.png" alt="pricingBg">
+						<img src="assets/images/index/shapes-bg.png" alt="pricingBg">
+						<img src="assets/images/index/shapes-bg.png" alt="pricingBg">
+					</div>
+
+				</div>
+			</section>
+			<!-- ====== End of 1.12 Pricing plan section ====== -->
+
+			<!-- ====== 1.13 Our media gallery section ====== -->
+			<section id="media">
+				<div class="container">
+					<div data-aos="fade">
+						<h3>UN VOYAGE a TRAVERS LES PIXELS</h3>
+						<p></p>
+					</div>
+					<div id="gallery_slider">
+						<input type="radio" name="slider" id="s1" checked>
+						<input type="radio" name="slider" id="s2">
+						<input type="radio" name="slider" id="s3">
+						<input type="radio" name="slider" id="s4">
+						<input type="radio" name="slider" id="s5">
+
+						<label for="s1" id="slide1"><img src="assets/images/index/gallery-img-1.webp" alt="gallery"></label>
+						<label for="s2" id="slide2"><img src="assets/images/index/gallery-img-2.webp" alt="gallery"></label>
+						<label for="s3" id="slide3"><img src="assets/images/index/gallery-img-3.webp" alt="gallery"></label>
+						<label for="s4" id="slide4"><img src="assets/images/index/gallery-img-4.webp" alt="gallery"></label>
+						<label for="s5" id="slide5"><img src="assets/images/index/gallery-img-5.webp" alt="gallery"></label>
+					</div>
+					<div class="d-flex justify-content-center mt-sm-5 mt-4">
+						<a href="gallery.html" class="btnTwo">Voir plus</a>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.13 Our media gallery section ====== -->
+
+			<!-- ====== 1.14 Testimonials section ====== -->
+			<section id="testimonials">
+				<div class="container">
+					<div class="row justify-content-center align-items-center">
+						<div class="col-md-5 col-sm-9" data-aos="fade-down">
+							<div>
+								<figure><img src="assets/images/index/customer.webp" alt="testimonialsImg"></figure>
+							</div>
+						</div>
+						<div class="col-md-7 col-sm-9 pb-lg-4 pb-3" data-aos="fade-up">
+							<div>
+								<h3>Ce que disent nos clients</h3>
+								<div class="testimonials-slider">
+									<div class="testimonial_card">
+										<div>
+											<figure><img src="assets/images/index/testimonials-1.webp" alt="testimonials-1">
+											</figure>
+											<h6>Hector Salamanca</h6>
+											<div class="d-flex flex-row gap-2">
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+											</div>
+											<p>Cette plateforme facilite la participation aux tournois et la gestion des équipes. L'interface est propre et trés intuitive.</p>
+										</div>
+									</div>
+									<div class="testimonial_card">
+										<div>
+											<figure><img src="assets/images/index/testimonials-2.webp" alt="testimonials-1">
+											</figure>
+											<h6>Steve Burr</h6>
+											<div class="d-flex flex-row gap-2">
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+											</div>
+											<p>La section coaching m'a aidé a améliorer mon gameplay. Tout est bien organisé et facile d'accés.</p>
+										</div>
+									</div>
+									<div class="testimonial_card">
+										<div>
+											<figure><img src="assets/images/index/testimonials-3.webp" alt="testimonials-1">
+											</figure>
+											<h6>Chris Hemswoth</h6>
+											<div class="d-flex flex-row gap-2">
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+												<i class="fa-solid fa-star"></i>
+											</div>
+											<p>Gérer les joueurs et les tournois est simple et efficace. Une excellente plateforme pour les communautés esport.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- <figure><img src="assets/images/index/testimonial-bg.webp" alt="testimonialBg"></figure> -->
+			</section>
+			<!-- ====== End of 1.14 Testimonials section ====== -->
+
+			<!-- ====== 1.15 Faq section ====== -->
+			<section id="faq">
+				<div class="container">
+					<div class="faq_content" data-aos="fade">
+						<p></p>
+					</div>
+					<div class="faq_container">
+						<div class="row justify-content-lg-between justify-content-center">
+							<div class="col-lg-8 col-md-9">
+								<div>
+									<video class="video" autoplay loop muted>
+										<source src="assets/images/index/faq-video.mp4" type="video/mp4">
+									</video>
+								</div>
+							</div>
+							<div class="col-lg-7 col-md-9" data-aos="fade-up">
+								<div class="accordion" id="accordionExample">
+									<div class="accordion-item">
+										<h6 class="accordion-header" id="headingOne">
+											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+												<i class="fa-solid fa-circle d-block"></i>
+
+											</button>
+										</h6>
+										<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+											<div class="accordion-body"></div>
+										</div>
+									</div>
+									<div class="accordion-item">
+										<h6 class="accordion-header" id="headingTwo">
+											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+												<i class="fa-solid fa-circle d-block"></i>
+
+											</button>
+										</h6>
+										<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+											<div class="accordion-body"></div>
+										</div>
+									</div>
+									<div class="accordion-item">
+										<h6 class="accordion-header" id="headingThree">
+											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+												<i class="fa-solid fa-circle d-block"></i>
+
+											</button>
+										</h6>
+										<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+											<div class="accordion-body"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ====== End of 1.15 Faq section ====== -->
+
+			<!-- ====== 1.16 Blog section ====== -->
+			<section class="blog">
+				<div class="container">
+					<div class="blog_content" data-aos="fade">
+						<h3>VOTRE SOURCE D'INFORMATIONS GAMING</h3>
+						<p>Restez informé des derniéres nouvelles esport, des temps forts des tournois, des mises a jour de la plateforme et des astuces gaming. Notre plateforme fournit des informations précieuses pour aider les joueurs, équipes et coachs a prendre des décisions éclairées et améliorer leurs performances compétitives.</p>
+						<p>Découvrez des stratégies, des actualités de tournois et des conseils d'experts conéus pour vous garder en téte de la scéne compétitive.</p>
+						<p>Apprenez, analysez et restez informé dans l'écosystéme gaming.</p>
+					</div>
+					<div class="row d-flex justify-content-between gap-lg-4 gap-md-0 gap-4">
+						<div class="col-md-8 col-md-12" data-aos="fade-up">
+							<div class="blog-card">
+								<div>
+									<figure><img src="assets/images/index/blog-1.webp" alt="blog-image"></figure>
+								</div>
+								<div class="blog-text">
+									<div class="d-flex justify-content-between">
+										<span>January 19, 2026</span>
+										<a href="#">
+											<span>5 min de lecture</span>
+										</a>
+									</div>
+									<a href="#">
+										<h5>L'Expert Stratégique (Idéal pour guides/astuces pro)</h5>
+									</a>
+									<p>Maétrisez le méta. Stratégies pour gagner, histoires a raconter.
+									</p>
+									<a href="#">
+										<h6>Par Rodrigus Sanchez</h6>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 d-flex flex-column gap-4 px-md-2">
+							<div class="blog-card2 row flex-column p-0" data-aos="fade-down">
+								<div class="col-lg-12">
+									<figure><img src="assets/images/index/blog-2.webp" alt="blog-image"></figure>
+								</div>
+								<div class="col-lg-12">
+									<div class="blog-text">
+										<div class="d-flex justify-content-between">
+											<span>January 19, 2026</span>
+											<a href="#">
+												<span>5 min de lecture</span>
+											</a>
+										</div>
+										<h6>Le format percutant et minimaliste : Jouez plus intelligemment.</h6>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- ===== TESTIMONIAL ===== -->
+			<section class="testimonial">
+				<div class="container">
+					<h3>CE QUE DISENT LES GAMERS DE NOUS</h3>
+
+					<div class="testimonial_slider">
+						<div class="testimonial-item">
+							<p>La meilleure plateforme gaming !</p>
+							<span>~ Hector Salamanca</span>
+						</div>
+						<div class="testimonial-item">
+							<p>Expérience incroyable.</p>
+							<span>~ Steve Burr</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- ===== FAQ ===== -->
+			<section class="faq">
+				<div class="container">
+					<h3>RPONSES a VOS QUESTIONS GAMING</h3>
+
+					<div class="faq_main">
+						<div class="col">
+							<h5>
+								<button class="faq_btn">
+									<span>Que propose la plateforme ?</span>
+									<i class="fa-solid fa-angle-down"></i>
+								</button>
+							</h5>
+							<p>Tournois, équipes, joueurs.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- ===== FOOTER ===== -->
+			<footer>
+				<div class="container">
+					<div class="row py-5">
+						<div class="col-lg-4">
+							<h6>A propos</h6>
+							<p>ClutchX est une plateforme de jeu compétitif.</p>
+						</div>
+						<div class="col-lg-4">
+							<h6>Liens rapides</h6>
+							<ul>
+								<li><a href="#">A propos</a></li>
+								<li><a href="#">Jeux</a></li>
+								<li><a href="#">Contact</a></li>
+							</ul>
+						</div>
+						<div class="col-lg-4">
+							<h6>Suivez-nous</h6>
+						</div>
+					</div>
+
+					<div class="footer-bottom text-center">
+						<p>© 2026 ClutchX</p>
+					</div>
+				</div>
+			</footer>
+
+		</div>
+
+		<!-- ===== AUTH LINK ===== -->
+
+
+		<style>
+			/* ── Navbar Auth ── */
+			.navbar-auth {
+				white-space: nowrap;
+			}
+
+			/* ── Dropdown ── */
+			.dropdown-btn {
+				position: relative;
+				display: inline-block;
+			}
+			.dropdown-btn .user-badge {
+				cursor: pointer;
+			}
+			.dropdown-arrow {
+				font-size: 10px !important;
+				color: rgba(255, 255, 255, 0.5);
+				transition: transform 0.3s ease;
+				margin-left: 2px;
+			}
+			.dropdown-btn:hover .dropdown-arrow {
+				transform: rotate(180deg);
+				color: rgba(255, 255, 255, 0.9);
+			}
+			.dropdown-content {
+				display: none;
+				position: absolute;
+				top: calc(100% + 8px);
+				right: 0;
+				min-width: 200px;
+				background: rgba(20, 10, 50, 0.92);
+				backdrop-filter: blur(20px);
+				-webkit-backdrop-filter: blur(20px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 12px;
+				padding: 8px;
+				z-index: 1000;
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+				animation: dropdownFadeIn 0.2s ease;
+			}
+			@keyframes dropdownFadeIn {
+				from { opacity: 0; transform: translateY(-6px); }
+				to { opacity: 1; transform: translateY(0); }
+			}
+			.dropdown-btn:hover .dropdown-content {
+				display: block;
+			}
+			.dropdown-content a {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 14px;
+				color: rgba(255, 255, 255, 0.85) !important;
+				text-decoration: none;
+				font-size: 13px;
+				font-weight: 500;
+				border-radius: 8px;
+				transition: all 0.2s ease;
+			}
+			.dropdown-content a i {
+				width: 18px;
+				text-align: center;
+				font-size: 14px;
+				color: #7c3aed;
+			}
+			.dropdown-content a:hover {
+				background: rgba(255, 255, 255, 0.08);
+				color: white !important;
+			}
+			.dropdown-content a.logout-link:hover {
+				background: rgba(255, 76, 76, 0.15);
+				color: #ff6b6b !important;
+			}
+			.dropdown-content a.logout-link i {
+				color: #ff6b6b;
+			}
+			.dropdown-divider {
+				height: 1px;
+				background: rgba(255, 255, 255, 0.08);
+				margin: 4px 6px;
+			}
+
+			/* ── User Badge ── */
+			.user-badge {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				background: rgba(255, 255, 255, 0.08);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.12);
+				padding: 6px 16px 6px 8px;
+				border-radius: 50px;
+				transition: all 0.3s ease;
+			}
+			.user-badge:hover {
+				background: rgba(255, 255, 255, 0.14);
+				border-color: rgba(255, 255, 255, 0.22);
+			}
+			.user-avatar {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				background: linear-gradient(135deg, #7c3aed, #5606d8);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+			.user-avatar i {
+				color: white;
+				font-size: 14px;
+			}
+			.user-email {
+				color: rgba(255, 255, 255, 0.9);
+				font-size: 13px;
+				font-weight: 500;
+				letter-spacing: 0.2px;
+				max-width: 180px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			/* ── Connexion Button ── */
+			.btn-login {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				background: linear-gradient(135deg, #7c3aed, #5606d8);
+				color: white !important;
+				padding: 9px 24px;
+				border-radius: 50px;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 13px;
+				letter-spacing: 0.3px;
+				box-shadow: 0 4px 15px rgba(86, 6, 216, 0.35);
+				transition: all 0.3s ease;
+			}
+			.btn-login:hover {
+				background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+				box-shadow: 0 6px 20px rgba(86, 6, 216, 0.5);
+				transform: translateY(-1px);
+			}
+			.btn-login i {
+				font-size: 13px;
+			}
+		</style>
+
+		<!-- JS -->
+		<script src="{{ asset('assets/js/jquery.js') }}"></script>
+		<script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('assets/js/slick.min.js') }}"></script>
+		<script src="{{ asset('assets/js/custom.js') }}"></script>
+		<script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
+		<script src="{{ asset('assets/js/aos.js') }}"></script>
+
+		<script>
+			AOS.init({once: true, duration: 1000});
+		</script>
+
+		{# {% if app.debug %}
+						<style>
+						    /* Ensure Symfony profiler toolbar is fully visible */
+						    body { padding-bottom: 50px !important; }
+						    .sf-toolbar { z-index: 99999 !important; }
+						</style>
+						{% endif %} #}
+
+	</body>
 </html>

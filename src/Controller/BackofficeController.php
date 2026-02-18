@@ -48,7 +48,6 @@ class BackofficeController extends AbstractController
             return $this->redirectToRoute('backoffice_home');
         }
         
-        // Trouver l'utilisateur
         $user = $userRepository->find($id);
         
         if (!$user) {
@@ -56,14 +55,12 @@ class BackofficeController extends AbstractController
             return $this->redirectToRoute('backoffice_home');
         }
         
-        // Empêcher la suppression de son propre compte
         if ($this->getUser() && $user->getId() === $this->getUser()->getId()) {
             $this->addFlash('error', 'Vous ne pouvez pas supprimer votre propre compte');
             return $this->redirectToRoute('backoffice_home');
         }
         
         try {
-            // Supprimer l'utilisateur
             $userEmail = $user->getEmail();
             $em->remove($user);
             $em->flush();
@@ -76,5 +73,35 @@ class BackofficeController extends AbstractController
         return $this->redirectToRoute('backoffice_home');
     }
     
+    #[Route('/user/toggle-block/{id}', name: 'user_toggle_block', methods: ['POST'])]
+    public function toggleBlockUser(int $id, UserRepository $userRepository, EntityManagerInterface $em, Request $request): Response
+    {
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('toggle-block-' . $id, $submittedToken)) {
+            $this->addFlash('error', 'Token de sécurité invalide');
+            return $this->redirectToRoute('backoffice_home');
+        }
+
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur non trouvé');
+            return $this->redirectToRoute('backoffice_home');
+        }
+
+        // L'admin ne peut pas se bloquer lui-même
+        if ($this->getUser() && $user->getId() === $this->getUser()->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez pas bloquer votre propre compte');
+            return $this->redirectToRoute('backoffice_home');
+        }
+
+        $user->setIsBlocked(!$user->isBlocked());
+        $em->flush();
+
+        $status = $user->isBlocked() ? 'bloqué' : 'débloqué';
+        $this->addFlash('success', "L'utilisateur {$user->getEmail()} a été {$status} avec succès");
+
+        return $this->redirectToRoute('backoffice_home');
+    }
  
 }

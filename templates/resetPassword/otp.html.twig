@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Code de validation | ClutchX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ── VIDEO BG ── */
+        .bg-video {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+        .bg-video video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .bg-video .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(16,10,46,0.88) 0%, rgba(30,10,60,0.92) 100%);
+        }
+
+        /* ── PAGE ── */
+        .login-page {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 16px;
+        }
+
+        /* ── CARD ── */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 36px 32px 28px;
+            color: #fff;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+        }
+
+        /* ── HEADER ── */
+        .login-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-header .icon-circle {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            font-size: 1.4rem;
+        }
+        .login-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 4px;
+            letter-spacing: -0.02em;
+        }
+        .login-header p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.55);
+            margin: 0;
+        }
+
+        /* ── OTP INPUTS ── */
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .otp-input {
+            width: 58px;
+            height: 58px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+            caret-color: #a855f7;
+        }
+        .otp-input::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+        .otp-input:focus {
+            border-color: #a855f7;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+        }
+        .otp-input.error {
+            border-color: #ef4444 !important;
+            background: rgba(239,68,68,0.06);
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+        }
+
+        /* ── ERROR MESSAGE ── */
+        .field-error {
+            display: none;
+            align-items: flex-start;
+            gap: 6px;
+            margin-bottom: 18px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            justify-content: center;
+        }
+        .field-error.show {
+            display: flex;
+        }
+        .field-error i {
+            color: #f87171;
+            font-size: 0.72rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .field-error span {
+            color: #fca5a5;
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+
+        /* ── SUBMIT ── */
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.01em;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(124,58,237,0.35);
+        }
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        /* ── RESEND ── */
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.84rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .login-footer .resend-link {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .login-footer .resend-link:hover {
+            color: #e9d5ff;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 28px 20px 22px;
+                border-radius: 16px;
+            }
+            .otp-input {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+            .otp-container {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="bg-video">
+    <video autoplay loop muted playsinline>
+        <source src="{{ asset('assets/images/index/header-video.mp4') }}" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+</div>
+
+<div class="login-page">
+    <div class="login-card">
+
+        <div class="login-header">
+            <div class="icon-circle">
+                <i class="fa fa-lock" style="color:#fff"></i>
+            </div>
+            <h2>Code de validation</h2>
+            <p>Entrez le code de vérification que nous vous avons envoyé</p>
+        </div>
+
+        <form id="otpForm" action="{{ path('app_otpVerfication') }}" method="POST" novalidate>
+
+            {% if error is defined and error %}
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:18px;padding:7px 10px;border-radius:8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);justify-content:center;">
+                    <i class="fa fa-exclamation-triangle" style="color:#f87171;font-size:0.72rem;"></i>
+                    <span style="color:#fca5a5;font-size:0.78rem;line-height:1.4;">{{ error }}</span>
+                </div>
+            {% endif %}
+
+            <div class="otp-container">
+                <input maxlength="1" type="text" class="otp-input" id="otp-input1" name="otp1" autofocus>
+                <input maxlength="1" type="text" class="otp-input" id="otp-input2" name="otp2">
+                <input maxlength="1" type="text" class="otp-input" id="otp-input3" name="otp3">
+                <input maxlength="1" type="text" class="otp-input" id="otp-input4" name="otp4">
+            </div>
+
+            <div class="field-error" id="otpError">
+                <i class="fa fa-exclamation-triangle"></i>
+                <span>Veuillez remplir tous les champs du code.</span>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fa fa-check-circle" style="margin-right:6px"></i> Vérifier
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <span>Vous n'avez pas reçu le code ?</span>
+            <a href="{{ path('app_resend_otp') }}" class="resend-link">Renvoyer</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var otpForm = document.getElementById('otpForm');
+        var inputs = otpForm.querySelectorAll('.otp-input');
+        var otpError = document.getElementById('otpError');
+
+        // Auto-focus next input on typing
+        inputs.forEach(function(input, index) {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                otpError.classList.remove('show');
+
+                if (this.value.length >= this.maxLength && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            // Handle backspace to go to previous input
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Allow only digits
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Form validation
+        otpForm.addEventListener('submit', function(event) {
+            var isValid = true;
+
+            inputs.forEach(function(input) {
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('error');
+                    input.animate([
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(0px)' }
+                    ], { duration: 400, iterations: 1 });
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+
+            if (!isValid) {
+                otpError.classList.add('show');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

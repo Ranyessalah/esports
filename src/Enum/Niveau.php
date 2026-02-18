@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum Niveau: string
 {
-    case BEGINNER = 'Beginner';
-    case INTERMEDIATE = 'Intermediate';
-    case ADVANCED = 'Advanced';
+    case BEGINNER = 'Débutant';
+    case INTERMEDIATE = 'Intermédiaire';
+    case ADVANCED = 'Avancé';
 }
