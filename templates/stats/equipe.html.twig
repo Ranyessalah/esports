@@ -1,0 +1,253 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Statistiques de {{ stats.equipe.nom }}{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ===== BACKGROUND ===== */
+.stats-page{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 20%, #1e293b, #020617 60%);
+    padding:40px 0;
+    color:#e5e7eb;
+}
+
+/* ===== HERO TEAM ===== */
+.team-hero{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.team-logo{
+    width:80px;
+    height:80px;
+    border-radius:16px;
+    background:#020617;
+    border:1px solid #334155;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.team-logo img{
+    width:70px;
+    height:70px;
+    object-fit:contain;
+}
+
+.team-title{
+    font-size:32px;
+    font-weight:800;
+    margin:0;
+}
+
+.team-sub{
+    color:#94a3b8;
+}
+
+/* ===== KPI CARDS ===== */
+.kpi-grid{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+
+.kpi-card{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:18px;
+    padding:20px;
+    text-align:center;
+    transition:.25s;
+}
+
+.kpi-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+
+.kpi-title{
+    font-size:14px;
+    color:#94a3b8;
+}
+
+.kpi-value{
+    font-size:32px;
+    font-weight:800;
+}
+
+/* COLORS */
+.win{color:#22c55e;}
+.draw{color:#facc15;}
+.lose{color:#ef4444;}
+.points{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* ===== INFO BLOCKS ===== */
+.info-grid{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+
+.info-card{
+    background:rgba(255,255,255,.05);
+    border-radius:18px;
+    padding:25px;
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.info-card h4{
+    margin-bottom:18px;
+}
+
+.info-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.badge-pill{
+    padding:6px 12px;
+    border-radius:999px;
+    background:#1e293b;
+}
+
+.diff-pos{color:#22c55e;}
+.diff-neg{color:#ef4444;}
+.diff-neutral{color:#94a3b8;}
+
+@media(max-width:900px){
+    .info-grid{grid-template-columns:1fr;}
+}
+
+</style>
+
+<div class="stats-page">
+<div class="container">
+
+    <!-- HERO -->
+    <div class="team-hero">
+        <div class="team-logo">
+            {% if stats.equipe.logo %}
+                <img src="{{ asset('uploads/equipes/' ~ stats.equipe.logo) }}">
+            {% endif %}
+        </div>
+
+        <div>
+            <h1 class="team-title">{{ stats.equipe.nom }}</h1>
+            <div class="team-sub">
+                {{ stats.equipe.game }} • {{ stats.equipe.categorie }}
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+
+        <div class="kpi-card">
+            <div class="kpi-title">Matchs</div>
+            <div class="kpi-value">{{ stats.matchs_joues }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Victoires</div>
+            <div class="kpi-value win">{{ stats.victoires }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Nuls</div>
+            <div class="kpi-value draw">{{ stats.nuls }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Défaites</div>
+            <div class="kpi-value lose">{{ stats.defaites }}</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title">Points</div>
+            <div class="kpi-value points">{{ stats.points }}</div>
+        </div>
+
+    </div>
+
+    <!-- DETAILS -->
+    <div class="info-grid">
+
+        <!-- GENERAL INFO -->
+        <div class="info-card">
+            <h4>Informations équipe</h4>
+
+            <div class="info-row">
+                <span>Coach</span>
+                <span class="badge-pill">
+                    {{ stats.equipe.coach ? stats.equipe.coach.email : 'Non assigné' }}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span>Nombre joueurs</span>
+                <span>{{ stats.equipe.joueur|length }}</span>
+            </div>
+
+            <div class="info-row">
+                <span>Jeu</span>
+                <span>{{ stats.equipe.game }}</span>
+            </div>
+
+            <div class="info-row">
+                <span>Catégorie</span>
+                <span>{{ stats.equipe.categorie }}</span>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE -->
+        <div class="info-card">
+            <h4>Performance</h4>
+
+            <div class="info-row">
+                <span>Buts pour</span>
+                <strong>{{ stats.buts_pour }}</strong>
+            </div>
+
+            <div class="info-row">
+                <span>Buts contre</span>
+                <strong>{{ stats.buts_contre }}</strong>
+            </div>
+
+            <div class="info-row">
+                <span>Différence</span>
+                <strong class="
+                    {% if stats.difference > 0 %}diff-pos
+                    {% elseif stats.difference < 0 %}diff-neg
+                    {% else %}diff-neutral
+                    {% endif %}">
+                    {{ stats.difference > 0 ? '+' : '' }}{{ stats.difference }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

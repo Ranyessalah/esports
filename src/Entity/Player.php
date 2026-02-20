@@ -21,6 +21,9 @@ class Player extends User
     #[ORM\Column(enumType: Niveau::class)]
     private ?Niveau $niveau = null;
 
+    #[ORM\ManyToOne(inversedBy: 'joueur')]
+    private ?Equipe $equipe = null;
+
     public function getPays(): ?string
     {
         return $this->pays;
@@ -51,6 +54,18 @@ class Player extends User
     public function setNiveau(Niveau $niveau): static
     {
         $this->niveau = $niveau;
+        return $this;
+    }
+
+    public function getEquipe(): ?Equipe
+    {
+        return $this->equipe;
+    }
+
+    public function setEquipe(?Equipe $equipe): static
+    {
+        $this->equipe = $equipe;
+
         return $this;
     }
 }

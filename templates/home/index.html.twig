@@ -1,130 +1,274 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Home | ClutchX{% endblock %}
 
 {% block body %}
 
-<!-- ===== HERO ===== -->
- <div>
-            <div class="hero_main">
-                <video class="video" autoplay loop muted data-aos="fade" data-aos-delay="150">
-                    <source src="assets/images/index/header-video.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="overlay">
-                <div class="header-content">
-                    <section id="hero">
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                <div class="col-lg-11 col-md-12 text-center" data-aos="fade" data-aos-delay="200">
-                                    <div>
-                                        <h2>Beyond the Screen. Master Your Multiverse.</h2>
-                                        <h4>UNLEASH YOUR INNER CHAMPION</h4>
-                                        <div class="d-flex justify-content-center gap-4">
-<div class="dropdown-btn">
-    <button class="btnTwoActive">Become a Member</button>
-    <div class="dropdown-content">
-        <a href="signup_player">Player</a>
-        <a href="signup_coach">Coach</a>
-    </div>
-</div>
-                                            <a href="contact.html" class="btnTwo">Contact Us</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+<!-- ================= HERO ARENA ================= -->
+<section class="hero-arena">
 
-<!-- ===== PARTNER ===== -->
-<section id="partner">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-3">
-                <h5>Our Partner:</h5>
-            </div>
-            <div class="col-md-9">
-                <div class="partner-slider d-flex justify-content-between">
-                    <img src="{{ asset('assets/images/index/logo_1.png') }}">
-                    <img src="{{ asset('assets/images/index/logo_2.svg') }}">
-                    <img src="{{ asset('assets/images/index/logo_3.svg') }}">
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source src="{{ asset('assets/images/index/header-video.mp4') }}" type="video/mp4">
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content container text-center">
+
+        <h1 class="hero-title">
+            Beyond the Screen
+            <span>Master Your Multiverse</span>
+        </h1>
+
+        <p class="hero-sub">
+            Join teams • Compete in tournaments • Track stats • Become a champion
+        </p>
+
+        <div class="hero-actions">
+
+            <!-- Dropdown -->
+            <div class="cta-dropdown">
+                <button class="cta-main">
+                    Become a Member
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+
+                <div class="cta-menu">
+                    <a href="{{ path('signup_player') }}">
+                        <i class="fa-solid fa-gamepad"></i> Player
+                    </a>
+                    <a href="{{ path('signup_coach') }}">
+                        <i class="fa-solid fa-chalkboard-user"></i> Coach
+                    </a>
                 </div>
             </div>
+
+            <a href="#" class="cta-secondary">Contact Us</a>
+
         </div>
     </div>
 </section>
 
-<!-- ===== TESTIMONIAL ===== -->
-<section class="testimonial">
+
+<!-- ================= PARTNERS ================= -->
+<section class="partners">
     <div class="container">
-        <h3>WHAT GAMERS SAY ABOUT US</h3>
+        <h4 class="section-title">Trusted By</h4>
 
-        <div class="testimonial_slider">
-            <div class="testimonial-item">
-                <p>Best gaming platform ever!</p>
-                <span>~ Hector Salamanca</span>
-            </div>
-            <div class="testimonial-item">
-                <p>Amazing experience.</p>
-                <span>~ Steve Burr</span>
-            </div>
+        <div class="partner-logos">
+            <img src="{{ asset('assets/images/index/logo_1.png') }}">
+            <img src="{{ asset('assets/images/index/logo_2.svg') }}">
+            <img src="{{ asset('assets/images/index/logo_3.svg') }}">
         </div>
     </div>
 </section>
 
-<!-- ===== FAQ ===== -->
-<section class="faq">
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="testimonials">
+    <div class="container text-center">
+
+        <h3 class="section-title">What Gamers Say</h3>
+
+        <div class="testimonial-grid">
+
+            <div class="testimonial-card">
+                <p>"Best gaming platform I’ve ever used."</p>
+                <span>— Hector Salamanca</span>
+            </div>
+
+            <div class="testimonial-card">
+                <p>"Finally a place to manage my team easily."</p>
+                <span>— Steve Burr</span>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= FAQ ================= -->
+<section class="faq-section">
     <div class="container">
-        <h3>ANSWERS TO YOUR GAMING QUERIES</h3>
 
-        <div class="faq_main">
-            <div class="col">
-                <h5>
-                    <button class="faq_btn">
-                        <span>What does the platform offer?</span>
-                        <i class="fa-solid fa-angle-down"></i>
-                    </button>
-                </h5>
-                <p>Tournaments, teams, players.</p>
+        <h3 class="section-title text-center">Frequently Asked Questions</h3>
+
+        <div class="faq-item">
+            <button class="faq-btn">
+                What does ClutchX offer?
+                <i class="fa-solid fa-angle-down"></i>
+            </button>
+            <div class="faq-content">
+                Tournaments, team management, match tracking, player statistics and coaching tools.
             </div>
         </div>
+
+        <div class="faq-item">
+            <button class="faq-btn">
+                Is the platform free?
+                <i class="fa-solid fa-angle-down"></i>
+            </button>
+            <div class="faq-content">
+                Yes. Players and teams can join and compete for free.
+            </div>
+        </div>
+
     </div>
 </section>
+
+
+<!-- ================= CSS ================= -->
 <style>
-/* Dropdown sur hover */
-.dropdown-btn {
-    position: relative;
-    display: inline-block;
+
+/* HERO */
+.hero-arena{
+    position:relative;
+    height:92vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
 }
 
-.dropdown-btn .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%; /* juste en dessous du bouton */
-    left: 0;
-    background-color: rgba(0,0,0,0.9);
-    min-width: 160px;
-    border-radius: 5px;
-    overflow: hidden;
-    z-index: 10;
-    text-align: center;
+.hero-video{
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:brightness(.35) contrast(1.2);
 }
 
-.dropdown-btn .dropdown-content a {
-    display: block;
-    padding: 10px;
-    color: white;
-    text-decoration: none;
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at center,rgba(139,92,246,.25),transparent 60%),
+        linear-gradient(to bottom,rgba(2,6,23,.6),#020617);
 }
 
-.dropdown-btn .dropdown-content a:hover {
-    background-color: #ff6b6b;
+.hero-content{position:relative; z-index:2;}
+
+.hero-title{
+    font-size:64px;
+    font-weight:900;
+    color:white;
+    line-height:1.1;
+}
+.hero-title span{
+    display:block;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
 }
 
-.dropdown-btn:hover .dropdown-content {
-    display: block;
+.hero-sub{
+    margin-top:18px;
+    font-size:20px;
+    color:#cbd5e1;
 }
+
+/* CTA */
+.hero-actions{margin-top:35px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+
+.cta-main{
+    padding:14px 28px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    border:none;color:white;font-weight:700;
+    box-shadow:0 15px 40px rgba(139,92,246,.5);
+}
+
+.cta-secondary{
+    padding:14px 28px;border-radius:14px;border:1px solid #8b5cf6;color:#e5e7eb;
+}
+
+/* dropdown */
+.cta-dropdown{position:relative;}
+.cta-menu{
+    position:absolute;
+    top:120%;
+    left:0;
+    width:220px;
+    background:#020617;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:.25s;
+    pointer-events:none;
+}
+.cta-dropdown:hover .cta-menu{opacity:1;transform:translateY(0);pointer-events:auto;}
+.cta-menu a{display:block;padding:14px;color:#e5e7eb;text-decoration:none;}
+.cta-menu a:hover{background:#8b5cf6}
+
+/* sections */
+.section-title{
+    margin:70px 0 25px;
+    font-weight:800;
+    text-align:center;
+    color:#e5e7eb;
+}
+
+/* partners */
+.partner-logos{
+    display:flex;
+    justify-content:center;
+    gap:60px;
+    opacity:.8;
+    flex-wrap:wrap;
+}
+.partner-logos img{height:50px;filter:grayscale(1);transition:.3s;}
+.partner-logos img:hover{filter:none;transform:scale(1.1);}
+
+/* testimonials */
+.testimonial-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+.testimonial-card{
+    background:#020617;
+    padding:25px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.08);
+}
+.testimonial-card span{color:#8b5cf6;font-weight:600;}
+
+/* FAQ */
+.faq-item{margin-bottom:12px;}
+.faq-btn{
+    width:100%;
+    background:#020617;
+    border:1px solid rgba(255,255,255,.1);
+    padding:16px;
+    color:#e5e7eb;
+    border-radius:12px;
+    display:flex;
+    justify-content:space-between;
+}
+.faq-content{
+    display:none;
+    padding:15px;
+    background:#020617;
+    border:1px solid rgba(255,255,255,.06);
+    border-top:none;
+}
+.faq-item.active .faq-content{display:block;}
+
+@media(max-width:768px){
+    .hero-title{font-size:38px;}
+    .hero-sub{font-size:16px;}
+}
+
 </style>
 
+
+<!-- ================= JS ================= -->
+<script>
+document.querySelectorAll(".faq-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        btn.parentElement.classList.toggle("active");
+    });
+});
+</script>
 
 {% endblock %}
