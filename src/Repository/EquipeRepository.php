@@ -40,8 +40,8 @@ public function findAllWithSearch(?string $search = null, ?string $game = null, 
     }
 
      if ($game) {
-        $qb->andWhere('e.categorie = :categorie')
-           ->setParameter('categorie', $game);
+        $qb->andWhere('e.game = :game')
+           ->setParameter('game', $game);
     }
 
     

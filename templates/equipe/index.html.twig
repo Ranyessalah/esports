@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
-{% block title %}Équipes | ClutchX{% endblock %}
+
+ {% block title %}Équipes | ClutchX{% endblock %}
 
 {% block body %}
 
@@ -151,7 +152,14 @@
     display:flex;
     justify-content:space-around;
     margin:20px 0;
+}.fadeIn{
+    animation:fadeIn .35s ease;
 }
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(15px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
 .stat-value{
     font-size:22px;
     font-weight:800;
@@ -192,7 +200,7 @@
     </div>
 
     <!-- FILTER -->
-    <form method="get" class="filter-form">
+<form class="filter-form" onsubmit="return false;">
 
         <input type="text" name="search"
                placeholder="Rechercher une équipe..."
@@ -216,12 +224,15 @@
             {% endfor %}
         </select>
 
-        <button type="submit" class="btn-search">Filtrer</button>
-
+ 
     </form>
+<div id="searchLoader" style="display:none;text-align:center;margin:20px;">
+    <img src="{{ asset('ia.gif') }}" width="80">
+    <div style="color:#94a3b8">Searching teams...</div>
+</div>
 
     <!-- GRID -->
-    <div class="teams-grid">
+<div class="teams-grid" id="teamsGrid">
 
     {% for equipe in equipes %}
 
@@ -283,5 +294,91 @@
     </div>
 
 </div>
+<script>
+
+const searchInput = document.querySelector('.input-search');
+const gameSelect  = document.querySelector('.select-game');
+const grid        = document.getElementById('teamsGrid');
+const loader      = document.getElementById('searchLoader');
+
+let typingTimer;
+const delay = 400; // ms
+
+function fetchTeams(){
+
+    loader.style.display = "block";
+
+    const search = searchInput.value;
+    const game   = gameSelect.value;
+
+    fetch(`/equipe/ajax/search?search=${encodeURIComponent(search)}&game=${encodeURIComponent(game)}`)
+    .then(res => res.json())
+    .then(data => {
+
+        loader.style.display = "none";
+
+        grid.innerHTML = "";
+
+        if(data.length === 0){
+            grid.innerHTML = "<p style='text-align:center;width:100%'>No teams found.</p>";
+            return;
+        }
+
+        data.forEach(team => {
+
+            const logo = team.logo
+                ? `/uploads/equipes/${team.logo}`
+                : null;
+
+            const initials = team.nom.substring(0,2).toUpperCase();
+
+            grid.innerHTML += `
+            <div class="team-card fadeIn">
+
+                <div class="team-logo">
+                    ${
+                        logo
+                        ? `<img src="${logo}">`
+                        : `<span style="font-weight:900;font-size:20px">${initials}</span>`
+                    }
+                </div>
+
+                <div class="team-name">${team.nom}</div>
+
+                <div class="team-badge">
+                    ${team.game} • ${team.categorie}
+                </div>
+
+                <div class="team-coach">
+                    Coach : ${team.coach}
+                </div>
+
+                <div class="team-stats">
+                    <div>
+                        <div class="stat-value">${team.players}</div>
+                        <div class="stat-label">Joueurs</div>
+                    </div>
+                </div>
+
+                <a href="/equipe/${team.id}" class="btn-show">
+                    Voir l'équipe
+                </a>
+
+            </div>`;
+        });
+
+    });
+}
+
+// typing detection
+searchInput.addEventListener('keyup', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(fetchTeams, delay);
+});
+
+// select change
+gameSelect.addEventListener('change', fetchTeams);
+
+</script>
 
 {% endblock %}

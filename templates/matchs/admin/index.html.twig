@@ -383,6 +383,20 @@
     .add-team-container { text-align:center; margin-bottom:50px; }
     .btn-add-team { background:transparent; color:#6c63ff; border:2px dashed #6c63ff; padding:16px 40px; border-radius:10px; font-size:18px; font-weight:700; text-decoration:none; display:inline-block; transition:all 0.3s; }
     .btn-add-team:hover { background: rgba(108,99,255,0.1); border-style:solid; }
+.btn-calendar{
+    padding:12px 26px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+    transition:.25s;
+}
+
+.btn-calendar:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(34,197,94,.5);
+}
 
     @media(max-width:992px){ .teams-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));} }
     @media(max-width:768px){ .teams-grid{grid-template-columns:1fr;} }
@@ -433,8 +447,16 @@
                 <div class="team-actions">
                     <a href="{{ path('app_matchs_show', {'id': match.id}) }}" class="btn-show"><i class="fas fa-eye"></i> Show</a>
                     <a href="{{ path('app_matchs_edit', {'id': match.id}) }}" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
+            
+            <a href="{{ path('app_matchs_calendar', {'id': match.id}) }}"
+   target="_blank"
+   class="btn-calendar">
+    📅 Ajouter au Google Calendar
+</a>
+
                 </div>
             </div>
+
         </div>
         {% else %}
             <p>Aucun match trouvé.</p>

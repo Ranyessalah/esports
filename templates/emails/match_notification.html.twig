@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>Nouveau Match ClutchX</title>
+</head>
+
+<body style="margin:0;padding:0;background:#0b0f1a;font-family:Arial,Helvetica,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0b0f1a;padding:25px 0;">
+<tr>
+<td align="center">
+
+<!-- MAIN CONTAINER -->
+<table width="640" cellpadding="0" cellspacing="0" border="0" style="background:#111827;border-radius:14px;overflow:hidden;">
+
+    <!-- HEADER -->
+    <tr>
+        <td align="center" style="background:#7c3aed;padding:35px 20px;color:white;">
+            <div style="font-size:34px;font-weight:900;letter-spacing:2px;">
+                CLUTCH<span style="color:#fde047;">X</span>
+            </div>
+
+            <div style="margin-top:10px;font-size:13px;background:rgba(255,255,255,.2);
+                        padding:6px 14px;border-radius:20px;display:inline-block;">
+                ⚡ Nouveau Match Programmé
+            </div>
+        </td>
+    </tr>
+
+    <!-- GREETING -->
+    <tr>
+        <td style="padding:30px 35px;color:#e5e7eb;">
+            <h2 style="margin:0 0 8px 0;font-size:24px;">Bonjour Coach 👋</h2>
+            <p style="margin:0;color:#9ca3af;font-size:15px;line-height:1.5;">
+                Votre équipe a été programmée pour un nouveau match officiel sur ClutchX.
+                Préparez votre stratégie !
+            </p>
+        </td>
+    </tr>
+
+    <!-- MATCH CARD -->
+    <tr>
+        <td style="padding:0 30px 20px 30px;">
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background:#020617;border:1px solid #7c3aed;border-radius:12px;padding:25px;text-align:center;">
+
+                <!-- TEAM VS -->
+                <tr>
+                    <td width="40%" align="center" style="padding:15px;color:white;">
+                        <div style="font-size:18px;font-weight:bold;">
+                            {{ match.equipe1.nom }}
+                        </div>
+                        <div style="font-size:12px;color:#9ca3af;margin-top:5px;">
+                            Équipe 1
+                        </div>
+                    </td>
+
+                    <td width="20%" align="center">
+                        <div style="background:#7c3aed;color:white;width:50px;height:50px;
+                                    line-height:50px;border-radius:50%;font-weight:bold;">
+                            VS
+                        </div>
+                    </td>
+
+                    <td width="40%" align="center" style="padding:15px;color:white;">
+                        <div style="font-size:18px;font-weight:bold;">
+                            {{ match.equipe2.nom }}
+                        </div>
+                        <div style="font-size:12px;color:#9ca3af;margin-top:5px;">
+                            Équipe 2
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- MATCH INFO -->
+                <tr>
+                    <td colspan="3" align="center" style="padding-top:20px;">
+
+                        <table cellpadding="0" cellspacing="0" border="0">
+
+                            <tr>
+                                <td style="padding:8px 15px;color:#e5e7eb;font-size:14px;">
+                                    🏆 <strong>{{ match.nomMatch }}</strong>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px 15px;color:#e5e7eb;font-size:14px;">
+                                    📅 {{ match.dateMatch|date('d M Y') }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px 15px;color:#e5e7eb;font-size:14px;">
+                                    ⏰ {{ match.dateMatch|date('H:i') }}
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+
+    <!-- COUNTDOWN -->
+    <tr>
+        <td align="center" style="padding:10px 35px 25px 35px;">
+            <div style="background:#1f2937;color:#fbbf24;padding:14px;border-radius:10px;font-weight:bold;">
+                ⏳ Match dans
+                {{ ((match.dateMatch|date('U') - "now"|date('U')) / 86400)|round }} jours
+            </div>
+        </td>
+    </tr>
+
+    <!-- BUTTON -->
+    <tr>
+        <td align="center" style="padding:0 35px 35px 35px;">
+            <a href="{{ absolute_url(path('app_matchs_show', {'id': match.id})) }}"
+               style="background:#7c3aed;color:white;text-decoration:none;padding:14px 30px;
+                      border-radius:8px;font-weight:bold;display:inline-block;">
+                Préparer le match
+            </a>
+        </td>
+    </tr>
+
+    <!-- FOOTER -->
+    <tr>
+        <td align="center" style="background:#020617;padding:25px;color:#9ca3af;font-size:12px;">
+            © {{ "now"|date("Y") }} ClutchX E-Sport Platform<br>
+            Ceci est un email automatique, merci de ne pas répondre.
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

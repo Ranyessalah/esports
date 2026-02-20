@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/equipe')]
 final class EquipeController extends AbstractController
@@ -37,7 +38,30 @@ public function index(Request $request, EquipeRepository $repo): Response
         'sort' => $sort,
     ]);
 }
+#[Route('/ajax/search', name: 'app_equipe_ajax_search', methods: ['GET'])]
+public function ajaxSearch(Request $request, EquipeRepository $repo): JsonResponse
+{
+    $search = $request->query->get('search');
+    $game   = $request->query->get('game');
 
+    $equipes = $repo->findAllWithSearch($search, $game);
+
+    $data = [];
+
+    foreach ($equipes as $equipe) {
+        $data[] = [
+            'id' => $equipe->getId(),
+            'nom' => $equipe->getNom(),
+            'game' => $equipe->getGame(),
+            'categorie' => $equipe->getCategorie(),
+            'logo' => $equipe->getLogo(),
+            'players' => count($equipe->getJoueur()),
+            'coach' => $equipe->getCoach() ? $equipe->getCoach()->getEmail() : 'Non assigné'
+        ];
+    }
+
+    return new JsonResponse($data);
+}
     #[Route('/new', name: 'app_equipe_new', methods: ['GET', 'POST'])]
 public function new(Request $request, EntityManagerInterface $entityManager): Response
 {

@@ -4,6 +4,8 @@ namespace App\Service;
 use App\Entity\Equipe;
 use App\Repository\MatchsRepository;
 use App\Repository\EquipeRepository;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class StatsService
 {
@@ -140,4 +142,14 @@ class StatsService
             'difference' => 0
         ];
     }
+
+
+
+
+
+
+
+
+
+
 }
