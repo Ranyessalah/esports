@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    recaptcha.site_key: '%env(RECAPTCHA_SITE_KEY)%'
+    recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
+    facepp.api_key: '%env(FACEPP_API_KEY)%'
+    facepp.api_secret: '%env(FACEPP_API_SECRET)%'
+
 
 services:
     # default configuration for services in *this* file
@@ -19,6 +24,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\MailerService:
+        arguments:
+            $mailer: '@mailer'
+
+    App\Service\RecaptchaService:
+        arguments:
+            $recaptchaSecretKey: '%recaptcha.secret_key%'
+
+    App\Service\FacePlusPlusService:
+        arguments:
+            $faceppApiKey: '%facepp.api_key%'
+            $faceppApiSecret: '%facepp.api_secret%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
