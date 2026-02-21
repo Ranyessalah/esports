@@ -1,0 +1,12 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Edit Equipe{% endblock %}
+
+    {% block content %}
+    <h1>Edit Equipe</h1>
+
+    {{ include('equipe/admin/_form.html.twig', {'button_label': 'Update'}) }}
+
+ 
+    {{ include('equipe/admin/_delete_form.html.twig') }}
+{% endblock %}

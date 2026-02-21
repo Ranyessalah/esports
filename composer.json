@@ -10,13 +10,17 @@
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
-        "endroid/qr-code": "^5.1",
         "knpuniversity/oauth2-client-bundle": "*",
         "league/oauth2-google": "*",
         "spomky-labs/otphp": "^11.4",
+        "dompdf/dompdf": "^3.1",
+        "endroid/qr-code": "^6.0",
         "symfony/asset": "6.4.*",
+        "symfony/cache": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
+        "symfony/expression-language": "6.4.*",
+        "symfony/filesystem": "6.4.*",
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
@@ -27,7 +31,9 @@
         "symfony/security-bundle": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

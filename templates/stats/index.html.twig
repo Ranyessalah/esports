@@ -1,0 +1,386 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Classement des équipes{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+<h1 class="mt-4 mb-3">🏆 Classement des équipes</h1>
+    <a href="{{ path('app_stats_pdf') }}" class="btn btn-danger">
+        <i class="fa fa-file-pdf"></i> Télécharger PDF
+    </a>
+<p class="mb-4"><strong>Total des équipes :</strong> {{ total_equipes }}</p>
+<style>
+
+/* ====== TABLE LOOK PRO ====== */
+#classementTable tbody tr{
+    transition: 0.2s;
+}
+#classementTable tbody tr:hover{
+    background:#1f2937 !important;
+    transform:scale(1.01);
+}
+
+/* POSITION */
+.position{
+    font-weight:700;
+    font-size:16px;
+    color:#e5e7eb;
+}
+
+/* POINTS (le plus important du classement) */
+.points-cell{
+    color:#60a5fa !important;
+    font-weight:800;
+    font-size:17px;
+}
+
+/* VICTOIRES */
+.victory{
+    color:#22c55e !important; /* vert vif lisible */
+    font-weight:700;
+}
+
+/* NULS */
+.draw{
+    color:#facc15 !important; /* jaune visible */
+    font-weight:700;
+}
+
+/* DEFAITES */
+.loss{
+    color:#ef4444 !important; /* rouge clair lisible */
+    font-weight:700;
+}
+
+/* DIFFERENCE DE BUTS */
+.diff-positive{
+    color:#4ade80 !important;
+    font-weight:700;
+}
+.diff-negative{
+    color:#f87171 !important;
+    font-weight:700;
+}
+
+/* NOM EQUIPE */
+.team-name a{
+    color:#f9fafb;
+    text-decoration:none;
+    font-weight:600;
+}
+.team-name a:hover{
+    color:#60a5fa;
+}
+
+/* BADGE GAME */
+.game{
+    background:#374151;
+    color:#e5e7eb;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:13px;
+    display:inline-block;
+}
+
+</style>
+<style>
+
+/* ===== TOOLBAR CONTAINER ===== */
+.filter-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    align-items:center;
+    padding:18px;
+    border-radius:18px;
+    margin-bottom:25px;
+
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
+}
+
+/* ===== GROUP ===== */
+.filter-group{
+    position:relative;
+    display:flex;
+    align-items:center;
+    flex:1;
+    min-width:200px;
+}
+
+/* ICONS */
+.filter-group i{
+    position:absolute;
+    left:14px;
+    color:#94a3b8;
+    font-size:14px;
+    pointer-events:none;
+}
+
+/* INPUT & SELECT */
+.filter-group input,
+.filter-group select{
+    width:100%;
+    padding:12px 14px 12px 38px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.1);
+    background:#020617;
+    color:#e5e7eb;
+    font-size:14px;
+    transition:.2s;
+}
+
+/* PLACEHOLDER */
+.filter-group input::placeholder{
+    color:#64748b;
+}
+
+/* FOCUS EFFECT */
+.filter-group input:focus,
+.filter-group select:focus{
+    outline:none;
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.25);
+    background:#020617;
+}
+
+/* SELECT ARROW */
+.filter-group select{
+    appearance:none;
+    cursor:pointer;
+}
+
+/* SEARCH SPECIAL */
+.search-box{
+    flex:2;
+}
+
+/* RESET BUTTON */
+.reset-btn{
+    border:none;
+    padding:12px 20px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ef4444,#f97316);
+    color:#fff;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:.25s;
+}
+
+.reset-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(239,68,68,.45);
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .filter-toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+    .reset-btn{
+        width:100%;
+        justify-content:center;
+    }
+}
+
+</style>
+
+<!-- ================== TOOLBAR FILTRES PRO ================== -->
+<div class="filter-toolbar">
+
+    <!-- SEARCH -->
+    <div class="filter-group search-box">
+        <i class="fa fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Rechercher une équipe...">
+    </div>
+
+    <!-- GAME FILTER -->
+    <div class="filter-group">
+        <i class="fa-solid fa-gamepad"></i>
+        <select id="gameFilter">
+            <option value="">Tous les jeux</option>
+            {% set games = [] %}
+            {% for stat in classement %}
+                {% if stat.equipe.game not in games %}
+                    {% set games = games|merge([stat.equipe.game]) %}
+                    <option value="{{ stat.equipe.game }}">{{ stat.equipe.game }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- SORT -->
+    <div class="filter-group">
+        <i class="fa-solid fa-arrow-down-wide-short"></i>
+        <select id="sortSelector">
+            <option value="points">Classement officiel</option>
+            <option value="victories">Victoires</option>
+            <option value="defeats">Défaites</option>
+            <option value="difference">Différence de buts</option>
+        </select>
+    </div>
+
+    <!-- RESET -->
+    <button class="reset-btn" onclick="resetFilters()">
+        <i class="fa fa-rotate-right"></i>
+        Reset
+    </button>
+
+</div>
+
+<!-- ================== TABLE ================== -->
+<div class="table-responsive">
+
+<table id="classementTable" class="table table-hover align-middle text-center">
+
+<thead class="table-dark">
+<tr>
+    <th>#</th>
+    <th>Équipe</th>
+    <th>Jeu</th>
+    <th>MJ</th>
+    <th class="text-success">V</th>
+    <th class="text-warning">N</th>
+    <th class="text-danger">D</th>
+    <th>BP</th>
+    <th>BC</th>
+    <th>Diff</th>
+    <th>Pts</th>
+</tr>
+</thead>
+
+<tbody id="tableBody">
+{% for stat in classement %}
+<tr data-points="{{ stat.points }}"
+    data-victories="{{ stat.victoires }}"
+    data-defeats="{{ stat.defaites }}"
+    data-difference="{{ stat.difference }}">
+
+    <td class="position">{{ loop.index }}</td>
+
+    <td class="team-name text-start ">
+        <a href="{{ path('app_stats_equipe', {'id': stat.equipe.id}) }}">
+            {% if stat.equipe.logo %}
+                <img src="{{ asset('uploads/equipes/' ~ stat.equipe.logo) }}"
+                     style="height:32px;width:32px;object-fit:contain;margin-right:8px;">
+            {% endif %}
+            {{ stat.equipe.nom }}
+        </a>
+    </td>
+
+    <td class="game ">{{ stat.equipe.game }}</td>
+    <td class="text-white bold">{{ stat.matchs_joues }}</td>
+<td class="victory">{{ stat.victoires }}</td>
+<td class="draw">{{ stat.nuls }}</td>
+<td class="loss">{{ stat.defaites }}</td>
+
+    <td class="text-white ">{{ stat.buts_pour }}</td>
+    <td class="text-white bold">{{ stat.buts_contre }}</td>
+
+   <td class="{{ stat.difference > 0 ? 'diff-positive' : (stat.difference < 0 ? 'diff-negative' : '') }}">
+    {{ stat.difference > 0 ? '+' : '' }}{{ stat.difference }}
+</td>
+
+
+<td class="points-cell">{{ stat.points }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+</div>
+
+<!-- ================== SCRIPT ================== -->
+<script>
+
+/* ================= RECHERCHE ================= */
+
+document.getElementById("searchInput").addEventListener("keyup", filterTable);
+document.getElementById("gameFilter").addEventListener("change", filterTable);
+
+function filterTable(){
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const game = document.getElementById("gameFilter").value.toLowerCase();
+
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    rows.forEach(row=>{
+        const name = row.querySelector(".team-name").textContent.toLowerCase();
+        const gameCell = row.querySelector(".game").textContent.toLowerCase();
+
+        const matchSearch = name.includes(search);
+        const matchGame = game === "" || gameCell === game;
+
+        row.style.display = (matchSearch && matchGame) ? "" : "none";
+    });
+
+    updatePositions();
+}
+
+/* ================= TRI SPORTIF ================= */
+
+document.getElementById("sortSelector").addEventListener("change", function(){
+    const type = this.value;
+    const tbody = document.getElementById("tableBody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    rows.sort((a,b)=>{
+
+        if(type==="points"){
+            return b.dataset.points - a.dataset.points;
+        }
+        if(type==="victories"){
+            return b.dataset.victories - a.dataset.victories;
+        }
+        if(type==="defeats"){
+            return b.dataset.defeats - a.dataset.defeats;
+        }
+        if(type==="difference"){
+            return b.dataset.difference - a.dataset.difference;
+        }
+
+    });
+
+    rows.forEach(row=>tbody.appendChild(row));
+    updatePositions();
+});
+
+/* ================= RECALCUL POSITION ================= */
+
+function updatePositions(){
+    const visibleRows = document.querySelectorAll("#tableBody tr:not([style*='display: none'])");
+
+    let index=1;
+    visibleRows.forEach(row=>{
+        row.querySelector(".position").textContent=index++;
+    });
+}
+
+/* ================= RESET ================= */
+
+function resetFilters(){
+    document.getElementById("searchInput").value="";
+    document.getElementById("gameFilter").value="";
+    document.getElementById("sortSelector").value="points";
+
+    document.querySelectorAll("#tableBody tr").forEach(r=>r.style.display="");
+
+    document.getElementById("sortSelector").dispatchEvent(new Event("change"));
+}
+
+/* AUTO classement par points au chargement */
+window.onload = ()=>{
+    document.getElementById("sortSelector").dispatchEvent(new Event("change"));
+};
+
+</script>
+
+{% endblock %}

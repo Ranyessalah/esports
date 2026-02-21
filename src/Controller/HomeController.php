@@ -33,6 +33,18 @@ final class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig');
     }
+
+    #[Route('/', name: 'app_home')]
+    public function indexs(): Response
+    {
+
+    
+
+        return $this->render('home/index.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
     #[Route('/backoffice', name: 'backoffice_home')]
     public function backOffice(UserRepository $userRepository, Request $request): Response
     {

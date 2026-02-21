@@ -1,3 +1,4 @@
+{# templates/backoffice/base_backoffice.html.twig #}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,6 +11,7 @@
     <link href="{{ asset('lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('lib/typicons.font/typicons.css') }}" rel="stylesheet">
     <link href="{{ asset('lib/flag-icon-css/css/flag-icon.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     {# Azia CSS #}
     <link rel="stylesheet" href="{{ asset('css/azia.css') }}">
@@ -17,352 +19,366 @@
     {% block stylesheets %}{% endblock %}
 
     <style>
-        /* Custom Styles for Layout */
-        body {
-            background-color: #f4f5f8;
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        :root{
+            --bg: #0b1220;
+            --surface: rgba(255,255,255,.06);
+            --stroke: rgba(255,255,255,.10);
+            --text: #e9eef8;
+            --muted: rgba(233,238,248,.70);
+            --brand: #560bd0;
+            --brand-2: #7c3aed;
+            --shadow: 0 18px 45px rgba(0,0,0,.35);
+            --radius: 18px;
+            --sidebar-w: 264px;
+            --topbar-h: 66px;
         }
 
-        .az-header {
+        *{ box-sizing:border-box; }
+
+        body{
+            margin:0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 10% 0%, rgba(124,58,237,.35), transparent 55%),
+                radial-gradient(1000px 500px at 90% 10%, rgba(86,11,208,.35), transparent 55%),
+                radial-gradient(900px 500px at 50% 120%, rgba(56,189,248,.12), transparent 60%),
+                var(--bg);
+            min-height:100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+        .bo-topbar{
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #fff;
-            border-bottom: 1px solid #e1e5eb;
+            inset: 0 0 auto 0;
+            height: var(--topbar-h);
             z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 10px 14px;
         }
 
-        .az-header .container-fluid {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .bo-topbar-inner{
             height: 100%;
-            padding: 0 25px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 12px;
+            padding: 0 14px;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.07);
+            backdrop-filter: blur(14px);
+            border-radius: calc(var(--radius) + 6px);
+            box-shadow: var(--shadow);
         }
 
-        .az-header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .bo-left{
+            display:flex;
+            align-items:center;
+            gap: 12px;
         }
 
-        /* Logo ClutchX - Amélioré */
-        .az-logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            height: 45px;
-            padding: 5px 10px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            background: transparent;
-        }
-
-        .az-logo:hover {
-            background: #f8f9fa;
-            transform: scale(1.02);
-        }
-
-        .az-logo img {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-            display: block;
-        }
-
-        .az-header-menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .az-header-menu .nav {
-            display: flex;
+        .bo-brand{
+            display:flex;
+            align-items:center;
             gap: 10px;
-            margin: 0;
+            text-decoration:none;
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: .3px;
         }
 
-        .az-header-menu .nav-link {
-            color: #596882;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
+        .bo-brand-badge{
+            width: 36px; height: 36px;
+            border-radius: 12px;
+            display:grid;
+            place-items:center;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            box-shadow: 0 10px 22px rgba(124,58,237,.28);
         }
 
-        .az-header-menu .nav-link:hover {
-            background: #f4f5f8;
-            color: #6c3fd6;
+        .bo-iconbtn{
+            width: 40px; height: 40px;
+            border-radius: 14px;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.06);
+            color: var(--text);
+            display:grid;
+            place-items:center;
+            cursor:pointer;
         }
 
-        .az-header-menu .nav-link.active {
-            color: #6c3fd6;
-            background: #f4f5f8;
+        .bo-search{
+            flex: 1;
+            max-width: 560px;
+            display:flex;
+            align-items:center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.06);
         }
 
-        .az-header-menu .nav-link i {
-            margin-right: 6px;
+        .bo-search input{
+            width:100%;
+            border:0;
+            outline:0;
+            background: transparent;
+            color: var(--text);
         }
 
-        .az-header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .bo-right{
+            display:flex;
+            align-items:center;
+            gap: 10px;
         }
 
-        .az-header-right .dropdown-link {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #f4f5f8;
-            color: #596882;
-            cursor: pointer;
-            transition: all 0.2s;
+        .bo-user{
+            display:flex;
+            align-items:center;
+            gap: 10px;
+            padding: 6px 10px 6px 6px;
+            border-radius: 18px;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.06);
         }
 
-        .az-header-right .dropdown-link:hover {
-            background: #e1e5eb;
-            color: #6c3fd6;
+        .bo-avatar{
+            width: 34px; height: 34px;
+            border-radius: 14px;
+            display:grid;
+            place-items:center;
+            background: rgba(255,255,255,.10);
+            font-weight: 800;
+            color: #fff;
         }
 
-        .az-sidebar {
+        /* ================= LAYOUT ================= */
+        .bo-layout{
+            display:flex;
+            padding-top: calc(var(--topbar-h) + 14px);
+            gap: 14px;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .bo-sidebar{
             position: fixed;
-            left: 0;
-            top: 60px;
-            bottom: 0;
-            width: 240px;
-            background: #1d273b;
-            padding: 20px 0;
-            overflow-y: auto;
-            z-index: 999;
+            top: calc(var(--topbar-h) + 14px);
+            left: 14px;
+            bottom: 14px;
+            width: var(--sidebar-w);
+            border-radius: var(--radius);
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.06);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            overflow:hidden;
         }
 
-        .az-sidebar .nav {
-            flex-direction: column;
-            padding: 0;
+        .bo-sidebar-inner{
+            height:100%;
+            display:flex;
+            flex-direction:column;
         }
 
-        .az-sidebar .nav-item {
-            list-style: none;
+        .bo-nav{
+            padding: 10px;
+            overflow:auto;
         }
 
-        .az-sidebar .nav-link {
-            color: #8392a5;
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
+        .bo-nav a{
+            display:flex;
+            align-items:center;
+            gap: 12px;
+            padding: 11px 12px;
+            margin: 6px 0;
+            border-radius: 14px;
+            text-decoration:none;
+            color: rgba(233,238,248,.82);
         }
 
-        .az-sidebar .nav-link i {
-            font-size: 20px;
-            margin-right: 12px;
-            width: 24px;
+        .bo-nav a.active{
+            background: linear-gradient(135deg, rgba(86,11,208,.35), rgba(124,58,237,.22));
         }
 
-        .az-sidebar .nav-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
+        .bo-main{
+            margin-left: calc(var(--sidebar-w) + 28px);
+            width: 100%;
+            padding: 0 14px 14px 14px;
         }
 
-        .az-sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(108,63,214,0.15);
-            border-left-color: #6c3fd6;
+        .bo-content-card{
+            border-radius: var(--radius);
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,.06);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+            padding: 18px;
+            min-height: calc(100vh - (var(--topbar-h) + 28px));
         }
 
-        .az-content {
-            margin-left: 240px;
-            margin-top: 60px;
-            padding: 25px;
-            min-height: calc(100vh - 100px);
+        .bo-footer{
+            margin-left: calc(var(--sidebar-w) + 28px);
+            padding: 10px 14px 18px 14px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
-        .az-footer {
-            margin-left: 240px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            border-top: 1px solid #e1e5eb;
-            font-size: 13px;
-            color: #8392a5;
+        /* ================= MOBILE ================= */
+        .bo-overlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 890;
+            opacity: 0;
+            pointer-events:none;
+            transition: opacity .2s ease;
         }
 
-        /* Mobile menu toggle */
-        #azMenuShow {
-            display: none;
-            width: 36px;
-            height: 36px;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
+        .bo-overlay.show{
+            opacity: 1;
+            pointer-events:auto;
         }
 
-        #azMenuShow:hover {
-            background: #f4f5f8;
-        }
-
-        #azMenuShow span,
-        #azMenuShow span::before,
-        #azMenuShow span::after {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: #596882;
-            transition: all 0.3s;
-        }
-
-        #azMenuShow span::before,
-        #azMenuShow span::after {
-            content: '';
-            position: relative;
-        }
-
-        #azMenuShow span::before {
-            top: -6px;
-        }
-
-        #azMenuShow span::after {
-            top: 4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 991px) {
-            #azMenuShow {
-                display: flex;
+        @media (max-width: 991px){
+            .bo-search{ display:none; }
+            .bo-sidebar{
+                transform: translateX(-120%);
+                transition: transform .25s ease;
             }
-
-            .az-sidebar {
-                transform: translateX(-240px);
-                transition: transform 0.3s;
-            }
-
-            .az-sidebar.show {
-                transform: translateX(0);
-            }
-
-            .az-content,
-            .az-footer {
-                margin-left: 0;
-            }
-
-            .az-header-menu {
-                display: none;
-            }
+            .bo-sidebar.show{ transform: translateX(0); }
+            .bo-main, .bo-footer{ margin-left: 0; }
         }
     </style>
 </head>
+
 <body>
 
-  {# ================== HEADER ================== #}
-  <div class="az-header">
-    <div class="container-fluid">
-      <div class="az-header-left">
-        <a href="{{ path('backoffice_home') }}" class="az-logo">
-          <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="ClutchX Logo">
-        </a>
-        <a href="#" id="azMenuShow"><span></span></a>
-      </div>
+<header class="bo-topbar">
+    <div class="bo-topbar-inner">
 
-      <div class="az-header-menu">
-        <ul class="nav">
-          <li class="nav-item">
-            <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-              <i class="typcn typcn-chart-area-outline"></i> Tableau de bord
+        <div class="bo-left">
+            <button class="bo-iconbtn d-lg-none" id="boMenuBtn" type="button">
+                <i class="typcn typcn-th-menu"></i>
+            </button>
+
+            <a href="{{ path('backoffice_home') }}" class="bo-brand">
+                <div class="bo-brand-badge"><i class="fas fa-bolt"></i></div>
+                <span>ClutchX</span>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="typcn typcn-document"></i> Pages
+        </div>
+
+        <div class="bo-search">
+            <i class="typcn typcn-zoom"></i>
+            <input type="text" placeholder="Search…">
+        </div>
+
+        <div class="bo-right">
+            <button class="bo-iconbtn" type="button">
+                <i class="typcn typcn-bell"></i>
+            </button>
+
+            <button class="bo-iconbtn" type="button">
+                <i class="typcn typcn-cog"></i>
+            </button>
+
+            <div class="bo-user">
+                <div class="bo-avatar">
+                    {{ (app.user ? (app.user.email|first)|upper : 'A') }}
+                </div>
+                <div>
+                    <small>Connected</small><br>
+                    <strong>{{ app.user ? app.user.email : 'Admin' }}</strong>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+
+<div class="bo-overlay" id="boOverlay"></div>
+
+<aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-inner">
+
+        <nav class="bo-nav">
+            <a href="{{ path('backoffice_home') }}"
+               class="{% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
+                <i class="typcn typcn-chart-area-outline"></i>
+                <span>Dashboard</span>
             </a>
-          </li>
-        </ul>
-      </div>
 
-      <div class="az-header-right">
-        <div class="dropdown-link">
-          <i class="typcn typcn-bell"></i>
-        </div>
-        <div class="dropdown-link">
-          <i class="typcn typcn-user"></i>
-        </div>
-      </div>
+            <a href="#"
+               class="{% if app.request.get('_route') starts with 'app_user' %}active{% endif %}">
+                <i class="typcn typcn-group"></i>
+                <span>Users</span>
+            </a>
+
+            <a href="{{ path('app_equipe_index') }}"
+               class="{% if app.request.get('_route') starts with 'app_equipe' %}active{% endif %}">
+                <i class="typcn typcn-group-outline"></i>
+                <span>Équipes</span>
+            </a>
+
+            <a href="{{ path('app_matchs_index') }}"
+               class="{% if app.request.get('_route') starts with 'app_matchs' %}active{% endif %}">
+                <i class="typcn typcn-media-record-outline"></i>
+                <span>Matchs</span>
+            </a>
+
+            <a href="{{ path('app_stats') }}"
+               class="{% if app.request.get('_route') == 'app_stats' %}active{% endif %}">
+                <i class="typcn typcn-chart-bar-outline"></i>
+                <span>Statistiques</span>
+            </a>
+        </nav>
+
     </div>
-  </div>
+</aside>
 
-  {# ================== SIDEBAR ================== #}
-  <div class="az-sidebar">
-    <ul class="nav">
-      <li class="nav-item">
-        <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-          <i class="typcn typcn-chart-area-outline"></i> Tableau de bord
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="typcn typcn-group"></i> Utilisateurs
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="typcn typcn-document"></i> Pages
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="typcn typcn-cog"></i> Paramètres
-        </a>
-      </li>
-    </ul>
-  </div>
+<div class="bo-layout">
+    <main class="bo-main">
+        <div class="bo-content-card">
+            {% block content %}
+                <h2>Bienvenue au Back-office</h2>
+                <p>Ceci est la zone de contenu principale.</p>
+            {% endblock %}
+        </div>
+    </main>
+</div>
 
-  {# ================== CONTENT ================== #}
-  <div class="az-content">
-    {% block content %}
-    <h2>Bienvenue au Back-office</h2>
-    <p>Ceci est la zone de contenu principale.</p>
-    {% endblock %}
-  </div>
+<footer class="bo-footer">
+    © {{ "now"|date("Y") }} — Backoffice
+</footer>
 
-  {# ================== FOOTER ================== #}
-  <div class="az-footer">
-    <div class="container-fluid">
-      <span>Copyright © ClutchX {{ 'now'|date('Y') }}</span>
-    </div>
-  </div>
+<script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('lib/ionicons/ionicons.js') }}"></script>
+<script src="{{ asset('js/azia.js') }}"></script>
 
-  {# ================== JS ================== #}
-  <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
-  <script src="{{ asset('lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ asset('lib/ionicons/ionicons.js') }}"></script>
-  <script src="{{ asset('js/azia.js') }}"></script>
+<script>
+    (function () {
+        const btn = document.getElementById('boMenuBtn');
+        const sidebar = document.getElementById('boSidebar');
+        const overlay = document.getElementById('boOverlay');
 
-  <script>
-    // Toggle sidebar on mobile
-    document.getElementById('azMenuShow')?.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelector('.az-sidebar').classList.toggle('show');
-    });
-  </script>
+        function openMenu(){
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        }
+        function closeMenu(){
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
 
-  {% block javascripts %}{% endblock %}
+        btn && btn.addEventListener('click', function(e){ e.preventDefault(); openMenu(); });
+        overlay && overlay.addEventListener('click', closeMenu);
 
+        document.addEventListener('keydown', function(e){
+            if(e.key === 'Escape') closeMenu();
+        });
+    })();
+</script>
+
+{% block javascripts %}{% endblock %}
 </body>
 </html>
