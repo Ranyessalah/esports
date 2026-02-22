@@ -6,8 +6,8 @@ class MatchPredictionService
 {
     public function predict(int $team1, int $team2): ?string
     {
-        $python = "C:/Program Files/Python312/python.exe";
-        $script = "C:/Users/Administrator/Desktop/esports_nermine/predict.py";
+       $python = "C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python312\\python.exe";
+$script = "C:\\Users\\User\\OneDrive\\Bureau\\esports_nermine\\esports_nermine\\predict.py";
 
         $command = "\"$python\" \"$script\" $team1 $team2";
 
