@@ -1,232 +1,170 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Créer un match</title>
 
-    <style>
-        * { box-sizing:border-box; margin:0; padding:0; font-family:Segoe UI,Tahoma,Verdana,sans-serif; }
-        body { background:#0f0f1a; color:#f0f0f0; min-height:100vh; }
+<style>
+    * { box-sizing:border-box; margin:0; padding:0; font-family:Segoe UI,Tahoma,Verdana,sans-serif; }
+    body { background:#0f0f1a; color:#f0f0f0; min-height:100vh; }
 
-        .main-content { max-width:1200px; margin:auto; padding:2rem; }
+    .main-content { max-width:1200px; margin:auto; padding:2rem; }
 
-        .page-header {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:2rem;
-        }
+    .match-creation-form {
+        background:#1a1a2e; border-radius:16px; padding:2.5rem;
+        border:1px solid #2a2a3e; box-shadow:0 10px 30px rgba(0,0,0,.5);
+    }
 
-        .back-btn {
-            background:#2a2a3e;
-            color:white;
-            padding:.6rem 1.3rem;
-            border-radius:8px;
-            text-decoration:none;
-        }
+    .form-section { margin-bottom:3rem; }
+    .form-section h3 { font-size:1.3rem; margin-bottom:1.5rem; border-left:4px solid #8b1c7c; padding-left:.7rem; }
 
-        .match-creation-form {
-            background:#1a1a2e;
-            border-radius:16px;
-            padding:2.5rem;
-            border:1px solid #2a2a3e;
-            box-shadow:0 10px 30px rgba(0,0,0,.5);
-        }
+    .team-input, .datetime-input {
+        width:100%; padding:1rem; background:#0f0f1a; color:white;
+        border:2px solid #2a2a3e; border-radius:12px; font-size:1rem; transition:.2s;
+    }
 
-        .form-section { margin-bottom:3rem; }
+    .team-input:focus, .datetime-input:focus {
+        outline:none; border-color:#ff4655; box-shadow:0 0 0 3px rgba(255,70,85,.25);
+    }
 
-        .form-section h3 {
-            font-size:1.3rem;
-            margin-bottom:1.5rem;
-            border-left:4px solid #8b1c7c;
-            padding-left:.7rem;
-        }
+    .form-error { color:#ff4655; font-size:.85rem; margin-top:.4rem; }
 
-        label { display:block; margin-bottom:.5rem; color:#b0b0c0; }
+    .dates-container, .teams-container { display:flex; gap:2rem; align-items:center; }
 
-        /* ===== INPUTS ===== */
-        .form-select, .team-input, .datetime-input {
-            width:100%;
-            padding:1rem;
-            background:#0f0f1a;
-            color:white;
-            border:2px solid #2a2a3e;
-            border-radius:12px;
-            font-size:1rem;
-            transition:.2s;
-        }
+    .team-card {
+        flex:1; background:#151525; padding:2rem;
+        border-radius:16px; border:2px solid #2a2a3e;
+    }
 
-        .datetime-input {
-            cursor:pointer;
-            text-align:center;
-        }
+    .vs span {
+        width:70px; height:70px; border-radius:50%;
+        background:linear-gradient(45deg,#ff4655,#8a2be2);
+        display:flex; align-items:center; justify-content:center;
+        font-size:1.4rem; font-weight:800;
+    }
 
-        .datetime-input::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor:pointer;
-        }
+    .form-actions {
+        display:flex; justify-content:flex-end;
+        gap:1.5rem; border-top:1px solid #2a2a3e; padding-top:2rem;
+    }
 
-        .datetime-input:focus,
-        .form-select:focus,
-        .team-input:focus {
-            outline:none;
-            border-color:#ff4655;
-            box-shadow:0 0 0 3px rgba(255,70,85,.25);
-        }
+    .btn {
+        padding:1rem 2.5rem; border-radius:10px;
+        font-weight:600; border:none; cursor:pointer;
+    }
 
-        .form-error {
-            color:#ff4655;
-            font-size:.85rem;
-            margin-top:.4rem;
-        }
+    .btn-secondary { background:#2a2a3e; color:#b0b0c0; }
+    .btn-primary { background:linear-gradient(135deg,#ff4655,#8a2be2); color:white; }
 
-        .dates-container,
-        .teams-container {
-            display:flex;
-            gap:2rem;
-            align-items:center;
-        }
+    .status-pill {
+        background:#ffc107;
+        color:#000;
+        padding:.5rem 1.5rem;
+        border-radius:50px;
+        display:inline-block;
+        font-weight:600;
+    }/* Conteneur des boutons */
+.score-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
 
-        .team-card {
-            flex:1;
-            background:#151525;
-            padding:2rem;
-            border-radius:16px;
-            border:2px solid #2a2a3e;
-        }
+/* Boutons plus et moins */
+.score-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #6f42c1; /* violet comme ton thème */
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
 
-        /* ===== SCORE ===== */
-        .score-controls {
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            gap:1.5rem;
-            margin-top:1.2rem;
-        }
+.score-btn:hover {
+    background-color: #5a32a3;
+    transform: scale(1.1);
+}
 
-        .score-display {
-            font-size:3rem;
-            font-weight:800;
-            min-width:60px;
-            text-align:center;
-        }
+.score-btn:active {
+    background-color: #4a267d;
+    transform: scale(0.95);
+}
 
-        .score-btn {
-            width:50px;
-            height:50px;
-            border-radius:50%;
-            border:none;
-            font-size:1.8rem;
-            font-weight:bold;
-            cursor:pointer;
-        }
+/* Affichage du score */
+.score-display {
+    min-width: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    color: #0f0f1a;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
 
-        .score-btn.plus { background:#00b894; color:white; }
-        .score-btn.minus { background:#ff4655; color:white; }
-
-        .vs span {
-            width:70px;
-            height:70px;
-            border-radius:50%;
-            background:linear-gradient(45deg,#ff4655,#8a2be2);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:1.4rem;
-            font-weight:800;
-        }
-
-        .form-actions {
-            display:flex;
-            justify-content:flex-end;
-            gap:1.5rem;
-            border-top:1px solid #2a2a3e;
-            padding-top:2rem;
-        }
-
-        .btn {
-            padding:1rem 2.5rem;
-            border-radius:10px;
-            font-weight:600;
-            border:none;
-            cursor:pointer;
-        }
-
-        .btn-secondary { background:#2a2a3e; color:#b0b0c0; }
-        .btn-primary {
-            background:linear-gradient(135deg,#ff4655,#8a2be2);
-            color:white;
-        }
-    </style>
-</head>
-
-<body>
+</style>
 
 <div class="main-content">
 
-<br>
-<br>
-<br>
-<br>
-
     {{ form_start(form, { attr:{ class:'match-creation-form', novalidate:'novalidate' } }) }}
 
-    <!-- CONFIG -->
+    <!-- NOM -->
     <div class="form-section">
-        <h3>Configuration du match</h3>
-        <label>Statut</label>
-        {{ form_widget(form.statut, { attr:{ class:'form-select' } }) }}
-        <div class="form-error">{{ form_errors(form.statut) }}</div>
+        <h3>Nom du match</h3>
+        {{ form_widget(form.nom_match, { attr: { class: 'team-input' } }) }}
+        <div class="form-error">{{ form_errors(form.nom_match) }}</div>
     </div>
 
-    <!-- DATE -->
+   <div class="form-section">
+    <h3>Configuration du match</h3>
+
+    {% if app.request.attributes.get('_route') == 'app_matchs_new' %}
+        {# Sur la page de création, statut par défaut #}
+        <div class="status-pill">EN COURS</div>
+    {% else %}
+        {# Sur la page édition ou autre, tu peux afficher le champ réel du formulaire #}
+        {{ form_widget(form.statut, { attr: { class: 'team-input' } }) }}
+        <div class="form-error">{{ form_errors(form.statut) }}</div>
+    {% endif %}
+</div>
+
+
+    <!-- DATES -->
     <div class="form-section">
         <h3>Date et heure</h3>
-
         <div class="dates-container">
-
             <div class="team-card">
                 <h4>Début</h4>
-                {{ form_widget(form.dateMatch, {
-                    attr: {
-                        class: 'datetime-input',
-                        type: 'datetime-local'
-                    }
-                }) }}
+                {{ form_widget(form.dateMatch, { attr: { class: 'datetime-input' } }) }}
                 <div class="form-error">{{ form_errors(form.dateMatch) }}</div>
             </div>
-
             <div class="team-card">
                 <h4>Fin</h4>
-                {{ form_widget(form.dateFinMatch, {
-                    attr: {
-                        class: 'datetime-input',
-                        type: 'datetime-local'
-                    }
-                }) }}
+                {{ form_widget(form.dateFinMatch, { attr: { class: 'datetime-input' } }) }}
                 <div class="form-error">{{ form_errors(form.dateFinMatch) }}</div>
             </div>
-
         </div>
     </div>
 
-    <!-- ÉQUIPES & SCORE -->
+    <!-- EQUIPES -->
     <div class="form-section">
-        <h3>Équipes & score</h3>
-
+        <h3>Équipes</h3>
         <div class="teams-container">
 
             <div class="team-card">
                 <h4>Équipe 1</h4>
                 {{ form_widget(form.equipe1, { attr:{ class:'team-input' } }) }}
-
-                <div class="score-controls">
-                    <button type="button" class="score-btn minus" onclick="changeScore(1,-1)">−</button>
-                    <div class="score-display" id="display1">0</div>
-                    <button type="button" class="score-btn plus" onclick="changeScore(1,1)">+</button>
-                </div>
-
-                {{ form_widget(form.scoreEquipe1, { attr:{ id:'scoreInput1' } }) }}
+                {{ form_widget(form.scoreEquipe1) }}
+                {% if app.request.attributes.get('_route') == 'app_matchs_edit' %}
+    <div class="score-controls">
+    <button type="button" class="score-btn minus" onclick="changeScore('score1', -1)">−</button>
+    <div class="score-display" id="score1">
+        {{ form.scoreEquipe1.vars.data ?: 0 }}
+    </div>
+    <button type="button" class="score-btn plus" onclick="changeScore('score1', 1)">+</button>
+</div>
+{% endif %}
             </div>
 
             <div class="vs"><span>VS</span></div>
@@ -234,40 +172,90 @@
             <div class="team-card">
                 <h4>Équipe 2</h4>
                 {{ form_widget(form.equipe2, { attr:{ class:'team-input' } }) }}
+                {{ form_widget(form.scoreEquipe2) }}
+                {# score-controls.twig #}
 
-                <div class="score-controls">
-                    <button type="button" class="score-btn minus" onclick="changeScore(2,-1)">−</button>
-                    <div class="score-display" id="display2">0</div>
-                    <button type="button" class="score-btn plus" onclick="changeScore(2,1)">+</button>
-                </div>
+{% if app.request.attributes.get('_route') == 'app_matchs_edit' %}
+   
+<div class="score-controls">
+    <button type="button" class="score-btn minus" onclick="changeScore('score2', -1)">−</button>
+    <div class="score-display" id="score2">
+        {{ form.scoreEquipe2.vars.data ?: 0 }}
+    </div>
+    <button type="button" class="score-btn plus" onclick="changeScore('score2', 1)">+</button>
+</div>
+{% endif %}
 
-                {{ form_widget(form.scoreEquipe2, { attr:{ id:'scoreInput2' } }) }}
             </div>
 
         </div>
     </div>
 
+    <!-- ACTIONS -->
     <div class="form-actions">
         <a href="{{ path('app_matchs_index') }}" class="btn btn-secondary">Annuler</a>
         <button type="submit" class="btn btn-primary">Créer le match</button>
     </div>
 
+
+
+
+
+
+
+
     {{ form_end(form) }}
 
 </div>
-
 <script>
-function changeScore(team, delta) {
-    const display = document.getElementById('display'+team);
-    const input = document.getElementById('scoreInput'+team);
+function changeScore(id, delta) {
+    const display = document.getElementById(id);
+    let current = parseInt(display.textContent) || 0;
+    current += delta;
+    if(current < 0) current = 0;
+    display.textContent = current;
 
-    let value = parseInt(display.textContent) || 0;
-    value = Math.max(0, value + delta);
-
-    display.textContent = value;
-    input.value = value;
+    // Update hidden input
+    if(id === 'score1') {
+        document.querySelector('input[name$="[scoreEquipe1]"]').value = current;
+    } else if(id === 'score2') {
+        document.querySelector('input[name$="[scoreEquipe2]"]').value = current;
+    }
 }
 </script>
 
-</body>
-</html>
+<!-- 🔥 CLEAN VANILLA JS (NO JQUERY) -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const equipe1 = document.querySelector('select[name$="[equipe1]"]');
+    const equipe2 = document.querySelector('select[name$="[equipe2]"]');
+
+    if (!equipe1 || !equipe2) return;
+
+    function updateOptions() {
+
+        const value1 = equipe1.value;
+        const value2 = equipe2.value;
+
+        Array.from(equipe1.options).forEach(option => {
+            option.disabled = (option.value !== "" && option.value === value2);
+        });
+
+        Array.from(equipe2.options).forEach(option => {
+            option.disabled = (option.value !== "" && option.value === value1);
+        });
+
+        if (value1 === value2 && value1 !== "") {
+            equipe2.value = "";
+        }
+    }
+
+    equipe1.addEventListener("change", updateOptions);
+    equipe2.addEventListener("change", updateOptions);
+
+    updateOptions();
+});
+</script>
+
+ 

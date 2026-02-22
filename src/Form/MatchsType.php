@@ -5,44 +5,45 @@ namespace App\Form;
 use App\Entity\Equipe;
 use App\Entity\Matchs;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class MatchsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('statut', ChoiceType::class, [
-                'choices' => [
-                    'Planifié' => 'planifie',
-                    'Annulé' => 'annule',
-                    'En cours' => 'en_cours',
-                    'Terminé' => 'termine',
-                ],
-                'placeholder' => '— Sélectionner le statut —',
+            ->add('nom_match', TextType::class, [
+                'label' => 'Nom du match',
                 'attr' => [
-                    'class' => 'form-select form-select-lg'
+                    'class' => 'team-input',
+                    'placeholder' => 'Entrez le nom du match'
                 ]
             ])
-           ->add('dateMatch', DateTimeType::class, [
-    'widget' => 'single_text',
-    'html5' => true,
-])
-
-->add('dateFinMatch', DateTimeType::class, [
-    'widget' => 'single_text',
-    'html5' => true,
-])
-
-->add('scoreEquipe1', HiddenType::class)
-->add('scoreEquipe2', HiddenType::class)
+            // Statut fixé à "en_cours" et non modifiable
+            ->add('statut', HiddenType::class, [
+                'data' => 'en_cours',
+                'disabled' => true,
+            ])
+            ->add('dateMatch', DateTimeType::class, [
+                'widget' => 'single_text',
+                'html5' => true,
+            ])
+            ->add('dateFinMatch', DateTimeType::class, [
+                'widget' => 'single_text',
+                'html5' => true,
+            ])
+            // Scores initialisés à 0
+            ->add('scoreEquipe1', HiddenType::class, [
+                'data' => 0
+            ])
+            ->add('scoreEquipe2', HiddenType::class, [
+                'data' => 0
+            ])
             ->add('equipe1', EntityType::class, [
                 'class' => Equipe::class,
                 'choice_label' => 'nom',
@@ -50,15 +51,13 @@ class MatchsType extends AbstractType
             ->add('equipe2', EntityType::class, [
                 'class' => Equipe::class,
                 'choice_label' => 'nom',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Matchs::class,
-            'attr' => ['novalidate' => 'novalidate'],
         ]);
     }
 }

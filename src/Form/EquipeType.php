@@ -40,7 +40,7 @@ class EquipeType extends AbstractType
                 },
             ])
 
-            ->add('joueurs', EntityType::class, [
+            ->add('joueur', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'email',
                 'multiple' => true,
