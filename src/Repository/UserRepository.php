@@ -42,11 +42,11 @@ class UserRepository extends ServiceEntityRepository
             }
 
             if ($statusSearch !== null) {
-                $qb->andWhere('u.email LIKE :search OR u.roles LIKE :search OR u.isBlocked = :statusSearch')
+                $qb->andWhere('u.email LIKE :search OR UPPER(u.roles) LIKE UPPER(:search) OR u.isBlocked = :statusSearch')
                    ->setParameter('search', '%' . $search . '%')
                    ->setParameter('statusSearch', $statusSearch);
             } else {
-                $qb->andWhere('u.email LIKE :search OR u.roles LIKE :search')
+                $qb->andWhere('u.email LIKE :search OR UPPER(u.roles) LIKE UPPER(:search)')
                    ->setParameter('search', '%' . $search . '%');
             }
         }
