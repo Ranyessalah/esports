@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-white sidebar collapse shadow-sm min-vh-100 p-0 position-fixed">
+            <div class="pt-4">
+                <div class="px-4 mb-4">
+                    <h5 class="text-uppercase text-muted fw-bold small">Main Menu</h5>
+                </div>
+                <ul class="nav flex-column mb-auto">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link px-4 py-3 {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active bg-primary text-white shadow-sm' : 'text-secondary' }}" href="{{ path('app_admin_dashboard') }}">
+                            <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a class="nav-link px-4 py-3 {{ 'app_training' in app.request.get('_route') ? 'active bg-primary text-white shadow-sm' : 'text-secondary' }}" href="{{ path('app_training_index') }}">
+                            <i class="bi bi-calendar3 me-2"></i> Trainings
+                        </a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a class="nav-link px-4 py-3 {{ app.request.get('_route') == 'app_attendance_index' ? 'active bg-primary text-white shadow-sm' : 'text-secondary' }}" href="{{ path('app_attendance_index') }}">
+                            <i class="bi bi-check-all me-2"></i> Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item border-top mt-4 pt-4">
+                        <a class="nav-link px-4 py-3 text-danger fw-bold" href="{{ path('app_logout') }}">
+                            <i class="bi bi-power me-2"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4" style="margin-left: 16.66667%;">
+            <style>
+                .nav-link { border-radius: 0 50px 50px 0; font-weight: 500; transition: all 0.2s; }
+                .nav-link:not(.active):hover { background: #f8fafc; color: var(--primary) !important; }
+                #sidebarMenu { z-index: 1000; border-right: 1px solid #f1f5f9; }
+            </style>
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

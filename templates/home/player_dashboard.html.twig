@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Player Dashboard - Becem{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="fw-bold display-5">Hello, {{ app.user.fullName }}! 👋</h1>
+            <p class="text-secondary lead">Ready for your next session?</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="badge bg-soft-primary text-primary fs-6 p-3 rounded-3 shadow-sm">
+                <i class="bi bi-star-fill me-1"></i> Player Active Status
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Quick Stats for Player -->
+        <div class="col-md-4">
+            <div class="card card-stats p-4 bg-white">
+                <span class="text-muted small fw-bold text-uppercase">Course Progress</span>
+                <h3 class="fw-bold mt-2 mb-0">{% set count = 0 %}{% for att in app.user.attendances %}{% if att.status == 'present' %}{% set count = count + 1 %}{% endif %}{% endfor %}{{ count }}</h3>
+                <small class="text-success mt-1">Sessions Completed</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stats p-4 bg-white">
+                <span class="text-muted small fw-bold text-uppercase">Engagement</span>
+                <h3 class="fw-bold mt-2 mb-0">{{ app.user.attendances|length }}</h3>
+                <small class="text-primary mt-1">Total Joined Events</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stats p-4 bg-white">
+                <span class="text-muted small fw-bold text-uppercase">Notifications</span>
+                <h3 class="fw-bold mt-2 mb-0">{% set unread = 0 %}{% for n in app.user.notifications %}{% if not n.isRead %}{% set unread = unread + 1 %}{% endif %}{% endfor %}{{ unread }}</h3>
+                <small class="text-warning mt-1">Unread Alerts</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card card-stats p-0 border-0 overflow-hidden bg-white">
+                <div class="card-header bg-white py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">🚀 Upcoming Sessions</h5>
+                    <a href="{{ path('app_training_index') }}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for training in upcomingTrainings %}
+                        <div class="list-group-item p-4 border-0 border-bottom">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="badge bg-soft-info text-info mb-2">{{ training.theme }}</div>
+                                    <h5 class="fw-bold mb-1">{{ training.title }}</h5>
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-calendar-event me-1"></i> {{ training.date|date('M d, Y') }} | 
+                                        <i class="bi bi-geo-alt me-1"></i> {{ training.location }}
+                                    </p>
+                                </div>
+                                <div class="col-auto">
+                                    {% set isRegistered = false %}
+                                    {% for att in training.attendances %}
+                                        {% if att.player == app.user %}
+                                            {% set isRegistered = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if isRegistered %}
+                                        <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-lg"></i> Registered</span>
+                                    {% else %}
+                                        <a href="{{ path('app_training_show', {id: training.id}) }}" class="btn btn-primary rounded-pill px-4">See Details</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="p-5 text-center text-muted">
+                            <i class="bi bi-wind fs-1 opacity-25 d-block mb-3"></i>
+                            No upcoming sessions scheduled.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-stats bg-primary text-white border-0 p-4 h-100 shadow-lg" style="background: linear-gradient(135deg, #2563eb, #1e40af) !important;">
+                <h4 class="fw-bold">Level Up Your Game</h4>
+                <p class="opacity-75 small">Remember to download course materials before the session. Be prepared, be ready.</p>
+                <div class="mt-auto pt-5">
+                    <img src="https://illustrations.popsy.co/white/fitness.svg" alt="Football" style="width: 100%; max-width: 200px; margin: 0 auto; display: block;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary { background-color: #eff6ff !important; }
+    .bg-soft-info { background-color: #f0f9ff !important; }
+</style>
+{% endblock %}

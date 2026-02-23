@@ -1,0 +1,46 @@
+{% extends 'admin_base.html.twig' %}
+
+{% block title %}Attendance History - Becem{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <h1 class="h2 text-primary mb-4">Full Attendance History</h1>
+    
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive p-3">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Training Session</th>
+                        <th>Player</th>
+                        <th>Status</th>
+                        <th>Recorded At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for attendance in attendances %}
+                    <tr class="align-middle">
+                        <td><strong>{{ attendance.training.date|date('Y-m-d') }}</strong></td>
+                        <td>{{ attendance.training.title }}</td>
+                        <td>{{ attendance.player.fullName }}</td>
+                        <td>
+                            <span class="badge {{ attendance.status == 'present' ? 'bg-success' : 'bg-danger' }}">
+                                {{ attendance.status|upper }}
+                            </span>
+                        </td>
+                        <td><small class="text-muted">{{ attendance.recordedAt|date('Y-m-d H:i') }}</small></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-info-circle me-1"></i> No attendance records found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

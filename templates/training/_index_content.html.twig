@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 text-primary">Training Sessions</h1>
+    {% if is_granted('ROLE_COACH') %}
+    <a href="{{ path('app_training_new') }}" class="btn btn-primary">Create New</a>
+    {% endif %}
+</div>
+
+<!-- Filter Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search by title or location..." value="{{ currentFilters.search }}">
+            </div>
+            <div class="col-md-3">
+                <select name="theme" class="form-select">
+                    <option value="">All Themes</option>
+                    {% for theme in themes %}
+                        <option value="{{ theme }}" {{ currentFilters.theme == theme ? 'selected' : '' }}>{{ theme }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="date" class="form-control" value="{{ currentFilters.date }}">
+            </div>
+            <div class="col-md-2 d-flex">
+                <button type="submit" class="btn btn-primary w-100 me-2">Filter</button>
+                {% if currentFilters.search or currentFilters.theme or currentFilters.date %}
+                    <a href="{{ path('app_training_index') }}" class="btn btn-outline-secondary">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive p-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Theme</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for training in trainings %}
+                <tr class="align-middle">
+                    <td class="fw-bold">{{ training.title }}</td>
+                    <td>{{ training.theme }}</td>
+                    <td>{{ training.date ? training.date|date('Y-m-d') : '' }}</td>
+                    <td>{{ training.startTime ? training.startTime|date('H:i') : '' }} - {{ training.endTime ? training.endTime|date('H:i') : '' }}</td>
+                    <td>{{ training.location }}</td>
+                    <td class="text-end">
+                        <a href="{{ path('app_training_show', {'id': training.id}) }}" class="btn btn-sm btn-outline-info">View</a>
+                        {% if is_granted('ROLE_COACH') %}
+                        <a href="{{ path('app_training_edit', {'id': training.id}) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4">No records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

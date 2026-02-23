@@ -1,0 +1,195 @@
+<!-- AI Generation Tool -->
+<div class="mb-4 text-end">
+    <button type="button" class="btn btn-dark shadow-sm hover-lift border-0" style="background: linear-gradient(135deg, #1e293b, #0f172a);" data-bs-toggle="modal" data-bs-target="#aiModal">
+        <i class="bi bi-magic me-2 text-warning"></i> Generate Course with AI
+    </button>
+</div>
+
+<!-- AI Modal -->
+<div class="modal fade" id="aiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-cpu-fill me-2 text-primary"></i> Becem AI Architect</h5>
+                <button type="button" class="btn-close" data-bs-close="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-secondary small mb-4">Tell Becem AI what you want to achieve today, and it will build the full session plan for you.</p>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Training Goal</label>
+                    <textarea id="aiPrompt" class="form-control border-0 bg-light p-3" rows="3" placeholder="e.g., Fast counter-attacks for 12 players with high intensity..."></textarea>
+                </div>
+
+                <div id="aiLoading" class="text-center d-none py-4">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <p class="text-primary fw-bold mb-0 pulse">Architecting your course...</p>
+                </div>
+
+                <div id="aiResult" class="d-none mt-4 p-3 rounded-3 bg-soft-primary border">
+                    <h6 class="fw-bold mb-2">Generation Success!</h6>
+                    <p class="small text-muted mb-3">Press the button below to apply this plan to your training form.</p>
+                    <button type="button" id="btnApplyAi" class="btn btn-primary w-100 rounded-pill">Apply to Form</button>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill" data-bs-close="modal">Cancel</button>
+                <button type="button" id="btnAiGenerate" class="btn btn-dark px-4 rounded-pill">Generate Core</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'trainingForm'}}) }}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control' ~ (form.title.vars.valid ? '' : ' is-invalid')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.title) }}
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.theme, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.theme, {'attr': {'class': 'form-control' ~ (form.theme.vars.valid ? '' : ' is-invalid')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.theme) }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control' ~ (form.description.vars.valid ? '' : ' is-invalid'), 'rows': 3}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.description) }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            {{ form_label(form.date, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.date, {'attr': {'class': 'form-control' ~ (form.date.vars.valid ? '' : ' is-invalid')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.date) }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            {{ form_label(form.startTime, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.startTime, {'attr': {'class': 'form-control' ~ (form.startTime.vars.valid ? '' : ' is-invalid')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.startTime) }}
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            {{ form_label(form.endTime, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.endTime, {'attr': {'class': 'form-control' ~ (form.endTime.vars.valid ? '' : ' is-invalid')}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.endTime) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.location, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.location, {'attr': {'class': 'form-control' ~ (form.location.vars.valid ? '' : ' is-invalid')}}) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.location) }}
+        </div>
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.document, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.document, {'attr': {'class': 'form-control' ~ (form.document.vars.valid ? '' : ' is-invalid')}}) }}
+        <div class="form-text">Upload course materials (PDF or Word, max 5MB).</div>
+        <div class="invalid-feedback">
+            {{ form_errors(form.document) }}
+        </div>
+    </div>
+
+    {# Display global errors (like the Expression constraint) #}
+    {% if not form.vars.valid %}
+        <div class="alert alert-danger">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <button class="btn btn-primary w-100 mt-3">{{ button_label|default('Save Training') }}</button>
+{{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnGenerate = document.getElementById('btnAiGenerate');
+    const btnApply = document.getElementById('btnApplyAi');
+    const promptInput = document.getElementById('aiPrompt');
+    const loading = document.getElementById('aiLoading');
+    const resultDiv = document.getElementById('aiResult');
+    
+    let generatedData = null;
+
+    btnGenerate.addEventListener('click', async () => {
+        const prompt = promptInput.value;
+        if (!prompt) return alert('Please enter a goal!');
+
+        // UI State
+        btnGenerate.disabled = true;
+        loading.classList.remove('d-none');
+        resultDiv.classList.add('d-none');
+
+        try {
+            const response = await fetch('{{ path('app_ai_generate_course') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            if (response.ok) {
+                generatedData = await response.json();
+                resultDiv.classList.remove('d-none');
+            } else {
+                alert('AI is currently busy. Please try again later.');
+            }
+        } catch (error) {
+            console.error('AI Error:', error);
+        } finally {
+            loading.classList.add('d-none');
+            btnGenerate.disabled = false;
+        }
+    });
+
+    btnApply.addEventListener('click', () => {
+        if (!generatedData) return;
+
+        // Fill Form Fields
+        // We target the field IDs generated by Symfony (usually training_title, training_theme, etc)
+        document.querySelector('[id$="_title"]').value = generatedData.title;
+        document.querySelector('[id$="_theme"]').value = generatedData.theme;
+        document.querySelector('[id$="_description"]').value = generatedData.description;
+
+        // Close Modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('aiModal'));
+        modal.hide();
+        
+        // Visual Feedback
+        const form = document.querySelector('form');
+        form.classList.add('shake');
+        setTimeout(() => form.classList.remove('shake'), 500);
+    });
+});
+</script>
+
+<style>
+    .bg-soft-primary { background-color: #eff6ff !important; }
+    .pulse { animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+        0% { opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { opacity: 0.6; }
+    }
+    .shake { animation: shake 0.5s; }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+</style>

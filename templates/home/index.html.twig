@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Becem Training - Football Excellence{% endblock %}
+
+{% block body %}
+    <section class="hero-section">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-primary rounded-pill px-3 py-2 mb-4 fw-bold shadow-sm">NEW: Digital Training Management</span>
+                    <h1 class="display-3 fw-bold mb-4">Elevate Every <span class="text-accent" style="color: var(--accent);">Session</span></h1>
+                    <p class="lead mb-5 opacity-90">The all-in-one platform for football coaches to manage sessions and players to track their progress.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ path('app_login') }}" class="btn btn-white btn-lg px-5 py-3 fw-bold text-primary" style="background: white !important;">Get Started Now</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="features" class="container" style="margin-top: -50px; position: relative; z-index: 10;">
+        <div class="row g-4 text-center justify-content-center">
+            <div class="col-md-4">
+                <div class="card card-stats h-100 p-5 shadow-lg bg-white">
+                    <div class="icon-box bg-soft-primary rounded-circle p-4 mb-4 mx-auto">
+                        <i class="bi bi-calendar-check fs-1 text-primary"></i>
+                    </div>
+                    <h3 class="fw-bold h4">Session Pro</h3>
+                    <p class="text-muted small">Design detailed training sessions with themes, documents, and schedules.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats h-100 p-5 shadow-lg bg-white">
+                    <div class="icon-box bg-soft-success rounded-circle p-4 mb-4 mx-auto">
+                        <i class="bi bi-people fs-1 text-success"></i>
+                    </div>
+                    <h3 class="fw-bold h4">Squad Connect</h3>
+                    <p class="text-muted small">Interactive dashboards for players to join sessions and download course materials.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats h-100 p-5 shadow-lg bg-white">
+                    <div class="icon-box bg-soft-warning rounded-circle p-4 mb-4 mx-auto">
+                        <i class="bi bi-graph-up fs-1 text-warning"></i>
+                    </div>
+                    <h3 class="fw-bold h4">Smart Track</h3>
+                    <p class="text-muted small">Automated attendance tracking and progress history for every session.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5 py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold mb-4">Master Your <span class="text-primary">Workflow</span></h2>
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-check-circle-fill text-primary fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="fw-bold">Centralized Repository</h5>
+                        <p class="text-muted">Upload all your course materials in one place for players to access instantly.</p>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-check-circle-fill text-primary fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="fw-bold">Real-time Attendance</h5>
+                        <p class="text-muted">Mark presence with a single click and send automated notifications to players.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://illustrations.popsy.co/blue/work-from-home.svg" alt="App Preview" class="img-fluid rounded-4 shadow">
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .icon-box { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .bg-soft-primary { background-color: #eff6ff !important; }
+        .bg-soft-success { background-color: #f0fdf4 !important; }
+        .bg-soft-warning { background-color: #fffbeb !important; }
+    </style>
+{% endblock %}

@@ -1,0 +1,111 @@
+{# Pre-calculate participation status #}
+{% set isParticipating = false %}
+{% if app.user %}
+    {% for attendance in training.attendances %}
+        {% if attendance.player == app.user %}
+            {% set isParticipating = true %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h2 class="h4 mb-0 text-primary">{{ training.title }}</h2>
+        <div>
+            {% if is_granted('ROLE_COACH') %}
+                <a href="{{ path('app_admin_attendance_take', {'id': training.id}) }}" class="btn btn-primary btn-sm me-1">Take Attendance</a>
+                <a href="{{ path('app_training_edit', {'id': training.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item"><strong>Theme:</strong> {{ training.theme }}</li>
+            <li class="list-group-item"><strong>Date:</strong> {{ training.date ? training.date|date('Y-m-d') : '' }}</li>
+            <li class="list-group-item"><strong>Time:</strong> {{ training.startTime ? training.startTime|date('H:i') : '' }} - {{ training.endTime ? training.endTime|date('H:i') : '' }}</li>
+            <li class="list-group-item"><strong>Location:</strong> {{ training.location }}</li>
+            <li class="list-group-item"><strong>Coach:</strong> {{ training.createdBy.fullName }}</li>
+            {% if training.documentName and (isParticipating or is_granted('ROLE_COACH')) %}
+            <li class="list-group-item text-primary">
+                <strong><i class="bi bi-file-earmark-pdf"></i> Course Material:</strong> 
+                <a href="{{ asset('uploads/documents/' ~ training.documentName) }}" target="_blank" class="ms-2 btn btn-sm btn-outline-primary">
+                    Download Course
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        
+        {# Participation Logic for Players #}
+        {% if is_granted('ROLE_USER') and not is_granted('ROLE_COACH') %}
+            <div class="mb-4">
+                {% if not isParticipating %}
+                    <form action="{{ path('app_training_participate', {'id': training.id}) }}" method="post">
+                        <button type="submit" class="btn btn-success p-3 w-100 shadow-sm fw-bold">
+                            <i class="bi bi-person-plus-fill me-2"></i> Join this Course Session to See Full Details
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-success d-flex align-items-center mb-0 shadow-sm border-0">
+                        <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+                        <div>
+                            <strong>You are registered!</strong> The full AI-generated course content is now visible below.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        {% if isParticipating or is_granted('ROLE_COACH') %}
+            <div class="mb-4 p-3 bg-light rounded shadow-sm border-start border-4 border-primary">
+                <h5 class="fw-bold text-primary"><i class="bi bi-journal-text me-2"></i> AI-Generated Course Content</h5>
+                <p style="white-space: pre-line;">{{ training.description }}</p>
+            </div>
+        {% else %}
+            <div class="mb-4 p-5 bg-light rounded text-center border-dashed">
+                <i class="bi bi-lock-fill display-4 text-muted mb-3 d-block"></i>
+                <h5 class="fw-bold">Content Locked</h5>
+                <p class="text-muted small">This detailed training course is hidden. Please join the session to unlock the materials and coach instructions.</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-5">
+            <h5 class="text-primary mb-3">Attendance Records</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Player</th>
+                            <th>Status</th>
+                            <th>Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in training.attendances %}
+                            <tr>
+                                <td>{{ attendance.player.fullName }}</td>
+                                <td>
+                                    {% if attendance.status == 'present' %}
+                                        <span class="badge bg-success">PRESENT</span>
+                                    {% elseif attendance.status == 'absent' %}
+                                        <span class="badge bg-danger">ABSENT</span>
+                                    {% else %}
+                                        <span class="badge bg-info text-dark">REGISTERED</span>
+                                    {% endif %}
+                                </td>
+                                <td><small>{{ attendance.comment }}</small></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-muted italic">No attendance recorded yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('app_training_index') }}" class="btn btn-outline-secondary">Back to list</a>
+        </div>
+    </div>
+</div>

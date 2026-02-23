@@ -1,0 +1,17 @@
+{% extends is_granted('ROLE_COACH') ? 'admin_base.html.twig' : 'base.html.twig' %}
+
+{% block title %}Training Details - Becem{% endblock %}
+
+{% block body %}
+    {% if not is_granted('ROLE_COACH') %}
+        <div class="container py-5">
+            {% include 'training/_show_content.html.twig' %}
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block admin_content %}
+    {% include 'training/_show_content.html.twig' %}
+{% endblock %}
