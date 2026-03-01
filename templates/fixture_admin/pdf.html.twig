@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Fixtures Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; margin: 0; padding: 20px; }
+        h1   { text-align: center; color: #6366f1; margin-bottom: 6px; }
+        .meta{ text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
+        table{ width: 100%; border-collapse: collapse; }
+        thead th { background: #6366f1; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; }
+        tbody td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; }
+        tbody tr:nth-child(even) { background: #f9fafb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .badge-success   { background: #d1fae5; color: #065f46; }
+        .badge-danger    { background: #fee2e2; color: #991b1b; }
+        .badge-secondary { background: #f3f4f6; color: #374151; }
+        .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <h1>⚽ Fixtures Report</h1>
+    <p class="meta">Generated on {{ "now"|date("Y-m-d H:i") }} — Total: {{ fixtures|length }} fixture(s)</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Match Date</th>
+                <th>Status</th>
+                <th>Round</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fixture in fixtures %}
+            <tr>
+                <td>{{ fixture.id }}</td>
+                <td>{{ fixture.matchDate ? fixture.matchDate|date('Y-m-d H:i') : '-' }}</td>
+                <td>
+                    <span class="badge badge-{{ fixture.status == 'completed' ? 'success' : (fixture.status == 'live' ? 'danger' : 'secondary') }}">
+                        {{ fixture.status }}
+                    </span>
+                </td>
+                <td>Round {{ fixture.round }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" style="text-align:center;color:#aaa;">No fixtures found</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="footer">Exported by Fixture Admin — {{ "now"|date("Y") }}</p>
+</body>
+</html>

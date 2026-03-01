@@ -1,0 +1,116 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}League Statistics{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">League Statistics</h2>
+            <p class="text-muted mb-0">Total leagues: <strong>{{ total }}</strong></p>
+        </div>
+        <a href="{{ path('app_league_admin_index') }}" class="btn btn-outline-secondary">
+            <i class="typcn typcn-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {# Leagues by Status – Pie #}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Leagues by Status</div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="chartStatus" style="max-height:280px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {# Leagues by Game – Doughnut #}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Leagues by Game</div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="chartGame" style="max-height:280px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {# Top Prize Pools – Bar #}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Top Prize Pools (USD)</div>
+                <div class="card-body">
+                    <canvas id="chartPrize" style="max-height:280px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {# Teams per League – Bar #}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Number of Teams per League</div>
+                <div class="card-body">
+                    <canvas id="chartTeams" style="max-height:280px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const palette = ['#6366f1','#10b981','#f59e0b','#ef4444','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
+
+// Status Pie
+new Chart(document.getElementById('chartStatus'), {
+    type: 'pie',
+    data: {
+        labels: [{% for k,v in byStatus %}'{{ k }}',{% endfor %}],
+        datasets: [{ data: [{% for k,v in byStatus %}{{ v }},{% endfor %}], backgroundColor: palette }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+// Game Doughnut
+new Chart(document.getElementById('chartGame'), {
+    type: 'doughnut',
+    data: {
+        labels: [{% for k,v in byGame %}'{{ k }}',{% endfor %}],
+        datasets: [{ data: [{% for k,v in byGame %}{{ v }},{% endfor %}], backgroundColor: palette }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+// Prize Pool Bar
+new Chart(document.getElementById('chartPrize'), {
+    type: 'bar',
+    data: {
+        labels: [{% for k,v in topPrize %}'{{ k|e('js') }}',{% endfor %}],
+        datasets: [{
+            label: 'Prize Pool ($)',
+            data: [{% for k,v in topPrize %}{{ v }},{% endfor %}],
+            backgroundColor: 'rgba(99,102,241,0.7)',
+            borderColor:     'rgba(99,102,241,1)',
+            borderWidth: 1
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+});
+
+// Teams Bar
+new Chart(document.getElementById('chartTeams'), {
+    type: 'bar',
+    data: {
+        labels: [{% for k,v in teamsData %}'{{ k|e('js') }}',{% endfor %}],
+        datasets: [{
+            label: 'Teams',
+            data: [{% for k,v in teamsData %}{{ v }},{% endfor %}],
+            backgroundColor: 'rgba(16,185,129,0.7)',
+            borderColor:     'rgba(16,185,129,1)',
+            borderWidth: 1
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

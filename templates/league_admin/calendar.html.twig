@@ -1,0 +1,70 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}League Calendar{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">League Calendar</h2>
+            <p class="text-muted mb-0">Visual overview of all league schedules</p>
+        </div>
+        <a href="{{ path('app_league_admin_index') }}" class="btn btn-outline-secondary">
+            <i class="typcn typcn-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.css" rel="stylesheet">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar   = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left:   'prev,next today',
+            center: 'title',
+            right:  'dayGridMonth,timeGridWeek,listMonth'
+        },
+        events: [
+            {% for league in leagues %}
+            {
+                title:           '{{ league.name|e('js') }} ({{ league.game|e('js') }})',
+                start:           '{{ league.startDate ? league.startDate|date('Y-m-d') : '' }}',
+                end:             '{{ league.endDate   ? league.endDate|date('Y-m-d')   : '' }}',
+                url:             '{{ path('app_league_admin_show', {id: league.id}) }}',
+                backgroundColor: '{{ league.status == "active" ? "#10b759" : (league.status == "upcoming" ? "#f0ad4e" : "#6c757d") }}',
+                borderColor:     'transparent',
+                extendedProps: {
+                    status:    '{{ league.status }}',
+                    numTeams:  {{ league.numTeams }},
+                    prizePool: {{ league.prizePool }}
+                }
+            },
+            {% endfor %}
+        ],
+        eventClick: function(info) {
+            if (info.event.url) {
+                info.jsEvent.preventDefault();
+                window.location.href = info.event.url;
+            }
+        },
+        eventDidMount: function(info) {
+            info.el.title =
+                info.event.title + '\n' +
+                'Status: '     + info.event.extendedProps.status   + '\n' +
+                'Teams: '      + info.event.extendedProps.numTeams  + '\n' +
+                'Prize Pool: $'+ info.event.extendedProps.prizePool;
+        }
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}
