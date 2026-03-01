@@ -1,0 +1,316 @@
+{{ form_start(form, {
+    attr: { class: 'team-form', novalidate: 'novalidate' },
+    enctype: 'multipart/form-data'
+}) }}
+
+<style>
+
+/* ===== CARD ===== */
+.team-form{
+    max-width:900px;
+    margin:40px auto;
+    background:linear-gradient(180deg,#0f172a,#020617);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 25px 60px rgba(0,0,0,.6);
+    color:#fff;
+    font-family:Segoe UI,Roboto;
+}
+
+/* ===== INPUT ===== */
+.form-group{margin-bottom:22px;}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+    color:#e5e7eb;
+}
+
+.form-control{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #1e293b;
+    background:#020617;
+    color:#fff;
+}
+
+.form-control:focus{
+    outline:none;
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.25);
+}
+
+/* ===== ERRORS ===== */
+.live-error{
+    font-size:13px;
+    margin-top:6px;
+    color:#f87171;
+    min-height:18px;
+}
+
+.input-error{
+    border:2px solid #ef4444 !important;
+    background:#1f0a0a !important;
+}
+
+.input-valid{
+    border:2px solid #22c55e !important;
+    background:#02160d !important;
+}
+
+.shake{animation:shake .25s;}
+@keyframes shake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-4px)}
+    50%{transform:translateX(4px)}
+    75%{transform:translateX(-4px)}
+    100%{transform:translateX(0)}
+}
+
+/* ===== BUTTONS ===== */
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:15px;
+    margin-top:30px;
+}
+
+.btn-primary{
+    padding:14px 30px;
+    border-radius:14px;
+    font-weight:700;
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:#fff;
+    border:none;
+    cursor:pointer;
+}
+
+.btn-secondary{
+    padding:14px 30px;
+    border-radius:14px;
+    background:#374151;
+    color:#fff;
+    text-decoration:none;
+}
+
+/* ===== IMAGE PREVIEW ===== */
+.logo-preview{
+    margin-top:10px;
+    display:none;
+    width:120px;
+    height:120px;
+    object-fit:contain;
+    border-radius:12px;
+    border:1px solid #334155;
+    background:#020617;
+}
+
+</style>
+
+<h2 style="margin-bottom:25px;">{{ button_label|default('Créer une équipe') }}</h2>
+
+<div class="form-error" style="margin-bottom:15px;">
+    {{ form_errors(form) }}
+</div>
+
+<!-- NOM -->
+<div class="form-group">
+    {{ form_label(form.nom) }}
+    {{ form_widget(form.nom, { attr:{ class:'form-control', id:'nom' } }) }}
+    <div class="live-error" id="err_nom"></div>
+</div>
+
+<!-- LOGO -->
+<div class="form-group">
+    {{ form_label(form.logoFile) }}
+    {{ form_widget(form.logoFile, { attr:{ class:'form-control', id:'logoFile', accept:'image/*' } }) }}
+    <div class="live-error" id="err_logoFile"></div>
+    <img id="preview" class="logo-preview"/>
+</div>
+
+<!-- GAME -->
+<div class="form-group">
+    {{ form_label(form.game) }}
+    {{ form_widget(form.game, { attr:{ class:'form-control', id:'game' } }) }}
+    <div class="live-error" id="err_game"></div>
+</div>
+
+<!-- CATEGORIE -->
+<div class="form-group">
+    {{ form_label(form.categorie) }}
+    {{ form_widget(form.categorie, { attr:{ class:'form-control', id:'categorie' } }) }}
+    <div class="live-error" id="err_categorie"></div>
+</div>
+
+<!-- COACH -->
+<div class="form-group">
+    {{ form_label(form.coach) }}
+    {{ form_widget(form.coach, { attr:{ class:'form-control', id:'coach' } }) }}
+    <div class="live-error" id="err_coach"></div>
+</div>
+
+<!-- JOUEURS -->
+<div class="form-group">
+    {{ form_label(form.joueur) }}
+    {{ form_widget(form.joueur, { attr:{ class:'form-control', id:'joueur', multiple:true } }) }}
+    <div class="live-error" id="err_joueur"></div>
+</div>
+
+<div class="form-actions">
+    <a href="{{ path('app_equipe_index') }}" class="btn-secondary">Annuler</a>
+    <button type="submit" class="btn-primary">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+<script>
+
+/* ========= INPUTS ========= */
+const form = document.querySelector('.team-form');
+const nom = document.getElementById('nom');
+const logo = document.getElementById('logoFile');
+const game = document.getElementById('game');
+const categorie = document.getElementById('categorie');
+const coach = document.getElementById('coach');
+const joueur = document.getElementById('joueur');
+
+/* ========= UTIL ========= */
+
+function setError(input, message){
+    input.classList.remove('input-valid');
+    input.classList.add('input-error','shake');
+    document.getElementById('err_'+input.id).textContent = message;
+}
+
+function setValid(input){
+    input.classList.remove('input-error');
+    input.classList.add('input-valid');
+    document.getElementById('err_'+input.id).textContent = "";
+}
+
+/* ========= NOM ========= */
+
+function validateNom(){
+    const value = nom.value.trim();
+
+    if(value.length < 3){
+        setError(nom,"Nom trop court (min 3 caractères)");
+        return false;
+    }
+
+    if(value.length > 40){
+        setError(nom,"Nom trop long (max 40 caractères)");
+        return false;
+    }
+
+    if(!/^[a-zA-Z0-9\s]+$/.test(value)){
+        setError(nom,"Seulement lettres et chiffres autorisés");
+        return false;
+    }
+
+    setValid(nom);
+    return true;
+}
+
+/* ========= LOGO ========= */
+
+function validateLogo(){
+    if(!logo.files.length){
+        setError(logo,"Veuillez choisir un logo");
+        return false;
+    }
+
+    const file = logo.files[0];
+
+    if(!file.type.startsWith("image/")){
+        setError(logo,"Le fichier doit être une image");
+        return false;
+    }
+
+    if(file.size > 2*1024*1024){
+        setError(logo,"Image trop lourde (max 2MB)");
+        return false;
+    }
+
+    setValid(logo);
+    return true;
+}
+
+/* ========= PREVIEW ========= */
+
+logo.addEventListener('change', ()=>{
+    validateLogo();
+
+    const file = logo.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = e=>{
+            const preview = document.getElementById('preview');
+            preview.src = e.target.result;
+            preview.style.display="block";
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+/* ========= SELECT ========= */
+
+function validateSelect(input){
+    if(!input.value){
+        setError(input,"Champ obligatoire");
+        return false;
+    }
+    setValid(input);
+    return true;
+}
+
+/* ========= JOUEURS ========= */
+
+function validatePlayers(){
+    if(joueur.selectedOptions.length < 2){
+        setError(joueur,"Sélectionnez au moins 2 joueurs");
+        return false;
+    }
+    setValid(joueur);
+    return true;
+}
+
+/* ========= LIVE ========= */
+
+[nom,game,categorie,coach].forEach(el=>{
+    el.addEventListener('blur',()=>{
+        validateNom();
+        validateSelect(game);
+        validateSelect(categorie);
+        validateSelect(coach);
+    });
+});
+
+joueur.addEventListener('change',validatePlayers);
+
+/* ========= SUBMIT ========= */
+
+form.addEventListener('submit',function(e){
+
+    let ok =
+        validateNom() &&
+        validateLogo() &&
+        validateSelect(game) &&
+        validateSelect(categorie) &&
+        validateSelect(coach) &&
+        validatePlayers();
+
+    if(!ok){
+        e.preventDefault();
+        alert("Veuillez corriger les erreurs du formulaire !");
+        window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+});
+
+</script>

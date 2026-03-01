@@ -1,3 +1,4 @@
+{# templates/backoffice/base_backoffice.html.twig #}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -269,7 +270,6 @@
         }
     </style>
 </head>
-<body>
 
   {# ================== HEADER ================== #}
   <div class="az-header">
@@ -296,16 +296,31 @@
         </ul>
       </div>
 
-      <div class="az-header-right">
-        <div class="dropdown-link">
+      <div class="bo-right">
+        <button class="bo-iconbtn" type="button" title="Notifications">
           <i class="typcn typcn-bell"></i>
-        </div>
-        <div class="dropdown-link">
-          <i class="typcn typcn-user"></i>
+        </button>
+
+        <button class="bo-iconbtn" type="button" title="Settings">
+          <i class="typcn typcn-cog"></i>
+        </button>
+
+        <div class="bo-user" title="Profile">
+          <div class="bo-avatar">
+            {{ (app.user ? (app.user.email|first)|upper : 'A') }}
+          </div>
+          <div class="bo-user-meta">
+            <small>Connected</small>
+            <strong>{{ app.user ? app.user.email : 'Admin' }}</strong>
+          </div>
         </div>
       </div>
+
     </div>
-  </div>
+  </header>
+
+  {# ================== MOBILE OVERLAY ================== #}
+  <div class="bo-overlay" id="boOverlay"></div>
 
   {# ================== SIDEBAR ================== #}
   <div class="az-sidebar">
@@ -319,19 +334,17 @@
         <a href="#" class="nav-link">
           <i class="typcn typcn-group"></i> Utilisateurs
         </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="typcn typcn-document"></i> Pages
+
+        <a href="{{ path('app_equipe_index') }}"
+           class="{% if app.request.get('_route') starts with 'app_equipe' %}active{% endif %}">
+          <i class="typcn typcn-group-outline"></i>
+          <span>Équipes</span>
         </a>
       </li>
       <li class="nav-item">
         <a href="#" class="nav-link">
           <i class="typcn typcn-cog"></i> Paramètres
         </a>
-      </li>
-    </ul>
-  </div>
 
   {# ================== CONTENT ================== #}
   <div class="az-content">
@@ -346,7 +359,23 @@
     <div class="container-fluid">
       <span>Copyright © ClutchX {{ 'now'|date('Y') }}</span>
     </div>
+  </aside>
+
+  {# ================== MAIN CONTENT ================== #}
+  <div class="bo-layout">
+    <main class="bo-main">
+      <div class="bo-content-card">
+        {% block content %}
+          <h2 style="margin:0 0 8px 0;">Welcome to Backoffice</h2>
+          <p style="margin:0; color: rgba(233,238,248,.72);">This is the main content area.</p>
+        {% endblock %}
+      </div>
+    </main>
   </div>
+
+  <footer class="bo-footer">
+    © {{ "now"|date("Y") }} — Backoffice
+  </footer>
 
   {# ================== JS ================== #}
   <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
@@ -355,14 +384,30 @@
   <script src="{{ asset('js/azia.js') }}"></script>
 
   <script>
-    // Toggle sidebar on mobile
-    document.getElementById('azMenuShow')?.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelector('.az-sidebar').classList.toggle('show');
-    });
+    (function () {
+      const btn = document.getElementById('boMenuBtn');
+      const sidebar = document.getElementById('boSidebar');
+      const overlay = document.getElementById('boOverlay');
+
+      function openMenu(){
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+      }
+      function closeMenu(){
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+      }
+
+      btn && btn.addEventListener('click', function(e){ e.preventDefault(); openMenu(); });
+      overlay && overlay.addEventListener('click', closeMenu);
+
+      // close on ESC
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') closeMenu();
+      });
+    })();
   </script>
 
   {% block javascripts %}{% endblock %}
-
 </body>
 </html>

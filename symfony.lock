@@ -35,14 +35,32 @@
             "./migrations/.gitignore"
         ]
     },
-    "knpuniversity/oauth2-client-bundle": {
-        "version": "2.20",
+    "phpstan/phpstan": {
+        "version": "2.1",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
-            "version": "1.20",
-            "ref": "1ff300d8c030f55c99219cc55050b97a695af3f6"
-        }
+            "version": "1.0",
+            "ref": "5e490cc197fb6bb1ae22e5abbc531ddc633b6767"
+        },
+        "files": [
+            "./phpstan.dist.neon"
+        ]
+    },
+    "phpunit/phpunit": {
+        "version": "11.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "11.1",
+            "ref": "1117deb12541f35793eec9fff7494d7aa12283fc"
+        },
+        "files": [
+            "./.env.test",
+            "./phpunit.dist.xml",
+            "./tests/bootstrap.php",
+            "./bin/phpunit"
+        ]
     },
     "symfony/console": {
         "version": "6.4",
@@ -87,15 +105,6 @@
             "./src/Controller/.gitignore",
             "./src/Kernel.php"
         ]
-    },
-    "symfony/google-mailer": {
-        "version": "6.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "4.4",
-            "ref": "f8fd4ddb9b477510f8f4bce2b9c054ab428c0120"
-        }
     },
     "symfony/mailer": {
         "version": "6.4",
@@ -169,17 +178,7 @@
             "./config/packages/validator.yaml"
         ]
     },
-    "symfony/web-profiler-bundle": {
-        "version": "6.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "6.1",
-            "ref": "8b51135b84f4266e3b4c8a6dc23c9d1e32e543b7"
-        },
-        "files": [
-            "./config/packages/web_profiler.yaml",
-            "./config/routes/web_profiler.yaml"
-        ]
+    "twig/extra-bundle": {
+        "version": "v3.23.0"
     }
 }

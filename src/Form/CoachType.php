@@ -14,8 +14,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
-class CoachType extends AbstractType
-{
+/**
+ * @extends AbstractType<Coach>
+ */
+class CoachType extends AbstractType{
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $isEdit = $options['is_edit'];

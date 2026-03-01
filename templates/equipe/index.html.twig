@@ -1,0 +1,384 @@
+{% extends 'base.html.twig' %}
+
+ {% block title %}Équipes | ClutchX{% endblock %}
+
+{% block body %}
+
+<style>
+
+/* ===== PAGE ===== */
+.teams-page{
+    max-width:1300px;
+    margin:50px auto;
+    padding:0 20px;
+    color:#e5e7eb;
+}
+
+/* ===== HEADER ===== */
+.main-header{
+    text-align:center;
+    margin-bottom:40px;
+}
+.main-header h1{
+    font-size:48px;
+    font-weight:900;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+.main-header p{
+    color:#94a3b8;
+    max-width:650px;
+    margin:auto;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-form{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin:35px 0;
+    flex-wrap:wrap;
+}
+
+.input-search,.select-game{
+    background:#020617;
+    border:1px solid #1e293b;
+    color:#e5e7eb;
+    padding:12px 16px;
+    border-radius:14px;
+    min-width:230px;
+}
+
+.input-search:focus,.select-game:focus{
+    outline:none;
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.25);
+}
+
+.btn-search{
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    border:none;
+    padding:12px 20px;
+    border-radius:14px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* ===== GRID ===== */
+.teams-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+/* ===== TEAM CARD ===== */
+.team-card{
+    position:relative;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:28px 22px;
+    text-align:center;
+    transition:.25s;
+    overflow:hidden;
+}
+
+/* glow animation */
+.team-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(139,92,246,.25),transparent);
+    opacity:0;
+    transition:.35s;
+    pointer-events:none;
+}
+
+.team-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 25px 60px rgba(0,0,0,.7);
+}
+.team-card:hover::before{opacity:1;}
+
+/* ===== LOGO ===== */
+.team-logo{
+    width:95px;
+    height:95px;
+    margin:auto;
+    border-radius:50%;
+    background:#020617;
+    border:2px solid #8b5cf6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+}
+.team-logo img{
+    width:85px;
+    height:85px;
+    object-fit:cover;
+    border-radius:50%;
+}
+
+/* ===== NAME ===== */
+.team-name{
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+/* ===== BADGE ===== */
+.team-badge{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:999px;
+    background:rgba(139,92,246,.15);
+    color:#c4b5fd;
+    font-size:13px;
+    margin-bottom:14px;
+}
+
+/* ===== COACH ===== */
+.team-coach{
+    color:#94a3b8;
+    font-size:14px;
+    margin-bottom:15px;
+}
+
+/* ===== STATS ===== */
+.team-stats{
+    display:flex;
+    justify-content:space-around;
+    margin:20px 0;
+}.fadeIn{
+    animation:fadeIn .35s ease;
+}
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(15px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.stat-value{
+    font-size:22px;
+    font-weight:800;
+    color:#8b5cf6;
+}
+.stat-label{
+    font-size:12px;
+    color:#94a3b8;
+}
+
+/* ===== BUTTON ===== */
+.btn-show{
+    display:block;
+    margin-top:10px;
+    padding:12px;
+    border-radius:12px;
+    background:#020617;
+    border:1px solid #8b5cf6;
+    color:#e5e7eb;
+    text-decoration:none;
+    transition:.25s;
+    position:relative;
+    z-index:2;
+}
+.btn-show:hover{
+    background:#8b5cf6;
+    color:white;
+}
+
+</style>
+
+<div class="teams-page">
+
+    <!-- HEADER -->
+    <div class="main-header">
+        <h1>Nos Équipes</h1>
+        <p>Découvrez toutes les équipes professionnelles de CLUTCH. Consultez leurs joueurs et performances.</p>
+    </div>
+
+    <!-- FILTER -->
+<form class="filter-form" onsubmit="return false;">
+
+        <input type="text" name="search"
+               placeholder="Rechercher une équipe..."
+               value="{{ search|default('') }}"
+               class="input-search">
+
+        <select name="game" class="select-game">
+            <option value="">Tous les jeux</option>
+
+            {# create unique list manually (Twig fix) #}
+            {% set games = [] %}
+
+            {% for equipe in equipes %}
+                {% if equipe.game not in games %}
+                    {% set games = games|merge([equipe.game]) %}
+                    <option value="{{ equipe.game }}"
+                        {% if game is defined and game == equipe.game %}selected{% endif %}>
+                        {{ equipe.game }}
+                    </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+
+ 
+    </form>
+<div id="searchLoader" style="display:none;text-align:center;margin:20px;">
+    <img src="{{ asset('ia.gif') }}" width="80">
+    <div style="color:#94a3b8">Searching teams...</div>
+</div>
+
+    <!-- GRID -->
+<div class="teams-grid" id="teamsGrid">
+
+    {% for equipe in equipes %}
+
+        <div class="team-card">
+
+            <!-- LOGO -->
+            <div class="team-logo">
+                {% if equipe.logo %}
+                    <img src="{{ asset('uploads/equipes/' ~ equipe.logo) }}" alt="{{ equipe.nom }}">
+                {% else %}
+                    <span style="font-weight:900;font-size:20px;">
+                        {{ equipe.nom|slice(0,2)|upper }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- NAME -->
+            <div class="team-name">{{ equipe.nom }}</div>
+
+            <!-- GAME BADGE -->
+            <div class="team-badge">
+                {{ equipe.game }} • {{ equipe.categorie }}
+            </div>
+
+            <!-- COACH -->
+            <div class="team-coach">
+                Coach : {{ equipe.coach.email ?? 'Non assigné' }}
+            </div>
+
+            <!-- STATS -->
+            <div class="team-stats">
+                <div>
+                    <div class="stat-value">{{ equipe.joueur|length }}</div>
+                    <div class="stat-label">Joueurs</div>
+                </div>
+
+                <div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-label">Matchs</div>
+                </div>
+
+                <div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-label">Victoires</div>
+                </div>
+            </div>
+
+            <!-- ACTION -->
+            <a href="{{ path('app_equipe_show', {'id': equipe.id}) }}" class="btn-show">
+                <i class="fas fa-eye"></i> Voir l'équipe
+            </a>
+
+        </div>
+
+    {% else %}
+        <p style="text-align:center;">Aucune équipe trouvée.</p>
+    {% endfor %}
+
+    </div>
+
+</div>
+<script>
+
+const searchInput = document.querySelector('.input-search');
+const gameSelect  = document.querySelector('.select-game');
+const grid        = document.getElementById('teamsGrid');
+const loader      = document.getElementById('searchLoader');
+
+let typingTimer;
+const delay = 400; // ms
+
+function fetchTeams(){
+
+    loader.style.display = "block";
+
+    const search = searchInput.value;
+    const game   = gameSelect.value;
+
+    fetch(`/equipe/ajax/search?search=${encodeURIComponent(search)}&game=${encodeURIComponent(game)}`)
+    .then(res => res.json())
+    .then(data => {
+
+        loader.style.display = "none";
+
+        grid.innerHTML = "";
+
+        if(data.length === 0){
+            grid.innerHTML = "<p style='text-align:center;width:100%'>No teams found.</p>";
+            return;
+        }
+
+        data.forEach(team => {
+
+            const logo = team.logo
+                ? `/uploads/equipes/${team.logo}`
+                : null;
+
+            const initials = team.nom.substring(0,2).toUpperCase();
+
+            grid.innerHTML += `
+            <div class="team-card fadeIn">
+
+                <div class="team-logo">
+                    ${
+                        logo
+                        ? `<img src="${logo}">`
+                        : `<span style="font-weight:900;font-size:20px">${initials}</span>`
+                    }
+                </div>
+
+                <div class="team-name">${team.nom}</div>
+
+                <div class="team-badge">
+                    ${team.game} • ${team.categorie}
+                </div>
+
+                <div class="team-coach">
+                    Coach : ${team.coach}
+                </div>
+
+                <div class="team-stats">
+                    <div>
+                        <div class="stat-value">${team.players}</div>
+                        <div class="stat-label">Joueurs</div>
+                    </div>
+                </div>
+
+                <a href="/equipe/${team.id}" class="btn-show">
+                    Voir l'équipe
+                </a>
+
+            </div>`;
+        });
+
+    });
+}
+
+// typing detection
+searchInput.addEventListener('keyup', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(fetchTeams, delay);
+});
+
+// select change
+gameSelect.addEventListener('change', fetchTeams);
+
+</script>
+
+{% endblock %}

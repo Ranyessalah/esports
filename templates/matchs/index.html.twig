@@ -1,0 +1,255 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List Matches{% endblock %}
+
+{% block body %}
+
+   <style>
+
+/* ===== PAGE ===== */
+.match-page{
+    max-width:1300px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+/* ===== TITLE ===== */
+.main-header{
+    text-align:center;
+    margin-bottom:35px;
+}
+.main-header h1{
+    font-size:46px;
+    font-weight:800;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+.main-header p{
+    color:#94a3b8;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-form{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin-bottom:35px;
+    flex-wrap:wrap;
+}
+
+.input-search, .select-sort{
+    background:#020617;
+    border:1px solid #1e293b;
+    color:#e5e7eb;
+    padding:12px 16px;
+    border-radius:14px;
+    min-width:230px;
+}
+
+.input-search:focus, .select-sort:focus{
+    outline:none;
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.25);
+}
+
+.btn-search{
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    border:none;
+    padding:12px 22px;
+    border-radius:14px;
+    color:white;
+    font-weight:600;
+}
+
+/* ===== MATCH CARD ===== */
+.match-card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:22px;
+    transition:.25s;
+    position:relative;
+    overflow:hidden;
+}
+
+.match-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+/* glow effect */
+.match-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(139,92,246,.25),transparent);
+    opacity:0;
+    transition:.4s;
+    pointer-events:none; /* ⭐ THIS FIXES EVERYTHING */
+}
+
+.match-card:hover::before{opacity:1;}
+
+/* ===== HEADER ===== */
+.match-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.match-name{
+    font-weight:700;
+    font-size:18px;
+}
+
+.match-date{
+    font-size:13px;
+    color:#94a3b8;
+}
+
+/* ===== VS AREA ===== */
+.vs-area{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* TEAM */
+.team{
+    width:40%;
+    text-align:center;
+}
+
+.team-name{
+    font-weight:700;
+    font-size:18px;
+}
+
+/* SCORE */
+.score{
+    font-size:54px;
+    font-weight:900;
+    letter-spacing:2px;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+/* VS */
+.vs{
+    font-size:22px;
+    color:#64748b;
+    font-weight:700;
+}
+
+/* META */
+.match-meta{
+    display:flex;
+    justify-content:space-between;
+    margin-top:18px;
+    font-size:14px;
+    color:#94a3b8;
+}
+
+/* BUTTON */
+.btn-show{
+    display:block;
+    margin-top:16px;
+    text-align:center;
+    background:#020617;
+    border:1px solid #8b5cf6;
+    padding:12px;
+    border-radius:12px;
+    color:#e5e7eb;
+    transition:.25s;
+}
+
+.btn-show:hover{
+    background:#8b5cf6;
+    color:white;
+}
+
+</style>
+
+
+<main class="container">
+    <div class="main-header">
+        <h1>Nos Matches</h1>
+        <p>Gérez vos équipes, consultez les scores et organisez vos matchs professionnels.</p>
+    </div>
+<form method="get" class="filter-form">
+    <input type="text" name="search" placeholder="Rechercher une équipe..." 
+           value="{{ search|default('') }}" class="input-search">
+
+    
+ 
+
+    <select name="sort" class="select-sort">
+        <option value="">Trier par score</option>
+        <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Score croissant</option>
+        <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Score décroissant</option>
+    </select>
+
+    <button type="submit" class="btn btn-search">Filtrer</button>
+</form>
+
+  <div class="teams-grid">
+{% for match in matchs %}
+
+<div class="match-card">
+
+    <div class="match-top">
+        <div class="match-name">{{ match.nomMatch }}</div>
+        <div class="match-date">
+            {{ match.dateMatch|date('d M Y • H:i') }}
+        </div>
+    </div>
+
+    <div class="vs-area">
+
+        <div class="team">
+            <div class="team-name">
+                <a href="{{ path('app_equipe_show', {'id': match.equipe1.id}) }}">
+                    {{ match.equipe1.nom }}
+                </a>
+            </div>
+        </div>
+
+        <div class="score">
+            {{ match.scoreEquipe1 ?? 0 }} : {{ match.scoreEquipe2 ?? 0 }}
+        </div>
+
+        <div class="team">
+            <div class="team-name">
+                <a href="{{ path('app_equipe_show', {'id': match.equipe2.id}) }}">
+                    {{ match.equipe2.nom }}
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="match-meta">
+        <div>Statut : <strong>{{ match.statut }}</strong></div>
+        <div>Heure : {{ match.dateMatch|date('H:i') }}</div>
+    </div>
+
+    <a href="{{ path('app_matchs_show', {'id': match.id}) }}" class="btn-show">
+        Voir les détails
+    </a>
+    
+
+</div>
+
+{% else %}
+<p style="text-align:center;">Aucun match trouvé.</p>
+{% endfor %}
+</div>
+
+    
+</main>
+
+{% endblock %}
