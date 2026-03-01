@@ -1,277 +1,454 @@
+{# templates/backoffice/base_backoffice.html.twig #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Backoffice{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Backoffice{% endblock %}</title>
 
-    {# Vendor CSS #}
-    <link href="{{ asset('lib/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('lib/typicons.font/typicons.css') }}" rel="stylesheet">
-    <link href="{{ asset('lib/flag-icon-css/css/flag-icon.min.css') }}" rel="stylesheet">
+  {# Vendor CSS #}
+  <link href="{{ asset('lib/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('lib/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('lib/typicons.font/typicons.css') }}" rel="stylesheet">
+  <link href="{{ asset('lib/flag-icon-css/css/flag-icon.min.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    {# Azia CSS #}
-    <link rel="stylesheet" href="{{ asset('css/azia.css') }}">
+  {# Azia CSS #}
+  <link rel="stylesheet" href="{{ asset('css/azia.css') }}">
 
-    {% block stylesheets %}{% endblock %}
+  {% block stylesheets %}{% endblock %}
 
-    <style>
-        /* Custom Styles for Layout */
-        body {
-            background-color: #f4f5f8;
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
+  <style>
+    :root{
+      --bg: #0b1220;
+      --surface: rgba(255,255,255,.06);
+      --surface-2: rgba(255,255,255,.10);
+      --stroke: rgba(255,255,255,.10);
+      --text: #e9eef8;
+      --muted: rgba(233,238,248,.70);
+      --brand: #560bd0;
+      --brand-2: #7c3aed;
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+      --radius: 18px;
+      --sidebar-w: 264px;
+      --topbar-h: 66px;
+    }
 
-        .az-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #fff;
-            border-bottom: 1px solid #e1e5eb;
-            z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% 0%, rgba(124,58,237,.35), transparent 55%),
+        radial-gradient(1000px 500px at 90% 10%, rgba(86,11,208,.35), transparent 55%),
+        radial-gradient(900px 500px at 50% 120%, rgba(56,189,248,.12), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+    }
 
-        .az-header .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 100%;
-            padding: 0 25px;
-        }
+    /* ===== Topbar ===== */
+    .bo-topbar{
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: var(--topbar-h);
+      z-index: 1000;
+      padding: 10px 14px;
+    }
+    .bo-topbar-inner{
+      height: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 0 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(14px);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+    }
 
-        .az-logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #560bd0;
-            text-decoration: none;
-        }
+    .bo-left{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 220px;
+    }
 
-        .az-header-menu {
-            display: flex;
-            align-items: center;
-        }
+    .bo-brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+      color: var(--text);
+      font-weight: 800;
+      letter-spacing: .3px;
+      text-transform: lowercase;
+      user-select:none;
+    }
+    .bo-brand-badge{
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 10px 22px rgba(124,58,237,.28);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .bo-brand-badge i{ color:#fff; font-size: 16px; }
+    .bo-brand span{ font-size: 16px; }
 
-        .az-header-menu .nav {
-            display: flex;
-            gap: 10px;
-            margin: 0;
-        }
+    .bo-iconbtn{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .bo-iconbtn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.18);
+    }
 
-        .az-header-menu .nav-link {
-            color: #596882;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
+    .bo-search{
+      flex: 1;
+      max-width: 560px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      min-height: 44px;
+    }
+    .bo-search i{ color: var(--muted); }
+    .bo-search input{
+      width:100%;
+      border:0;
+      outline:0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .bo-search input::placeholder{ color: rgba(233,238,248,.55); }
 
-        .az-header-menu .nav-link:hover {
-            background: #f4f5f8;
-            color: #560bd0;
-        }
+    .bo-right{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 220px;
+      justify-content:flex-end;
+    }
 
-        .az-header-menu .nav-link.active {
-            color: #560bd0;
-            background: #f4f5f8;
-        }
+    .bo-user{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 6px 10px 6px 6px;
+      border-radius: 18px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+    }
+    .bo-avatar{
+      width: 34px; height: 34px;
+      border-radius: 14px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      font-weight: 800;
+      color: #fff;
+    }
+    .bo-user-meta{ line-height: 1.05; }
+    .bo-user-meta small{ display:block; color: var(--muted); font-size: 11px; }
+    .bo-user-meta strong{ display:block; font-size: 12.5px; }
 
-        .az-header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    /* ===== Layout ===== */
+    .bo-layout{
+      display:flex;
+      padding-top: calc(var(--topbar-h) + 14px);
+      gap: 14px;
+    }
 
-        .az-header-right .dropdown-link {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #f4f5f8;
-            color: #596882;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    /* ===== Sidebar ===== */
+    .bo-sidebar{
+      position: fixed;
+      top: calc(var(--topbar-h) + 14px);
+      left: 14px;
+      bottom: 14px;
+      width: var(--sidebar-w);
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      z-index: 900;
+    }
+    .bo-sidebar-inner{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
 
-        .az-header-right .dropdown-link:hover {
-            background: #e1e5eb;
-        }
+    .bo-sid-head{
+      padding: 14px 14px 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .bo-sid-title{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .bo-sid-title .pill{
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(86,11,208,.18);
+      color: rgba(233,238,248,.92);
+    }
 
-        .az-sidebar {
-            position: fixed;
-            left: 0;
-            top: 60px;
-            bottom: 0;
-            width: 240px;
-            background: #1d273b;
-            padding: 20px 0;
-            overflow-y: auto;
-            z-index: 999;
-        }
+    .bo-nav{
+      padding: 10px 10px 12px 10px;
+      overflow:auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.18) transparent;
+    }
+    .bo-nav::-webkit-scrollbar{ width: 10px; }
+    .bo-nav::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.14);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
 
-        .az-sidebar .nav {
-            flex-direction: column;
-            padding: 0;
-        }
+    .bo-nav a{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 11px 12px;
+      margin: 6px 0;
+      border-radius: 14px;
+      text-decoration:none;
+      color: rgba(233,238,248,.82);
+      border: 1px solid transparent;
+      transition: background .15s ease, transform .15s ease, border-color .15s ease;
+    }
+    .bo-nav a i{ width: 20px; font-size: 18px; color: rgba(233,238,248,.68); }
+    .bo-nav a:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.10);
+    }
+    .bo-nav a.active{
+      background: linear-gradient(135deg, rgba(86,11,208,.35), rgba(124,58,237,.22));
+      border-color: rgba(124,58,237,.38);
+    }
+    .bo-nav a.active i{ color: #fff; }
 
-        .az-sidebar .nav-item {
-            list-style: none;
-        }
+    .bo-sid-foot{
+      margin-top:auto;
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      display:grid;
+      gap: 10px;
+    }
+    .bo-help{
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+    .bo-help strong{ font-size: 13px; }
+    .bo-help p{ margin:6px 0 0 0; font-size: 12px; color: var(--muted); }
 
-        .az-sidebar .nav-link {
-            color: #8392a5;
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
+    /* ===== Content ===== */
+    .bo-main{
+      margin-left: calc(var(--sidebar-w) + 28px);
+      width: 100%;
+      padding: 0 14px 14px 14px;
+    }
 
-        .az-sidebar .nav-link i {
-            font-size: 20px;
-            margin-right: 12px;
-            width: 24px;
-        }
+    .bo-content-card{
+      border-radius: var(--radius);
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-height: calc(100vh - (var(--topbar-h) + 14px) - 14px);
+    }
 
-        .az-sidebar .nav-link:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
-        }
+    .bo-footer{
+      margin-left: calc(var(--sidebar-w) + 28px);
+      padding: 10px 14px 18px 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-        .az-sidebar .nav-link.active {
-            color: #fff;
-            background: rgba(86,11,208,0.15);
-            border-left-color: #560bd0;
-        }
+    /* ===== Mobile ===== */
+    .bo-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 890;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .2s ease;
+    }
+    .bo-overlay.show{
+      opacity: 1;
+      pointer-events:auto;
+    }
 
-        .az-content {
-            margin-left: 240px;
-            margin-top: 60px;
-            padding: 25px;
-            min-height: calc(100vh - 100px);
-        }
+    @media (max-width: 991px){
+      .bo-search{ display:none; }
+      .bo-sidebar{
+        left: 12px;
+        transform: translateX(calc(-1 * (var(--sidebar-w) + 20px)));
+        transition: transform .25s ease;
+      }
+      .bo-sidebar.show{ transform: translateX(0); }
+      .bo-main, .bo-footer{ margin-left: 0; }
+    }
 
-        .az-footer {
-            margin-left: 240px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            border-top: 1px solid #e1e5eb;
-            font-size: 13px;
-            color: #8392a5;
-        }
-
-        /* Responsive */
-        @media (max-width: 991px) {
-            .az-sidebar {
-                transform: translateX(-240px);
-                transition: transform 0.3s;
-            }
-
-            .az-sidebar.show {
-                transform: translateX(0);
-            }
-
-            .az-content,
-            .az-footer {
-                margin-left: 0;
-            }
-
-            .az-header-menu {
-                display: none;
-            }
-        }
-    </style>
+    @media (max-width: 520px){
+      .bo-user-meta{ display:none; }
+      .bo-left{ min-width: auto; }
+      .bo-right{ min-width: auto; }
+    }
+  </style>
 </head>
+
 <body>
+  {# ================== TOPBAR ================== #}
+  <header class="bo-topbar">
+    <div class="bo-topbar-inner">
 
-  {# ================== HEADER ================== #}
-  <div class="az-header">
-    <div class="container-fluid">
-      <div class="az-header-left">
-        <a href="{{ path('backoffice_home') }}" class="az-logo">azia</a>
-        <a href="#" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
+      <div class="bo-left">
+        <button class="bo-iconbtn d-lg-none" id="boMenuBtn" type="button" aria-label="Open menu">
+          <i class="typcn typcn-th-menu"></i>
+        </button>
+
+        <a href="{{ path('backoffice_home') }}" class="bo-brand">
+          <div class="bo-brand-badge"><i class="fas fa-bolt"></i></div>
+          <span>azia</span>
+        </a>
       </div>
 
-      <div class="az-header-menu">
-        <ul class="nav">
-          <li class="nav-item">
-            <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-              <i class="typcn typcn-chart-area-outline"></i> Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="typcn typcn-document"></i> Pages
-            </a>
-          </li>
-        </ul>
+      <div class="bo-search">
+        <i class="typcn typcn-zoom"></i>
+        <input type="text" placeholder="Search… (UI only)">
       </div>
 
-      <div class="az-header-right">
-        <div class="dropdown-link">
+      <div class="bo-right">
+        <button class="bo-iconbtn" type="button" title="Notifications">
           <i class="typcn typcn-bell"></i>
-        </div>
-        <div class="dropdown-link">
-          <i class="typcn typcn-user"></i>
+        </button>
+
+        <button class="bo-iconbtn" type="button" title="Settings">
+          <i class="typcn typcn-cog"></i>
+        </button>
+
+        <div class="bo-user" title="Profile">
+          <div class="bo-avatar">
+            {{ (app.user ? (app.user.email|first)|upper : 'A') }}
+          </div>
+          <div class="bo-user-meta">
+            <small>Connected</small>
+            <strong>{{ app.user ? app.user.email : 'Admin' }}</strong>
+          </div>
         </div>
       </div>
+
     </div>
-  </div>
+  </header>
+
+  {# ================== MOBILE OVERLAY ================== #}
+  <div class="bo-overlay" id="boOverlay"></div>
 
   {# ================== SIDEBAR ================== #}
-  <div class="az-sidebar">
-    <ul class="nav">
-      <li class="nav-item">
-        <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
-          <i class="typcn typcn-chart-area-outline"></i> Dashboard
+  <aside class="bo-sidebar" id="boSidebar">
+    <div class="bo-sidebar-inner">
+
+      <div class="bo-sid-head">
+        <div class="bo-sid-title">
+          <span>Navigation</span>
+          <span class="pill">Backoffice</span>
+        </div>
+      </div>
+
+      <nav class="bo-nav">
+        <a href="{{ path('backoffice_home') }}"
+           class="{% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
+          <i class="typcn typcn-chart-area-outline"></i>
+          <span>Dashboard</span>
         </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="typcn typcn-group"></i> Users
+
+        <a href="#"
+           class="{% if app.request.get('_route') starts with 'app_user' %}active{% endif %}">
+          <i class="typcn typcn-group"></i>
+          <span>Users</span>
         </a>
-      </li>
-      <li class="nav-item">
-    <a href="{{ path('app_equipe_index_admin') }}" class="nav-link">
-        <i class="typcn typcn-group"></i> Equipes
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ path('app_matchs_index_admin') }}" class="nav-link">
-        <i class="typcn typcn-media-record-outline"></i> Matchs
-    </a>
-</li>
 
-    
-    </ul>
-  </div>
+        <a href="{{ path('app_equipe_index') }}"
+           class="{% if app.request.get('_route') starts with 'app_equipe' %}active{% endif %}">
+          <i class="typcn typcn-group-outline"></i>
+          <span>Équipes</span>
+        </a>
 
-  {# ================== CONTENT ================== #}
-  <div class="az-content">
-    {% block content %}
-    <h2>Welcome to Backoffice</h2>
-    <p>This is the main content area.</p>
-    {% endblock %}
-  </div>
+        <a href="{{ path('app_matchs_index') }}"
+           class="{% if app.request.get('_route') starts with 'app_matchs' %}active{% endif %}">
+          <i class="typcn typcn-media-record-outline"></i>
+          <span>Matchs</span>
+        </a>
 
-  {# ================== FOOTER ================== #}
-  <div class="az-footer">
-    <div class="container-fluid">
-      <span>Copyright © bootstrapdash.com 2020</span>
+        <a href="{{ path('app_stats') }}"
+           class="{% if app.request.get('_route') == 'app_stats' %}active{% endif %}">
+          <i class="typcn typcn-chart-bar-outline"></i>
+          <span>Statistiques</span>
+        </a>
+      </nav>
+
+      <div class="bo-sid-foot">
+        <div class="bo-help">
+          <strong>Tip</strong>
+          <p>Sidebar scroll + glass header + cleaner spacing. Ready for any pages.</p>
+        </div>
+
+        <a href="{{ path('backoffice_home') }}" class="bo-iconbtn" style="width:100%; height:44px; border-radius:16px; text-decoration:none;">
+          <i class="typcn typcn-home-outline"></i>
+        </a>
+      </div>
+
     </div>
+  </aside>
+
+  {# ================== MAIN CONTENT ================== #}
+  <div class="bo-layout">
+    <main class="bo-main">
+      <div class="bo-content-card">
+        {% block content %}
+          <h2 style="margin:0 0 8px 0;">Welcome to Backoffice</h2>
+          <p style="margin:0; color: rgba(233,238,248,.72);">This is the main content area.</p>
+        {% endblock %}
+      </div>
+    </main>
   </div>
+
+  <footer class="bo-footer">
+    © {{ "now"|date("Y") }} — Backoffice
+  </footer>
 
   {# ================== JS ================== #}
   <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
@@ -280,14 +457,30 @@
   <script src="{{ asset('js/azia.js') }}"></script>
 
   <script>
-    // Toggle sidebar on mobile
-    document.getElementById('azMenuShow')?.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelector('.az-sidebar').classList.toggle('show');
-    });
+    (function () {
+      const btn = document.getElementById('boMenuBtn');
+      const sidebar = document.getElementById('boSidebar');
+      const overlay = document.getElementById('boOverlay');
+
+      function openMenu(){
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+      }
+      function closeMenu(){
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+      }
+
+      btn && btn.addEventListener('click', function(e){ e.preventDefault(); openMenu(); });
+      overlay && overlay.addEventListener('click', closeMenu);
+
+      // close on ESC
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') closeMenu();
+      });
+    })();
   </script>
 
   {% block javascripts %}{% endblock %}
-
 </body>
 </html>

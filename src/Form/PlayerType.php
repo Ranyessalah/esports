@@ -12,7 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
-
+/**
+ * @extends AbstractType<Player>
+ */
 class PlayerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

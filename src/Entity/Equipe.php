@@ -54,17 +54,19 @@ class Equipe
     #[Assert\NotNull(message: "Le coach est obligatoire")]
     private ?User $coach = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class)]
-    #[Assert\Count(
-        min: 1,
-        minMessage: "Au moins un joueur doit être sélectionné"
-    )]
-    private Collection $joueurs;
+    /**
+     * @var Collection<int, Player>
+     */
+    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'equipe')]
+    private Collection $joueur;
 
     public function __construct()
     {
-        $this->joueurs = new ArrayCollection();
+        $this->joueur = new ArrayCollection();
     }
+
+
+ 
 
     public function getId(): ?int { return $this->id; }
     public function getNom(): ?string { return $this->nom; }
@@ -77,32 +79,41 @@ class Equipe
     public function setCategorie(string $categorie): static { $this->categorie = $categorie; return $this; }
     public function getCoach(): ?User { return $this->coach; }
     public function setCoach(?User $coach): static { $this->coach = $coach; return $this; }
-    public function getJoueurs(): Collection { return $this->joueurs; }
 
-public function getPlayers(): Collection
-{
-    return $this->joueurs->filter(
-        fn ($user) => $user instanceof Player
-    );
-}
-
-    
-  
-
-    public function addJoueur(User $joueur): static
+    /**
+     * @return Collection<int, Player>
+     */
+    public function getJoueur(): Collection
     {
-        if (!$this->joueurs->contains($joueur)) {
-            $this->joueurs->add($joueur);
+        return $this->joueur;
+    }
+
+    public function addJoueur(Player $joueur): static
+    {
+        if (!$this->joueur->contains($joueur)) {
+            $this->joueur->add($joueur);
+            $joueur->setEquipe($this);
         }
 
         return $this;
     }
 
-    public function removeJoueur(User $joueur): static
+    public function removeJoueur(Player $joueur): static
     {
-        $this->joueurs->removeElement($joueur);
+        if ($this->joueur->removeElement($joueur)) {
+            // set the owning side to null (unless already changed)
+            if ($joueur->getEquipe() === $this) {
+                $joueur->setEquipe(null);
+            }
+        }
 
         return $this;
     }
+ 
+ 
+
+    
+  
+ 
 }
     

@@ -1,13 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'backoffice/base.html.twig' %}
 
-{% block title %}Edit Equipe{% endblock %}
+{% block title %}Créer un match{% endblock %}
 
-{% block body %}
-    <h1>Edit Equipe</h1>
+{% block content %}
+     <h1>Edit Equipe</h1>
 
     {{ include('equipe/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_equipe_index') }}">back to list</a>
-
-    {{ include('equipe/_delete_form.html.twig') }}
+ 
 {% endblock %}

@@ -4,190 +4,252 @@
 
 {% block body %}
 
-<style>
-.page {
-    min-height: calc(100vh - 300px);
-    padding: 120px 60px;
-    color: #fff;
+   <style>
+
+/* ===== PAGE ===== */
+.match-page{
+    max-width:1300px;
+    margin:auto;
+    padding:40px 20px;
 }
-.header {
+
+/* ===== TITLE ===== */
+.main-header{
+    text-align:center;
+    margin-bottom:35px;
+}
+.main-header h1{
+    font-size:46px;
+    font-weight:800;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+.main-header p{
+    color:#94a3b8;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-form{
     display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:40px;
-}
-.header h2 span {
-    border-left:4px solid #a855f7;
-    padding-left:12px;
-}
-.add-btn {
-    background: linear-gradient(90deg,#a855f7,#a855A2);
-    color:#fff;
-    padding:12px 26px;
-    border-radius:12px;
-    text-decoration:none;
-    font-weight:600;
-}
-.cards {
-    display:flex;
-    gap:30px;
+    gap:12px;
+    justify-content:center;
+    margin-bottom:35px;
     flex-wrap:wrap;
 }
-.card {
-    width:390px;
-    background: linear-gradient(180deg,#2a3547,#1b2433);
+
+.input-search, .select-sort{
+    background:#020617;
+    border:1px solid #1e293b;
+    color:#e5e7eb;
+    padding:12px 16px;
+    border-radius:14px;
+    min-width:230px;
+}
+
+.input-search:focus, .select-sort:focus{
+    outline:none;
+    border-color:#8b5cf6;
+    box-shadow:0 0 0 3px rgba(139,92,246,.25);
+}
+
+.btn-search{
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    border:none;
+    padding:12px 22px;
+    border-radius:14px;
+    color:white;
+    font-weight:600;
+}
+
+/* ===== MATCH CARD ===== */
+.match-card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
     border-radius:18px;
     padding:22px;
-    box-shadow:0 20px 40px rgba(0,0,0,.45);
+    margin-bottom:22px;
+    transition:.25s;
+    position:relative;
+    overflow:hidden;
 }
-.card-top {
+
+.match-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+/* glow effect */
+.match-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(139,92,246,.25),transparent);
+    opacity:0;
+    transition:.4s;
+    pointer-events:none; /* ⭐ THIS FIXES EVERYTHING */
+}
+
+.match-card:hover::before{opacity:1;}
+
+/* ===== HEADER ===== */
+.match-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:18px;
 }
-.badge {
-    background:#6c4c3b;
-    padding:4px 12px;
-    border-radius:20px;
-    font-size:12px;
-    color:orange;
+
+.match-name{
+    font-weight:700;
+    font-size:18px;
 }
-.statut {
+
+.match-date{
     font-size:13px;
-    font-weight:600;
-}
-.planifie { color:#f1c40f; }
-.encours { color:#2ecc71; }
-.termine { color:#9b59b6; }
-.score-box {
-    background:#0b1220;
-    border-radius:14px;
-    padding:15px;
-    margin-bottom:18px;
+    color:#94a3b8;
 }
 
-.score-line {
+/* ===== VS AREA ===== */
+.vs-area{
     display:flex;
+    justify-content:space-between;
     align-items:center;
-    justify-content:center;
-    gap:18px;
 }
 
-.team-name {
-    font-size:14px;
-    font-weight:600;
-    color:#e5e7eb;
-    min-width:110px;
+/* TEAM */
+.team{
+    width:40%;
     text-align:center;
 }
 
-.score-number {
-    font-size:34px;
-    font-weight:800;
-    color:#ffffff;
+.team-name{
+    font-weight:700;
+    font-size:18px;
 }
 
-.vs-text {
-    font-size:14px;
-    opacity:.5;
-    margin:0 4px;
+/* SCORE */
+.score{
+    font-size:54px;
+    font-weight:900;
+    letter-spacing:2px;
+    background:linear-gradient(90deg,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;
+    color:transparent;
 }
 
-.meta {
+/* VS */
+.vs{
+    font-size:22px;
+    color:#64748b;
+    font-weight:700;
+}
+
+/* META */
+.match-meta{
     display:flex;
     justify-content:space-between;
-    font-size:13px;
-    margin-bottom:16px;
+    margin-top:18px;
+    font-size:14px;
+    color:#94a3b8;
 }
-.meta span {
+
+/* BUTTON */
+.btn-show{
     display:block;
-    opacity:.5;
-}
-.actions {
-    display:flex;
-    gap:10px;
-}
-.actions a {
-    flex:1;
+    margin-top:16px;
     text-align:center;
-    padding:10px;
-    border-radius:10px;
-    text-decoration:none;
-    font-weight:600;
+    background:#020617;
+    border:1px solid #8b5cf6;
+    padding:12px;
+    border-radius:12px;
+    color:#e5e7eb;
+    transition:.25s;
 }
-.show { background:#3b82f6; color:#fff; }
-.edit { background:#374151; color:#fff; }
+
+.btn-show:hover{
+    background:#8b5cf6;
+    color:white;
+}
+
 </style>
 
-<div class="page">
 
-    <div class="header">
-        <h2><span>List Matches</span></h2>
-        <a href="{{ path('app_matchs_new') }}" class="add-btn">➕</a>
+<main class="container">
+    <div class="main-header">
+        <h1>Nos Matches</h1>
+        <p>Gérez vos équipes, consultez les scores et organisez vos matchs professionnels.</p>
+    </div>
+<form method="get" class="filter-form">
+    <input type="text" name="search" placeholder="Rechercher une équipe..." 
+           value="{{ search|default('') }}" class="input-search">
+
+    
+ 
+
+    <select name="sort" class="select-sort">
+        <option value="">Trier par score</option>
+        <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Score croissant</option>
+        <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Score décroissant</option>
+    </select>
+
+    <button type="submit" class="btn btn-search">Filtrer</button>
+</form>
+
+  <div class="teams-grid">
+{% for match in matchs %}
+
+<div class="match-card">
+
+    <div class="match-top">
+        <div class="match-name">{{ match.nomMatch }}</div>
+        <div class="match-date">
+            {{ match.dateMatch|date('d M Y • H:i') }}
+        </div>
     </div>
 
-    <div class="cards">
+    <div class="vs-area">
 
-        {% for match in matchs %}
-
-        <div class="card">
-
-            <div class="card-top">
-                <strong>Match #{{ match.id }}</strong>
-
-                <span class="statut
-                    {% if match.statut == 'En Cours' %}encours
-                    {% elseif match.statut == 'Terminé' %}termine
-                    {% else %}planifie{% endif %}
-                ">
-                    {{ match.statut }}
-                </span>
+        <div class="team">
+            <div class="team-name">
+                <a href="{{ path('app_equipe_show', {'id': match.equipe1.id}) }}">
+                    {{ match.equipe1.nom }}
+                </a>
             </div>
-
-            <!-- SCORE LINE -->
-           <div class="score-box">
-    <div class="score-line">
-        <span class="team-name">{{ match.equipe1.nom }}</span>
-
-        <span class="score-number">{{ match.scoreEquipe1 ?? 0 }}</span>
-        <span class="vs-text">VS</span>
-        <span class="score-number">{{ match.scoreEquipe2 ?? 0 }}</span>
-
-        <span class="team-name">{{ match.equipe2.nom }}</span>
-    </div>
-</div>
-
-
-            <!-- META -->
-            <div class="meta">
-                <div>
-                    <span>Date</span>
-                    {{ match.dateMatch|date('Y-m-d') }}
-                </div>
-                <div>
-                    <span>Heure</span>
-                    {{ match.dateMatch|date('H:i') }}
-                </div>
-                <div>
-                    <span>Statut</span>
-                    {{ match.statut }}
-                </div>
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="actions">
-                <a href="{{ path('app_matchs_show', {'id': match.id}) }}" class="show">👁 Show</a>
-                <a href="{{ path('app_matchs_edit', {'id': match.id}) }}" class="edit">✏ Edit</a>
-            </div>
-
         </div>
 
-        {% else %}
-            <p>Aucun match trouvé.</p>
-        {% endfor %}
+        <div class="score">
+            {{ match.scoreEquipe1 ?? 0 }} : {{ match.scoreEquipe2 ?? 0 }}
+        </div>
+
+        <div class="team">
+            <div class="team-name">
+                <a href="{{ path('app_equipe_show', {'id': match.equipe2.id}) }}">
+                    {{ match.equipe2.nom }}
+                </a>
+            </div>
+        </div>
 
     </div>
+
+    <div class="match-meta">
+        <div>Statut : <strong>{{ match.statut }}</strong></div>
+        <div>Heure : {{ match.dateMatch|date('H:i') }}</div>
+    </div>
+
+    <a href="{{ path('app_matchs_show', {'id': match.id}) }}" class="btn-show">
+        Voir les détails
+    </a>
+    
+
 </div>
+
+{% else %}
+<p style="text-align:center;">Aucun match trouvé.</p>
+{% endfor %}
+</div>
+
+    
+</main>
 
 {% endblock %}

@@ -11,7 +11,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+/**
+ * @extends AbstractType<Equipe>
+ */
 class EquipeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -40,7 +42,7 @@ class EquipeType extends AbstractType
                 },
             ])
 
-            ->add('joueurs', EntityType::class, [
+            ->add('joueur', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'email',
                 'multiple' => true,

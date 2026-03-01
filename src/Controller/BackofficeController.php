@@ -57,10 +57,13 @@ class BackofficeController extends AbstractController
         }
         
         // Empêcher la suppression de son propre compte
-        if ($this->getUser() && $user->getId() === $this->getUser()->getId()) {
-            $this->addFlash('error', 'Vous ne pouvez pas supprimer votre propre compte');
-            return $this->redirectToRoute('backoffice_home');
-        }
+ /** @var \App\Entity\User|null $connectedUser */
+$connectedUser = $this->getUser();
+
+if ($connectedUser && $user->getId() === $connectedUser->getId()) {
+    $this->addFlash('error', 'Vous ne pouvez pas supprimer votre propre compte');
+    return $this->redirectToRoute('backoffice_home');
+}
         
         try {
             // Supprimer l'utilisateur

@@ -7,118 +7,201 @@
 
     <link rel="shortcut icon" href="{{ asset('assets/images/fav-icon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-lib/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/font-awesome-lib/icon/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/slick.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/aos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    {% block stylesheets %}{% endblock %}
+
+<style>
+
+/* ===== GLOBAL ===== */
+body{
+    background:#020617;
+    color:#e5e7eb;
+    font-family: 'Segoe UI',Roboto,Arial;
+}
+
+a{ text-decoration:none; }
+
+/* ===== NAVBAR ===== */
+.main-navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:999;
+    padding:14px 0;
+    backdrop-filter:blur(14px);
+    background:rgba(2,6,23,.55);
+    border-bottom:1px solid rgba(255,255,255,.05);
+    transition:.3s;
+}
+
+/* ===== LOGO ===== */
+.navbar-brand img{
+    height:42px;
+    transition:.3s;
+}
+.navbar-brand:hover img{
+    transform:scale(1.08) rotate(-2deg);
+}
+
+/* ===== MENU ===== */
+.navbar-nav .nav-link{
+    color:#cbd5e1 !important;
+    font-weight:600;
+    margin:0 12px;
+    position:relative;
+    transition:.3s;
+}
+
+/* hover underline neon */
+.navbar-nav .nav-link::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-6px;
+    width:0%;
+    height:2px;
+    background:linear-gradient(90deg,#ec4899,#8b5cf6);
+    transition:.3s;
+}
+
+.navbar-nav .nav-link:hover{
+    color:#fff !important;
+}
+.navbar-nav .nav-link:hover::after{
+    width:100%;
+}
+
+/* active page */
+.navbar-nav .active{
+    color:#fff !important;
+}
+.navbar-nav .active::after{
+    width:100%;
+}
+
+/* ===== LOGIN BUTTON ===== */
+.login-btn{
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:#fff;
+    padding:10px 22px;
+    border-radius:30px;
+    font-weight:700;
+    margin-left:15px;
+    transition:.25s;
+    box-shadow:0 8px 20px rgba(139,92,246,.45);
+}
+
+.login-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(139,92,246,.6);
+}
+
+/* ===== MOBILE BURGER ===== */
+.navbar-toggler{
+    border:none;
+    color:#fff;
+    font-size:22px;
+}
+
+.navbar-collapse{
+    justify-content:center;
+}
+
+/* ===== PAGE CONTENT SPACE ===== */
+.page-content{
+    padding-top:110px;
+}
+
+/* ===== HERO BACKGROUND OPTION ===== */
+.hero-bg{
+    background:
+        radial-gradient(circle at 20% 10%,#1e293b,#020617 60%);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+    margin-top:80px;
+    padding:30px 0;
+    text-align:center;
+    color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,.06);
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="site-wrapper">
+<!-- ===== NAVBAR ===== -->
+<header class="main-navbar">
+    <nav class="navbar navbar-expand-lg container">
 
-    <!-- ===== HEADER ===== -->
-    <header>
-        <nav class="navbar container navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand p-0" href="{{ path('app_home') }}">
-                    <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="logo">
-                </a>
+        <a class="navbar-brand" href="{{ path('app_home') }}">
+            <img src="{{ asset('assets/images/clutch_logo.png') }}" alt="ClutchX">
+        </a>
 
-                <button class="navbar-toggler" id="sidebarEvent" type="button">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ms-auto mx-5 d-flex align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ path('app_home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_matchs_index') }}">Matchs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_equipe_index') }}">Equipes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+        <div class="collapse navbar-collapse" id="mainMenu">
 
-    <!-- ===== CONTENU ===== -->
-    {% block body %}{% endblock %}
+            <ul class="navbar-nav ms-auto align-items-center">
 
-    <!-- ===== FOOTER ===== -->
-    <footer>
-    <div class="container">
-        <div class="row py-5">
-            <div class="col-lg-4">
-                <h6 style="color:#fff;">About Us</h6>
-                <p style="color:#fff;">ClutchX is a competitive gaming platform.</p>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') == 'app_home' ? 'active' }}" href="{{ path('app_home') }}">
+                        Home
+                    </a>
+                </li>
 
-            <div class="col-lg-4">
-                <h6 style="color:#fff;">Quick Links</h6>
-                <ul>
-                    <li><a href="#" style="color:#fff;">About</a></li>
-                    <li><a href="#" style="color:#fff;">Games</a></li>
-                    <li><a href="#" style="color:#fff;">Contact</a></li>
-                </ul>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_matchs' ? 'active' }}" href="{{ path('app_matchs_index') }}">
+                        Matchs
+                    </a>
+                </li>
 
-            <div class="col-lg-4">
-                <h6 style="color:#fff;">Follow Us</h6>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_equipe' ? 'active' }}" href="{{ path('app_equipe_index') }}">
+                        Equipes
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        About
+                    </a>
+                </li>
+
+                <!-- LOGIN -->
+                <li class="nav-item">
+                    <a href="{{ path('app_login') }}" class="login-btn">
+                        <i class="fa-solid fa-user"></i> Login
+                    </a>
+                </li>
+
+            </ul>
         </div>
+    </nav>
+</header>
 
-        <div class="footer-bottom text-center">
-            <p style="color:#fff;">© 2026 ClutchX</p>
-        </div>
-    </div>
-</footer>
-
-
+<!-- ===== PAGE ===== -->
+<div class="page-content hero-bg">
+{% block body %}
+{% endblock %}
 </div>
 
-<!-- ===== LOGIN FIXÉ ===== -->
-<a href="{{ path('app_login') }}" class="login-link-fixed">Login</a>
-
-<style>
-/* Bouton Login cliquable au-dessus de tout */
-.login-link-fixed {
-    position: fixed; /* reste visible au-dessus de tout */
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    background-color: #5606d8;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.login-link-fixed:hover {
-    background-color: #9731c7;
-}
-</style>
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    © {{ "now"|date("Y") }} ClutchX — Plateforme E-Sport
+</footer>
 
 <!-- JS -->
 <script src="{{ asset('assets/js/jquery.js') }}"></script>
-<script src="{{ asset('assets/js/javascript-lib/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/slick.min.js') }}"></script>
-<script src="{{ asset('assets/js/custom.js') }}"></script>
-<script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-<script src="{{ asset('assets/js/aos.js') }}"></script>
+<script src="{{ asset('assets/js/javascript-lib/bootstrap.bundle.min.js') }}"></script>
 
-<script>
-    AOS.init({ once: true, duration: 1000 });
-</script>
+{% block javascripts %}{% endblock %}
 
 </body>
 </html>

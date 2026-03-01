@@ -31,8 +31,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     protected ?string $email = null;
 
-    #[ORM\Column]
-    protected array $roles = [];
+/** @var string[] */
+#[ORM\Column]
+protected array $roles = [];
 
     #[Assert\NotBlank(message: 'Mot de passe obligatoire')]
     #[Assert\Length(min: 8)]
@@ -59,7 +60,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return (string) $this->email;
     }
-
+/**
+ * @return string[]
+ */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -67,8 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
-    {
+/**
+ * @param string[] $roles
+ */
+public function setRoles(array $roles): static    {
         $this->roles = $roles;
         return $this;
     }

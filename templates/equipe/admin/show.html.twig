@@ -1,248 +1,274 @@
 {% extends 'backoffice/base.html.twig' %}
-{% block title %}Équipe {{ equipe.nom }}{% endblock %}
+
+{% block title %}Equipe {{ equipe.nom }}{% endblock %}
 
 {% block content %}
+
+<style>
+.page-wrapper {
+    min-height: calc(100vh - 200px);
+    padding: 120px 60px;
+    color:#fff;
+}
+
+.team-card {
+    max-width:900px;
+    margin:auto;
+    background:linear-gradient(180deg,#1f2937,#111827);
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 25px 50px rgba(0,0,0,.6);
+}
+
+/* HEADER */
+.team-header {
+    display:flex;
+    align-items:center;
+    gap:30px;
+    margin-bottom:40px;
+}
+
+.team-logo {
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#0b1220;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    font-weight:800;
+    color:#8b5cf6;
+}
+
+.team-info h1 {
+    margin:0;
+    font-size:36px;
+    font-weight:800;
+}
+
+.team-info p {
+    margin-top:6px;
+    opacity:.6;
+}
+
+/* DETAILS */
+.team-details {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-bottom:40px;
+}
+
+.detail-box {
+    background:#020617;
+    padding:18px;
+    border-radius:14px;
+    border-left:4px solid #8b5cf6;
+}
+
+.detail-box small {
+    opacity:.6;
+}
+
+/* JOUEURS */
+.players-section h2 {
+    margin-bottom:20px;
+    font-size:24px;
+}
+
+.player-list {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:20px;
+}
+
+.player-card {
+    background:#020617;
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+}
+
+.player-avatar {
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#1e293b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    margin:auto;
+    margin-bottom:10px;
+    color:#38bdf8;
+}
+
+.player-name {
+    font-weight:600;
+}
+
+/* ACTIONS */
+.actions {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:40px;
+}
+
+.btn {
+    padding:14px 30px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.btn-back {
+    background:#374151;
+    color:#fff;
+}
+
+.btn-edit {
+    background:linear-gradient(135deg,#ec4899,#8b5cf6);
+    color:#fff;
+}
+</style>
+
 <div class="page-wrapper">
+
     <div class="team-card">
-        
-        <!-- En-tête -->
+
+        <!-- HEADER -->
         <div class="team-header">
             <div class="team-logo">
                 {{ equipe.nom|slice(0,2)|upper }}
             </div>
+
             <div class="team-info">
                 <h1>{{ equipe.nom }}</h1>
                 <p>{{ equipe.game }} • {{ equipe.categorie }}</p>
             </div>
         </div>
 
-        <!-- Détails -->
+        <!-- DETAILS -->
         <div class="team-details">
             <div class="detail-box">
                 <small>Coach</small>
-                <strong>{{ equipe.coach.email}}</strong>
+                <strong>{{ equipe.coach.email }}</strong>
             </div>
+
             <div class="detail-box">
-                <small>Jeu</small>
+                <small>Game</small>
                 <strong>{{ equipe.game }}</strong>
             </div>
+
             <div class="detail-box">
                 <small>Catégorie</small>
                 <strong>{{ equipe.categorie }}</strong>
             </div>
         </div>
 
-        <!-- Joueurs -->
-        <h3 class="section-title">Joueurs de l'équipe</h3>
-        
-        {% if equipe.players|length > 0 %}
-        <div class="players-table-container">
-            <table class="players-table">
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Pays</th>
-                        <th>Niveau</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for joueur in equipe.players %}
-                    <tr>
-                        <td>{{ joueur.email }}</td>
-                        <td>{{ joueur.pays }}</td>
-                        <td>
-                            <span class="badge level-{{ joueur.niveau.value|lower }}">
-                                {{ joueur.niveau.value|title }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge status-{{ joueur.statut ? 'actif' : 'inactif' }}">
-                                {{ joueur.statut ? 'Actif' : 'Inactif' }}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-            <p class="no-players">Aucun joueur dans cette équipe.</p>
-        {% endif %}
+        <!-- PLAYERS -->
+<!-- PLAYERS -->
+<h3 style="margin:30px 0 15px; font-size:22px; font-weight:700; color:#fff;">
+    Joueurs de l’équipe
+</h3>
 
-        <!-- Actions -->
+{% if equipe.joueur|length > 0 %}
+<div style="
+    background:#020617;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,.6);
+">
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    color:#fff;
+    font-size:14px;
+">
+    <thead>
+        <tr style="text-align:left; border-bottom:1px solid #1e293b;">
+            <th style="padding:12px;">Email</th>
+            <th style="padding:12px;">Pays</th>
+            <th style="padding:12px;">Niveau</th>
+            <th style="padding:12px;">Statut</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for joueur in equipe.joueur %}
+        <tr style="
+            border-bottom:1px solid #0f172a;
+            transition:.2s;
+        " onmouseover="this.style.background='#020b1e'"
+          onmouseout="this.style.background='transparent'">
+
+            <td style="padding:12px; font-weight:500;">
+                {{ joueur.email }}
+            </td>
+
+            <td style="padding:12px; opacity:.85;">
+                {{ joueur.pays }}
+            </td>
+
+            <td style="padding:12px;">
+                <span style="
+                    padding:6px 14px;
+                    border-radius:999px;
+                    font-size:12px;
+                    font-weight:600;
+                    background:
+                        {% if joueur.niveau.value == 'BEGINNER' %}#1e40af
+                        {% elseif joueur.niveau.value == 'INTERMEDIATE' %}#065f46
+                        {% else %}#7c2d12{% endif %};
+                    color:#fff;
+                ">
+                    {{ joueur.niveau.value|title }}
+                </span>
+            </td>
+
+            <td style="padding:12px;">
+                <span style="
+                    padding:6px 14px;
+                    border-radius:999px;
+                    font-size:12px;
+                    font-weight:600;
+                    background: {{ joueur.statut ? '#14532d' : '#7f1d1d' }};
+                    color:#fff;
+                ">
+                    {{ joueur.statut ? 'Actif' : 'Inactif' }}
+                </span>
+            </td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+</div>
+{% else %}
+    <p style="color:#9ca3af;">Aucun joueur dans cette équipe.</p>
+{% endif %}
+
+
+
+
+        <!-- ACTIONS -->
         <div class="actions">
-            <a href="{{ path('app_equipe_index_admin') }}" class="btn btn-back">
-                ← Retour à la liste
+           
+
+            <a href="{{ path('app_equipe_edit', {'id': equipe.id}) }}" class="btn btn-edit">
+                ✏ Edit Team
             </a>
-            <a href="{{ path('app_equipe_edit_admin', {'id': equipe.id}) }}" class="btn btn-edit">
-                ✏ Modifier l'équipe
-            </a>
+
         </div>
+                        {{ include('equipe/_delete_form.html.twig') }}
+
+
     </div>
+
 </div>
 
-<style>
-/* ===== VARIABLES LIGHT ===== */
-:root {
-    --bg-page: #f9fafb;
-    --bg-card: #ffffff;
-    --bg-soft: #f1f5f9;
-    --accent: #6366f1;
-    --accent-secondary: #ec4899;
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-}
-
-/* PAGE */
-.page-wrapper {
-    min-height: calc(100vh - 200px);
-    background: var(--bg-page);
-    padding: 40px;
-    color: var(--text-main);
-}
-
-/* CARD */
-.team-card {
-    max-width: 900px;
-    margin: auto;
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 45px rgba(0,0,0,.08);
-}
-
-/* HEADER */
-.team-header {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 40px;
-}
-
-.team-logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: var(--bg-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--accent);
-}
-
-.team-info h1 {
-    margin: 0;
-    font-size: 36px;
-    font-weight: 800;
-}
-
-.team-info p {
-    margin-top: 6px;
-    color: var(--text-muted);
-}
-
-/* DETAILS */
-.team-details {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.detail-box {
-    background: var(--bg-soft);
-    padding: 18px;
-    border-radius: 14px;
-    border-left: 4px solid var(--accent);
-}
-
-.detail-box small {
-    color: var(--text-muted);
-}
-
-/* JOUEURS */
-.section-title {
-    margin: 30px 0 15px;
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.players-table-container {
-    background: var(--bg-soft);
-    border-radius: 16px;
-    padding: 20px;
-}
-
-.players-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.players-table th {
-    text-align: left;
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.players-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-}
-
-.players-table tr:hover {
-    background: rgba(0,0,0,0.03);
-}
-
-/* BADGES */
-.badge {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.level-beginner { background: #e0e7ff; color:#3730a3; }
-.level-intermediate { background: #dcfce7; color:#065f46; }
-.level-expert { background: #fee2e2; color:#7f1d1d; }
-
-.status-actif { background: #dcfce7; color:#166534; }
-.status-inactif { background: #fee2e2; color:#7f1d1d; }
-
-/* NO PLAYERS */
-.no-players {
-    text-align: center;
-    color: var(--text-muted);
-}
-
-/* ACTIONS */
-.actions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 40px;
-}
-
-.btn {
-    padding: 14px 30px;
-    border-radius: 14px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.btn-back {
-    background: #e5e7eb;
-    color: var(--text-main);
-}
-
-.btn-edit {
-    background: linear-gradient(135deg, var(--accent-secondary), var(--accent));
-    color: #fff;
-}
-</style>
 {% endblock %}

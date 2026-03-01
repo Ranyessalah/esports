@@ -15,8 +15,10 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 
-class CoachType extends AbstractType
-{
+/**
+ * @extends AbstractType<Coach>
+ */
+class CoachType extends AbstractType{
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
