@@ -6,23 +6,48 @@
 parameters:
   logos_directory: "%kernel.project_dir%/public/uploads/logos"
   equipe_directory: "%kernel.project_dir%/public/uploads/equipes"
+  recaptcha.site_key: '%env(RECAPTCHA_SITE_KEY)%'
+  recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
+  facepp.api_key: '%env(FACEPP_API_KEY)%'
+  facepp.api_secret: '%env(FACEPP_API_SECRET)%'
+
+
 services:
   # default configuration for services in *this* file
   _defaults:
     autowire: true # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-  # makes classes in src/ available to be used as services
-  # this creates a service per class whose id is the fully-qualified class name
-  App\:
+ # makes classes in src/ available to be used as services
+# this creates a service per class whose id is the fully-qualified class name
+App\:
     resource: "../src/"
     exclude:
-      - "../src/DependencyInjection/"
-      - "../src/Entity/"
-      - "../src/Kernel.php"
-  App\Service\StatsService:
+        - "../src/DependencyInjection/"
+        - "../src/Entity/"
+        - "../src/Kernel.php"
+
+# ---------------- MATCH / STATS ----------------
+App\Service\StatsService:
     arguments:
-      $matchsRepository: '@App\Repository\MatchsRepository'
-      $equipeRepository: '@App\Repository\EquipeRepository'
-  # add more service definitions when explicit configuration is needed
-  # please note that last definitions always *replace* previous ones
+        $matchsRepository: '@App\Repository\MatchsRepository'
+        $equipeRepository: '@App\Repository\EquipeRepository'
+
+# ---------------- MAILER ----------------
+App\Service\MailerService:
+    arguments:
+        $mailer: '@mailer'
+
+# ---------------- RECAPTCHA ----------------
+App\Service\RecaptchaService:
+    arguments:
+        $recaptchaSecretKey: '%recaptcha.secret_key%'
+
+# ---------------- FACE++ ----------------
+App\Service\FacePlusPlusService:
+    arguments:
+        $faceppApiKey: '%facepp.api_key%'
+        $faceppApiSecret: '%facepp.api_secret%'
+
+# add more service definitions when explicit configuration is needed
+# please note that last definitions always *replace* previous ones

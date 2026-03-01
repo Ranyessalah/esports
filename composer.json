@@ -12,6 +12,9 @@
         "doctrine/orm": "^3.6",
         "dompdf/dompdf": "^3.1",
         "endroid/qr-code": "^6.0",
+         "knpuniversity/oauth2-client-bundle": "*",
+        "league/oauth2-google": "*",
+        "spomky-labs/otphp": "^11.4",
         "symfony/asset": "6.4.*",
         "symfony/cache": "6.4.*",
         "symfony/console": "6.4.*",
@@ -21,6 +24,7 @@
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/google-mailer": "6.4.*",
         "symfony/http-client": "6.4.*",
         "symfony/mailer": "6.4.*",
         "symfony/runtime": "6.4.*",
@@ -86,5 +90,6 @@
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",
         "symfony/maker-bundle": "^1.65"
+         "symfony/web-profiler-bundle": "6.4.*"
     }
 }

@@ -3,17 +3,20 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'coach')]
 class Coach extends User
 {
+    #[Assert\NotBlank(message: 'La spécialité est obligatoire')]
     #[ORM\Column(length: 100)]
     private ?string $specialite = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $disponibilite = false;
 
+    #[Assert\NotBlank(message: 'Le pays est obligatoire')]
     #[ORM\Column(length: 100)]
     private ?string $pays = null;
 

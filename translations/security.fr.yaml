@@ -1,0 +1,8 @@
+"Username could not be found.": "Email introuvable."
+"Email could not be found.": "Aucun compte trouvé avec cet email."
+"Invalid credentials.": "Mot de passe incorrect."
+"Account is disabled.": "Ce compte est désactivé."
+"Account has expired.": "Ce compte a expiré."
+"Credentials have expired.": "Les identifiants ont expiré."
+"Account is locked.": "Ce compte est verrouillé."
+"Invalid CSRF token.": "Jeton CSRF invalide, veuillez réessayer."
