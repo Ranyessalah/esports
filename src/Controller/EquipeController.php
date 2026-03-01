@@ -8,10 +8,14 @@ use App\Repository\EquipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -58,8 +62,50 @@ public function ajaxSearch(Request $request, EquipeRepository $repo): JsonRespon
             'players' => count($equipe->getJoueur()),
             'coach' => $equipe->getCoach() ? $equipe->getCoach()->getEmail() : 'Non assigné'
         ];
+    #[Route( name: 'app_equipe_index', methods: ['GET'])]
+public function index(Request $request, EquipeRepository $repo): Response
+{
+    $search = $request->query->get('search');
+    $game   = $request->query->get('game');
+    $sort   = $request->query->get('sort');
+
+    $equipes = $repo->findAllWithSearch($search, $game, $sort);
+
+    $template = $this->isGranted('ROLE_ADMIN') 
+        ? 'equipe/admin/index.html.twig' 
+        : 'equipe/index.html.twig';
+
+    return $this->render($template, [
+        'equipes' => $equipes,
+        'search' => $search,
+        'game' => $game,
+        'sort' => $sort,
+    ]);
+}
+#[Route('/ajax/search', name: 'app_equipe_ajax_search', methods: ['GET'])]
+public function ajaxSearch(Request $request, EquipeRepository $repo): JsonResponse
+{
+    $search = $request->query->get('search');
+    $game   = $request->query->get('game');
+
+    $equipes = $repo->findAllWithSearch($search, $game);
+
+    $data = [];
+
+    foreach ($equipes as $equipe) {
+        $data[] = [
+            'id' => $equipe->getId(),
+            'nom' => $equipe->getNom(),
+            'game' => $equipe->getGame(),
+            'categorie' => $equipe->getCategorie(),
+            'logo' => $equipe->getLogo(),
+            'players' => count($equipe->getJoueur()),
+            'coach' => $equipe->getCoach() ? $equipe->getCoach()->getEmail() : 'Non assigné'
+        ];
     }
 
+    return new JsonResponse($data);
+}
     return new JsonResponse($data);
 }
     #[Route('/new', name: 'app_equipe_new', methods: ['GET', 'POST'])]
@@ -68,6 +114,15 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     $equipe = new Equipe();
     $form = $this->createForm(EquipeType::class, $equipe);
     $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $equipe = new Equipe();
+    $form = $this->createForm(EquipeType::class, $equipe);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+        $logoFile = $form->get('logoFile')->getData();
 
     if ($form->isSubmitted() && $form->isValid()) {
 
@@ -86,13 +141,35 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
             $equipe->setLogo($newFilename);
         }else {
             $equipe->setLogo("default.jpg"); // logo par défaut si aucun fichier uploadé
+            $newFilename = uniqid() . '.' . $logoFile->guessExtension();
+
+            // Utilise le paramètre défini dans services.yaml
+            $logoFile->move(
+                $this->getParameter('equipe_directory'),
+                $newFilename
+            );
+
+            // On enregistre seulement le nom en base (meilleure pratique)
+            $equipe->setLogo($newFilename);
+        }else {
+            $equipe->setLogo("default.jpg"); // logo par défaut si aucun fichier uploadé
         }
 
+        $entityManager->persist($equipe);
+        $entityManager->flush();
         $entityManager->persist($equipe);
         $entityManager->flush();
 
         return $this->redirectToRoute('app_equipe_index', [], Response::HTTP_SEE_OTHER);
     }
+        return $this->redirectToRoute('app_equipe_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    return $this->render('equipe/new.html.twig', [
+        'equipe' => $equipe,
+        'form' => $form->createView(), // ⚠ important
+    ]);
+}
 
     return $this->render('equipe/new.html.twig', [
         'equipe' => $equipe,
@@ -124,10 +201,43 @@ public function show(Equipe $equipe): Response
     // ADMIN
     if ($this->isGranted('ROLE_ADMIN')) {
         return $this->render('equipe/admin/show.html.twig', [
+#[Route('/{id}', name: 'app_equipe_show', methods: ['GET'])]
+public function show(Equipe $equipe): Response
+{
+    // ========= TEXTE DU QR =========
+    $text = "Equipe : ".$equipe->getNom()."\n\nJoueurs :\n";
+
+    foreach ($equipe->getJoueur() as $joueur) {
+        $text .= "- ".$joueur->getEmail()."\n";
+    }
+
+    // ========= QR CODE (ancienne version) =========
+    $qrCode = new QrCode($text);
+ 
+
+    $writer = new PngWriter();
+    $result = $writer->write($qrCode);
+
+    // convertir en base64
+    $qrImage = base64_encode($result->getString());
+
+    // ADMIN
+    if ($this->isGranted('ROLE_ADMIN')) {
+        return $this->render('equipe/admin/show.html.twig', [
             'equipe' => $equipe,
+            'qrCode' => $qrImage
             'qrCode' => $qrImage
         ]);
     }
+
+    // CLIENT
+    return $this->render('equipe/show.html.twig', [
+        'equipe' => $equipe,
+        'qrCode' => $qrImage
+    ]);
+}
+
+
 
     // CLIENT
     return $this->render('equipe/show.html.twig', [
@@ -201,6 +311,12 @@ $logoFile = $form->get('logo')->getData();
     return $this->redirectToRoute('app_equipe_index');
 }
 
+
+    return $this->render('equipe/edit.html.twig', [
+        'equipe' => $equipe,
+        'form' => $form->createView(), // ⚠ important
+    ]);
+}
 
     return $this->render('equipe/edit.html.twig', [
         'equipe' => $equipe,

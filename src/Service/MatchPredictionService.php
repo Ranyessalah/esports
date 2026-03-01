@@ -6,13 +6,17 @@ class MatchPredictionService
 {
     public function predict(int $team1, int $team2): ?string
     {
-        $python = "C:/Program Files/Python312/python.exe";
-        $script = "C:/Users/Administrator/Desktop/esports_nermine/predict.py";
-    
-        $command = escapeshellcmd("\"$python\" \"$script\" $team1 $team2");
-    
-        $output = shell_exec($command);
-    
-        return $output ?: "Prediction unavailable";
+       $python = "C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python312\\python.exe";
+$script = "C:\\Users\\User\\OneDrive\\Bureau\\esports_nermine\\esports_nermine\\predict.py";
+
+        $command = "\"$python\" \"$script\" $team1 $team2";
+
+        $output = shell_exec($command . " 2>&1");
+
+        if (!$output) {
+            return null;
+        }
+
+        return trim($output);
     }
 }
