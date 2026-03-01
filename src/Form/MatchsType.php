@@ -8,9 +8,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -27,11 +24,7 @@ class MatchsType extends AbstractType
         $builder
             ->add('nom_match', TextType::class, [
                 'label' => 'Nom du match',
-            ->add('nom_match', TextType::class, [
-                'label' => 'Nom du match',
                 'attr' => [
-                    'class' => 'team-input',
-                    'placeholder' => 'Entrez le nom du match'
                     'class' => 'team-input',
                     'placeholder' => 'Entrez le nom du match'
                 ]
@@ -104,4 +97,3 @@ class MatchsType extends AbstractType
         ]);
     }
 }
-

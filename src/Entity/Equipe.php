@@ -57,7 +57,7 @@ class Equipe
     /**
      * @var Collection<int, Player>
      */
-    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'equipe')]
+#[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Player::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $joueur;
 
     public function __construct()
