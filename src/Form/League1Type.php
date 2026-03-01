@@ -32,6 +32,10 @@ class League1Type extends AbstractType
                 'class' => User::class,
                 'choice_label' => 'id',
             ])
+              ->add('description')
+            ->add('location')
+            ->add('maxTeams')
+            ->add('banner')
         ;
     }
 

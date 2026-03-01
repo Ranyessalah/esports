@@ -39,6 +39,72 @@ class League
     #[ORM\Column(nullable: true)]
     private ?float $prizePool = null;
 
+
+
+
+
+
+        #[ORM\Column(type: 'text', nullable: true)]
+        private ?string $description = null;
+
+        #[ORM\Column(length: 255, nullable: true)]
+        private ?string $location = null;
+
+        #[ORM\Column(nullable: true)]
+        private ?int $maxTeams = null;
+
+        #[ORM\Column(length: 255, nullable: true)]
+        private ?string $banner = null;
+
+    
+
+            public function getDescription(): ?string
+        {
+            return $this->description;
+        }
+
+        public function setDescription(?string $description): static
+        {
+            $this->description = $description;
+            return $this;
+        }
+
+        public function getLocation(): ?string
+        {
+            return $this->location;
+        }
+
+        public function setLocation(?string $location): static
+        {
+            $this->location = $location;
+            return $this;
+        }
+
+        public function getMaxTeams(): ?int
+        {
+            return $this->maxTeams;
+        }
+
+        public function setMaxTeams(?int $maxTeams): static
+        {
+            $this->maxTeams = $maxTeams;
+            return $this;
+        }
+
+        public function getBanner(): ?string
+        {
+            return $this->banner;
+        }
+
+        public function setBanner(?string $banner): static
+        {
+            $this->banner = $banner;
+            return $this;
+        }
+
+
+
+
     public function getId(): ?int
     {
         return $this->id;

@@ -140,7 +140,27 @@
                             </span>
                         </td>
                     </tr>
+                    
                     <tr>
+                        <th>Location</th>
+                        <td>{{ league.location }}</td>
+                    </tr>
+                    <tr>
+                        <th>Max Teams</th>
+                        <td>{{ league.maxTeams }}</td>
+                    </tr>
+                    <tr>
+                            <th>Description</th>
+                            <td>{{ league.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Banner</th>
+                        <td>{% if league.banner %}
+                            <img src="{{ asset('uploads/banners/' ~ league.banner) }}" alt="League Banner" style="max-width: 300px; border-radius: 8px;">
+                        {% else %}
+                            No banner uploaded
+                        {% endif %}</td>
+                    </tr>
                         <th>Prize Pool</th>
                         <td><strong>${{ league.prizePool ? league.prizePool|number_format(2) : '0.00' }}</strong></td>
                     </tr>

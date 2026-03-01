@@ -34,6 +34,21 @@ class Fixture
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $round = null;
 
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $matchLink = null;
+
+    public function getMatchLink(): ?string
+    {
+        return $this->matchLink;
+    }
+
+    public function setMatchLink(?string $matchLink): static
+    {
+        $this->matchLink = $matchLink;
+        return $this;
+    }
+
     // ---------------- Getters & Setters ----------------
 
     public function getId(): ?int

@@ -36,6 +36,7 @@ class Fixture1Type extends AbstractType
                 'class' => User::class,
                 'choice_label' => 'id',
             ])
+            ->add('matchLink')
         ;
     }
 

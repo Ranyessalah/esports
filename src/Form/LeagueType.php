@@ -27,6 +27,11 @@ class LeagueType extends AbstractType
             ->add('format')
             ->add('status')
             ->add('prizePool')
+            
+            ->add('description')
+            ->add('location')
+            ->add('maxTeams')
+            ->add('banner')
         ;
     }
     

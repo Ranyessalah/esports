@@ -23,6 +23,7 @@ class FixtureType extends AbstractType
                 'class' => League::class,
                 'choice_label' => 'id',
             ])
+            ->add('matchLink')
          
         ;
     }
