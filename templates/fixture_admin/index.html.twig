@@ -9,18 +9,48 @@
 .table tbody td { vertical-align:middle; padding:12px 15px; border-bottom:1px solid #f4f5f8; }
 .table tbody tr:last-child td { border-bottom:none; }
 .table tbody tr:hover { background:#f8f9fa; }
-.btn-action  { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; text-decoration:none; transition:all .2s; }
-.btn-show    { background:rgba(16,183,89,.1); color:#10b759; }
+
+.btn-action  { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; text-decoration:none; transition:all .2s; border:none; cursor:pointer; }
+.btn-show    { background:rgba(16,183,89,.1);  color:#10b759; }
 .btn-show:hover   { background:#10b759; color:#fff; }
-.btn-edit    { background:rgba(1,104,250,.1); color:#0168fa; }
+.btn-edit    { background:rgba(1,104,250,.1);  color:#0168fa; }
 .btn-edit:hover   { background:#0168fa; color:#fff; }
-.btn-delete  { background:rgba(220,38,38,.1); color:#dc2626; }
+.btn-delete  { background:rgba(220,38,38,.1);  color:#dc2626; }
 .btn-delete:hover { background:#dc2626; color:#fff; }
+
+/* ── Filter bar ── */
+.filter-bar {
+    background:#fff; border-radius:8px; padding:14px 18px;
+    box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:18px;
+    display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
+}
+.filter-bar label { font-size:11px; font-weight:600; color:#596882; text-transform:uppercase; display:block; margin-bottom:4px; }
+.filter-bar input,
+.filter-bar select {
+    height:36px; border:1px solid #d1d5db; border-radius:6px;
+    padding:0 10px; font-size:13px; color:#374151;
+    transition:border-color .2s; outline:none;
+}
+.filter-bar input:focus,
+.filter-bar select:focus { border-color:#6c3fd6; box-shadow:0 0 0 2px rgba(108,63,214,.1); }
+.filter-search { flex:1; min-width:160px; }
+.filter-select { min-width:130px; }
+.filter-date   { min-width:150px; }
+.filter-reset {
+    height:36px; padding:0 14px; border-radius:6px; border:1px solid #e5e7eb;
+    background:#f9fafb; color:#6b7280; font-size:13px; cursor:pointer;
+    transition:all .2s; white-space:nowrap;
+}
+.filter-reset:hover { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+#result-count { font-size:12px; color:#6b7280; margin-left:auto; align-self:center; white-space:nowrap; }
+.highlight { background:#fef9c3; }
+tr.filtered-out { display:none; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="az-content-body">
+
     {# Page Header #}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -45,12 +75,69 @@
         {% endfor %}
     {% endfor %}
 
-    {# Search #}
-    <form method="get" class="mb-3 d-flex gap-2">
-        <input type="text" name="search" class="form-control" placeholder="Search by status or round…" value="{{ searchQuery }}">
-        <button class="btn btn-outline-secondary">Search</button>
-        {% if searchQuery %}<a href="{{ path('app_fixture_admin_index') }}" class="btn btn-outline-danger">Clear</a>{% endif %}
-    </form>
+    {#
+      Collect unique rounds BEFORE the filter bar using ~ to cast to string.
+      Twig does not have a |string filter — use the concatenation trick: '' ~ value
+    #}
+    {% set rounds = [] %}
+    {% for fixture in fixtures %}
+        {% set roundStr = '' ~ fixture.round %}
+        {% if fixture.round is not null and roundStr not in rounds %}
+            {% set rounds = rounds|merge([roundStr]) %}
+        {% endif %}
+    {% endfor %}
+
+    {# ── Live Filter Bar ──────────────────────────────────────────────────── #}
+    <div class="filter-bar">
+
+        <div style="flex:1;min-width:160px">
+            <label>Search</label>
+            <input id="f-search" type="text" class="filter-search" placeholder="Round, status…" autocomplete="off">
+        </div>
+
+        <div>
+            <label>Status</label>
+            <select id="f-status" class="filter-select">
+                <option value="">All statuses</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="live">Live</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Round</label>
+            <select id="f-round" class="filter-select">
+                <option value="">All rounds</option>
+                {% for r in rounds|sort %}
+                    <option value="{{ r|lower }}">Round {{ r }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Match date from</label>
+            <input id="f-date-from" type="date" class="filter-date">
+        </div>
+
+        <div>
+            <label>Match date until</label>
+            <input id="f-date-to" type="date" class="filter-date">
+        </div>
+
+        <div>
+            <label>Time from</label>
+            <input id="f-time-from" type="time" style="min-width:110px" class="filter-date">
+        </div>
+
+        <div>
+            <label>Time until</label>
+            <input id="f-time-to" type="time" style="min-width:110px" class="filter-date">
+        </div>
+
+        <button class="filter-reset" id="f-reset">✕ Reset</button>
+        <span id="result-count"></span>
+    </div>
 
     {# Table #}
     <div class="card">
@@ -59,20 +146,26 @@
                 <table class="table mb-0">
                     <thead>
                         <tr>
-                            <th>ID</th><th>Match Date</th><th>Status</th><th>Round</th><th class="text-center">Actions</th>
+                            <th>ID</th><th>Match Date</th><th>Time</th><th>Status</th><th>Round</th><th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="fixture-tbody">
                         {% for fixture in fixtures %}
-                        <tr>
+                        <tr
+                            data-status="{{ fixture.status|lower }}"
+                            data-round="{{ ('' ~ fixture.round)|lower }}"
+                            data-date="{{ fixture.matchDate ? fixture.matchDate|date('Y-m-d') : '' }}"
+                            data-time="{{ fixture.matchDate ? fixture.matchDate|date('H:i') : '' }}"
+                        >
                             <td><strong>#{{ fixture.id }}</strong></td>
-                            <td>{{ fixture.matchDate ? fixture.matchDate|date('Y-m-d H:i') : '-' }}</td>
+                            <td>{{ fixture.matchDate ? fixture.matchDate|date('Y-m-d') : '-' }}</td>
+                            <td>{{ fixture.matchDate ? fixture.matchDate|date('H:i') : '-' }}</td>
                             <td>
                                 <span class="badge bg-{{ fixture.status == 'completed' ? 'success' : (fixture.status == 'live' ? 'danger' : 'secondary') }}">
                                     {{ fixture.status }}
                                 </span>
                             </td>
-                            <td>Round {{ fixture.round }}</td>
+                            <td class="col-round">Round {{ fixture.round }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a class="btn-action btn-show" href="{{ path('app_fixture_admin_show', {id:fixture.id}) }}" title="View"><i class="typcn typcn-eye"></i></a>
@@ -85,8 +178,8 @@
                             </td>
                         </tr>
                         {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">
+                        <tr id="empty-row">
+                            <td colspan="6" class="text-center py-4 text-muted">
                                 <i class="typcn typcn-info-large" style="font-size:48px;opacity:.3;"></i>
                                 <p class="mb-0 mt-2">No fixtures found</p>
                             </td>
@@ -98,9 +191,128 @@
         </div>
     </div>
 
-    {# Pagination #}
-    <div class="mt-3 d-flex justify-content-center">
+    <div class="mt-3 d-flex justify-content-center" id="pagination-wrap">
         {{ knp_pagination_render(fixtures) }}
     </div>
+
+    <template id="no-results-tpl">
+        <tr id="no-results-row">
+            <td colspan="6" class="text-center py-4 text-muted">
+                <i class="typcn typcn-warning" style="font-size:36px;opacity:.4;"></i>
+                <p class="mb-0 mt-2">No fixtures match your filters</p>
+            </td>
+        </tr>
+    </template>
+
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function () {
+    const tbody    = document.getElementById('fixture-tbody');
+    const rows     = Array.from(tbody.querySelectorAll('tr[data-status]'));
+    const countEl  = document.getElementById('result-count');
+    const pagWrap  = document.getElementById('pagination-wrap');
+    const noResTpl = document.getElementById('no-results-tpl');
+
+    const fSearch   = document.getElementById('f-search');
+    const fStatus   = document.getElementById('f-status');
+    const fRound    = document.getElementById('f-round');
+    const fDateFrom = document.getElementById('f-date-from');
+    const fDateTo   = document.getElementById('f-date-to');
+    const fTimeFrom = document.getElementById('f-time-from');
+    const fTimeTo   = document.getElementById('f-time-to');
+    const fReset    = document.getElementById('f-reset');
+
+    function isFiltering() {
+        return fSearch.value.trim() !== '' || fStatus.value !== '' || fRound.value !== '' ||
+               fDateFrom.value !== '' || fDateTo.value !== '' ||
+               fTimeFrom.value !== '' || fTimeTo.value !== '';
+    }
+
+    function applyFilters() {
+        const search   = fSearch.value.trim().toLowerCase();
+        const status   = fStatus.value.toLowerCase();
+        const round    = fRound.value.toLowerCase();
+        const dateFrom = fDateFrom.value || null;
+        const dateTo   = fDateTo.value   || null;
+        const timeFrom = fTimeFrom.value || null;
+        const timeTo   = fTimeTo.value   || null;
+
+        const old = document.getElementById('no-results-row');
+        if (old) old.remove();
+
+        pagWrap.style.display = isFiltering() ? 'none' : '';
+
+        let visible = 0;
+
+        rows.forEach(function (row) {
+            const rStatus = row.dataset.status || '';
+            const rRound  = row.dataset.round  || '';
+            const rDate   = row.dataset.date   || '';
+            const rTime   = row.dataset.time   || '';
+
+            let show = true;
+
+            if (search && !rRound.includes(search) && !rStatus.includes(search)) show = false;
+            if (status && rStatus !== status) show = false;
+            if (round  && rRound  !== round)  show = false;
+            if (dateFrom && rDate && rDate < dateFrom) show = false;
+            if (dateTo   && rDate && rDate > dateTo)   show = false;
+            if (timeFrom && rTime && rTime < timeFrom) show = false;
+            if (timeTo   && rTime && rTime > timeTo)   show = false;
+
+            row.classList.toggle('filtered-out', !show);
+            highlightCell(row.querySelector('.col-round'), search);
+            if (show) visible++;
+        });
+
+        countEl.textContent = isFiltering()
+            ? visible + ' of ' + rows.length + ' fixture(s)'
+            : rows.length + ' fixture(s)';
+
+        if (visible === 0 && isFiltering()) {
+            tbody.appendChild(noResTpl.content.cloneNode(true));
+        }
+    }
+
+    function highlightCell(cell, term) {
+        if (!cell) return;
+        cell.innerHTML = cell.textContent;
+        if (!term) return;
+        const text = cell.textContent;
+        const idx  = text.toLowerCase().indexOf(term);
+        if (idx === -1) return;
+        cell.innerHTML =
+            esc(text.slice(0, idx)) +
+            '<mark class="highlight">' + esc(text.slice(idx, idx + term.length)) + '</mark>' +
+            esc(text.slice(idx + term.length));
+    }
+
+    function esc(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    let timer;
+    function debounced() { clearTimeout(timer); timer = setTimeout(applyFilters, 180); }
+
+    fSearch.addEventListener('input',    debounced);
+    fStatus.addEventListener('change',   applyFilters);
+    fRound.addEventListener('change',    applyFilters);
+    fDateFrom.addEventListener('change', applyFilters);
+    fDateTo.addEventListener('change',   applyFilters);
+    fTimeFrom.addEventListener('change', applyFilters);
+    fTimeTo.addEventListener('change',   applyFilters);
+
+    fReset.addEventListener('click', function () {
+        [fSearch, fDateFrom, fDateTo, fTimeFrom, fTimeTo].forEach(el => el.value = '');
+        [fStatus, fRound].forEach(el => el.value = '');
+        applyFilters();
+    });
+
+    applyFilters();
+})();
+</script>
 {% endblock %}

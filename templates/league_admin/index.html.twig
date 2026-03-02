@@ -9,18 +9,55 @@
 .table tbody td { vertical-align:middle; padding:12px 15px; border-bottom:1px solid #f4f5f8; }
 .table tbody tr:last-child td { border-bottom:none; }
 .table tbody tr:hover { background:#f8f9fa; }
-.btn-action { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; text-decoration:none; transition:all .2s; }
-.btn-show  { background:rgba(16,183,89,.1); color:#10b759; }
-.btn-show:hover  { background:#10b759; color:#fff; }
-.btn-edit  { background:rgba(1,104,250,.1); color:#0168fa; }
-.btn-edit:hover  { background:#0168fa; color:#fff; }
-.btn-delete{ background:rgba(220,38,38,.1); color:#dc2626; }
-.btn-delete:hover{ background:#dc2626; color:#fff; }
+
+.btn-action { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:4px; text-decoration:none; transition:all .2s; border:none; cursor:pointer; }
+.btn-show   { background:rgba(16,183,89,.1);  color:#10b759; }
+.btn-show:hover  { background:#10b759;  color:#fff; }
+.btn-edit   { background:rgba(1,104,250,.1);  color:#0168fa; }
+.btn-edit:hover  { background:#0168fa;  color:#fff; }
+.btn-delete { background:rgba(220,38,38,.1);  color:#dc2626; }
+.btn-delete:hover{ background:#dc2626;  color:#fff; }
+
+/* ── Filter bar ── */
+.filter-bar {
+    background:#fff; border-radius:8px; padding:14px 18px;
+    box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:18px;
+    display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;
+}
+.filter-bar label { font-size:11px; font-weight:600; color:#596882; text-transform:uppercase; display:block; margin-bottom:4px; }
+.filter-bar input,
+.filter-bar select {
+    height:36px; border:1px solid #d1d5db; border-radius:6px;
+    padding:0 10px; font-size:13px; color:#374151;
+    transition:border-color .2s; outline:none;
+}
+.filter-bar input:focus,
+.filter-bar select:focus { border-color:#6c3fd6; box-shadow:0 0 0 2px rgba(108,63,214,.1); }
+.filter-search { flex:1; min-width:180px; }
+.filter-select { min-width:130px; }
+.filter-date   { min-width:140px; }
+.filter-reset {
+    height:36px; padding:0 14px; border-radius:6px; border:1px solid #e5e7eb;
+    background:#f9fafb; color:#6b7280; font-size:13px; cursor:pointer;
+    transition:all .2s; white-space:nowrap; align-self:flex-end;
+}
+.filter-reset:hover { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+
+/* result count badge */
+#result-count {
+    font-size:12px; color:#6b7280; margin-left:auto;
+    align-self:center; white-space:nowrap;
+}
+.highlight { background:#fef9c3; }
+
+/* hidden row */
+tr.filtered-out { display:none; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="az-content-body">
+
     {# Page Header #}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -45,30 +82,88 @@
         {% endfor %}
     {% endfor %}
 
-    {# Search #}
-    <form method="get" class="mb-3 d-flex gap-2">
-        <input type="text" name="search" class="form-control" placeholder="Search by name, game or status…" value="{{ searchQuery }}">
-        <button class="btn btn-outline-secondary">Search</button>
-        {% if searchQuery %}<a href="{{ path('app_league_admin_index') }}" class="btn btn-outline-danger">Clear</a>{% endif %}
-    </form>
+    {# ── Live Filter Bar ──────────────────────────────────────────────────── #}
+    <div class="filter-bar">
+
+        <div style="flex:1;min-width:180px">
+            <label>Search</label>
+            <input id="f-search" type="text" class="filter-search" placeholder="Name, game…" autocomplete="off">
+        </div>
+
+        <div>
+            <label>Status</label>
+            <select id="f-status" class="filter-select">
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Game</label>
+            <select id="f-game" class="filter-select">
+                <option value="">All games</option>
+                {# Collect unique games from data #}
+                {% set games = [] %}
+                {% for league in leagues %}
+                    {% if league.game and league.game not in games %}
+                        {% set games = games|merge([league.game]) %}
+                    {% endif %}
+                {% endfor %}
+                {% for game in games|sort %}
+                    <option value="{{ game|lower }}">{{ game }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Min Prize ($)</label>
+            <input id="f-prize-min" type="number" class="filter-date" placeholder="0" min="0">
+        </div>
+
+        <div>
+            <label>Max Prize ($)</label>
+            <input id="f-prize-max" type="number" class="filter-date" placeholder="∞" min="0">
+        </div>
+
+        <div>
+            <label>Start from</label>
+            <input id="f-date-from" type="date" class="filter-date">
+        </div>
+
+        <div>
+            <label>Start until</label>
+            <input id="f-date-to" type="date" class="filter-date">
+        </div>
+
+        <button class="filter-reset" id="f-reset">✕ Reset</button>
+        <span id="result-count"></span>
+    </div>
 
     {# Table Card #}
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table mb-0">
+                <table class="table mb-0" id="league-table">
                     <thead>
                         <tr>
                             <th>ID</th><th>Name</th><th>Game</th><th>Start</th><th>End</th>
                             <th>Teams</th><th>Status</th><th>Prize Pool</th><th class="text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="league-tbody">
                         {% for league in leagues %}
-                        <tr>
+                        <tr
+                            data-name     ="{{ league.name|lower }}"
+                            data-game     ="{{ league.game|lower }}"
+                            data-status   ="{{ league.status|lower }}"
+                            data-prize    ="{{ league.prizePool }}"
+                            data-startdate="{{ league.startDate ? league.startDate|date('Y-m-d') : '' }}"
+                        >
                             <td><strong>#{{ league.id }}</strong></td>
-                            <td>{{ league.name }}</td>
-                            <td>{{ league.game }}</td>
+                            <td class="col-name">{{ league.name }}</td>
+                            <td class="col-game">{{ league.game }}</td>
                             <td>{{ league.startDate ? league.startDate|date('Y-m-d') : '-' }}</td>
                             <td>{{ league.endDate   ? league.endDate|date('Y-m-d')   : '-' }}</td>
                             <td>{{ league.numTeams }}</td>
@@ -80,8 +175,8 @@
                             <td>${{ league.prizePool|number_format(2) }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a class="btn-action btn-show"   href="{{ path('app_league_admin_show',   {id:league.id}) }}" title="View"><i class="typcn typcn-eye"></i></a>
-                                    <a class="btn-action btn-edit"   href="{{ path('app_league_admin_edit',   {id:league.id}) }}" title="Edit"><i class="typcn typcn-edit"></i></a>
+                                    <a class="btn-action btn-show" href="{{ path('app_league_admin_show', {id:league.id}) }}" title="View"><i class="typcn typcn-eye"></i></a>
+                                    <a class="btn-action btn-edit" href="{{ path('app_league_admin_edit', {id:league.id}) }}" title="Edit"><i class="typcn typcn-edit"></i></a>
                                     <form method="post" action="{{ path('app_league_admin_delete', {id:league.id}) }}" onsubmit="return confirm('Delete this league?');" style="display:inline">
                                         <input type="hidden" name="_token" value="{{ csrf_token('delete'~league.id) }}">
                                         <button class="btn-action btn-delete" title="Delete"><i class="typcn typcn-trash"></i></button>
@@ -90,7 +185,7 @@
                             </td>
                         </tr>
                         {% else %}
-                        <tr>
+                        <tr id="empty-row">
                             <td colspan="9" class="text-center py-4 text-muted">
                                 <i class="typcn typcn-info-large" style="font-size:48px;opacity:.3;"></i>
                                 <p class="mb-0 mt-2">No leagues found</p>
@@ -103,9 +198,165 @@
         </div>
     </div>
 
-    {# Pagination #}
-    <div class="mt-3 d-flex justify-content-center">
+    {# Pagination — shown only when no filter is active #}
+    <div class="mt-3 d-flex justify-content-center" id="pagination-wrap">
         {{ knp_pagination_render(leagues) }}
     </div>
+
+    {# No-results row (injected by JS when filters hide everything) #}
+    <template id="no-results-tpl">
+        <tr id="no-results-row">
+            <td colspan="9" class="text-center py-4 text-muted">
+                <i class="typcn typcn-warning" style="font-size:36px;opacity:.4;"></i>
+                <p class="mb-0 mt-2">No leagues match your filters</p>
+            </td>
+        </tr>
+    </template>
+
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function () {
+    const tbody      = document.getElementById('league-tbody');
+    const rows       = Array.from(tbody.querySelectorAll('tr[data-name]'));
+    const countEl    = document.getElementById('result-count');
+    const pagWrap    = document.getElementById('pagination-wrap');
+    const noResTpl   = document.getElementById('no-results-tpl');
+
+    const fSearch   = document.getElementById('f-search');
+    const fStatus   = document.getElementById('f-status');
+    const fGame     = document.getElementById('f-game');
+    const fPrizeMin = document.getElementById('f-prize-min');
+    const fPrizeMax = document.getElementById('f-prize-max');
+    const fDateFrom = document.getElementById('f-date-from');
+    const fDateTo   = document.getElementById('f-date-to');
+    const fReset    = document.getElementById('f-reset');
+
+    function isFiltering() {
+        return fSearch.value.trim()   !== '' ||
+               fStatus.value          !== '' ||
+               fGame.value            !== '' ||
+               fPrizeMin.value.trim() !== '' ||
+               fPrizeMax.value.trim() !== '' ||
+               fDateFrom.value        !== '' ||
+               fDateTo.value          !== '';
+    }
+
+    function applyFilters() {
+        const search   = fSearch.value.trim().toLowerCase();
+        const status   = fStatus.value.toLowerCase();
+        const game     = fGame.value.toLowerCase();
+        const prizeMin = fPrizeMin.value !== '' ? parseFloat(fPrizeMin.value) : null;
+        const prizeMax = fPrizeMax.value !== '' ? parseFloat(fPrizeMax.value) : null;
+        const dateFrom = fDateFrom.value || null;
+        const dateTo   = fDateTo.value   || null;
+
+        // Remove old no-results row if present
+        const old = document.getElementById('no-results-row');
+        if (old) old.remove();
+
+        // Hide pagination when filtering (results are already all on page via server pagination,
+        // but visual filter works on current page rows)
+        pagWrap.style.display = isFiltering() ? 'none' : '';
+
+        let visible = 0;
+
+        rows.forEach(function (row) {
+            const rName      = row.dataset.name      || '';
+            const rGame      = row.dataset.game      || '';
+            const rStatus    = row.dataset.status    || '';
+            const rPrize     = parseFloat(row.dataset.prize) || 0;
+            const rStartDate = row.dataset.startdate || '';
+
+            let show = true;
+
+            // Text search — name or game
+            if (search && !rName.includes(search) && !rGame.includes(search)) show = false;
+
+            // Status
+            if (status && rStatus !== status) show = false;
+
+            // Game
+            if (game && rGame !== game) show = false;
+
+            // Prize min/max
+            if (prizeMin !== null && rPrize < prizeMin) show = false;
+            if (prizeMax !== null && rPrize > prizeMax) show = false;
+
+            // Start date range
+            if (dateFrom && rStartDate && rStartDate < dateFrom) show = false;
+            if (dateTo   && rStartDate && rStartDate > dateTo)   show = false;
+
+            row.classList.toggle('filtered-out', !show);
+
+            // Highlight search term
+            highlightCell(row.querySelector('.col-name'), search);
+            highlightCell(row.querySelector('.col-game'), search);
+
+            if (show) visible++;
+        });
+
+        // Update count
+        countEl.textContent = isFiltering()
+            ? visible + ' of ' + rows.length + ' league(s)'
+            : rows.length + ' league(s)';
+
+        // Show no-results row if everything hidden
+        if (visible === 0 && isFiltering()) {
+            const clone = noResTpl.content.cloneNode(true);
+            tbody.appendChild(clone);
+        }
+    }
+
+    function highlightCell(cell, term) {
+        if (!cell) return;
+        // Strip previous highlights
+        cell.innerHTML = cell.textContent;
+        if (!term) return;
+        const text  = cell.textContent;
+        const idx   = text.toLowerCase().indexOf(term);
+        if (idx === -1) return;
+        cell.innerHTML =
+            escHtml(text.slice(0, idx)) +
+            '<mark class="highlight">' + escHtml(text.slice(idx, idx + term.length)) + '</mark>' +
+            escHtml(text.slice(idx + term.length));
+    }
+
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // Debounce for text inputs
+    let debounceTimer;
+    function debounced() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(applyFilters, 180);
+    }
+
+    fSearch.addEventListener('input', debounced);
+    fPrizeMin.addEventListener('input', debounced);
+    fPrizeMax.addEventListener('input', debounced);
+    fStatus.addEventListener('change', applyFilters);
+    fGame.addEventListener('change', applyFilters);
+    fDateFrom.addEventListener('change', applyFilters);
+    fDateTo.addEventListener('change', applyFilters);
+
+    fReset.addEventListener('click', function () {
+        fSearch.value   = '';
+        fStatus.value   = '';
+        fGame.value     = '';
+        fPrizeMin.value = '';
+        fPrizeMax.value = '';
+        fDateFrom.value = '';
+        fDateTo.value   = '';
+        applyFilters();
+    });
+
+    // Initial count
+    applyFilters();
+})();
+</script>
 {% endblock %}
