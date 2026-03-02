@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Leagues{% endblock %}
+
+{% block body %}
+<section id="games" style="background-color: transparent; color: #fff;">
+    <div class="container">
+        <div data-aos="fade">
+            <h3>DIVE INTO DIVERSE WORLDS OF PLAY</h3>
+            <p>Where gamers connect, compete, and grow.</p>
+        </div>
+
+        <div class="row gap-md-0 gap-4">
+            {% for league in leagues %}
+                <div class="col-md-6 mt-4" data-aos="fade-up">
+                    <div class="games g-one">
+                        <div class="tags d-flex justify-content-end gap-lg-4 gap-md-2 gap-sm-5 gap-3">
+                            <a href="#">{{ league.game }}</a>
+                            <a href="#">{{ league.format }}</a>
+                            <a href="#">{{ league.status }}</a>
+                            
+
+                        </div>
+                        <figure>
+                            <img src="{{ asset('assets/images/index/g-1.webp') }}" alt="{{ league.name }}">
+                        </figure>
+                        <h5>{{ league.name }}</h5>
+                        <p>Start: {{ league.startDate ? league.startDate|date('Y-m-d') : 'TBD' }}, End: {{ league.endDate ? league.endDate|date('Y-m-d') : 'TBD' }}</p>
+                        <p>Teams: {{ league.numTeams }} | Prize Pool: {{ league.prizePool }}</p>
+                        <div class="globalBtn">
+                            <ul>
+                                <li>
+                                    <a href="{{ path('app_league_show', {'id': league.id}) }}">
+                                        View League
+                                        <span></span><span></span><span></span><span></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center mt-5">
+                    <p>No leagues found</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Edit Fixture{% endblock %}
+
+{% block stylesheets %}
+<style>
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #6c3fd6;
+    box-shadow: 0 0 0 3px rgba(108, 63, 214, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-save {
+    background: #6c3fd6;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-save:hover {
+    background: #5a32b3;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background: #d1d5db;
+    color: #374151;
+}
+
+.btn-delete {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.btn-delete:hover {
+    background: #b91c1c;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    {# Page Header #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Fixture</h2>
+            <p class="text-muted mb-0">Update fixture information</p>
+        </div>
+        <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-secondary">
+            <i class="typcn typcn-arrow-back"></i> Back to List
+        </a>
+    </div>
+
+    {# Form Card #}
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    {% for field in form %}
+                        {% if field.vars.name != '_token' %}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form_label(field) }}
+                                    {{ form_widget(field) }}
+                                    {{ form_errors(field) }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="typcn typcn-tick"></i> Update Fixture
+                    </button>
+                    <a href="{{ path('app_fixture_admin_index') }}" class="btn-cancel">
+                        Cancel
+                    </a>
+                    
+                    {# Delete Form #}
+                    {{ form_end(form) }}
+                    <form method="post" 
+                          action="{{ path('app_fixture_admin_delete', {'id': fixture.id}) }}" 
+                          onsubmit="return confirm('Are you sure you want to delete this fixture?');"
+                          style="margin: 0;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ fixture.id) }}">
+                        <button type="submit" class="btn-delete">
+                            <i class="typcn typcn-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

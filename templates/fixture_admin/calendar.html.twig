@@ -1,0 +1,104 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Fixture Calendar{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+#calendar-wrap {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+#calendar { min-height: 600px; }
+.cal-legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+.cal-legend span { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#555; }
+.cal-legend i    { display:inline-block; width:12px; height:12px; border-radius:3px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Fixture Calendar</h2>
+            <p class="text-muted mb-0">Visual schedule of all matches</p>
+        </div>
+        <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-outline-secondary">← Back to List</a>
+    </div>
+
+    <div class="cal-legend">
+        <span><i style="background:#10b759"></i> Completed</span>
+        <span><i style="background:#ef4444"></i> Live</span>
+        <span><i style="background:#6c757d"></i> Scheduled</span>
+    </div>
+
+    <div id="calendar-wrap">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+{#
+  ALL values go through json_encode — this handles strings, numbers, nulls,
+  and special characters safely regardless of the field type.
+#}
+<script id="cal-data" type="application/json">
+[{% set first = true %}{% for fixture in fixtures %}{% if fixture.matchDate %}{% if not first %},{% endif %}{% set first = false %}{
+    "title": {{ ('Round ' ~ fixture.round ~ ' — ' ~ (fixture.status|capitalize))|json_encode|raw }},
+    "start": {{ fixture.matchDate|date('Y-m-d\\TH:i:s')|json_encode|raw }},
+    "url":   {{ path('app_fixture_admin_show', {id: fixture.id})|json_encode|raw }},
+    "color": {{ (fixture.status == 'completed' ? '#10b759' : (fixture.status == 'live' ? '#ef4444' : '#6c757d'))|json_encode|raw }},
+    "extendedProps": {
+        "status": {{ fixture.status|default('scheduled')|json_encode|raw }},
+        "round":  {{ fixture.round|default('')|json_encode|raw }}
+    }
+}{% endif %}{% endfor %}]
+</script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var raw, events;
+
+    try {
+        raw    = document.getElementById('cal-data').textContent;
+        events = JSON.parse(raw);
+    } catch (e) {
+        console.error('Fixture calendar JSON parse error:', e);
+        console.error('Raw JSON was:', raw);
+        events = [];
+    }
+
+    new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView:  'dayGridMonth',
+        height:       'auto',
+        headerToolbar: {
+            left:   'prev,next today',
+            center: 'title',
+            right:  'dayGridMonth,timeGridWeek,listMonth'
+        },
+        events:           events,
+        eventBorderColor: 'transparent',
+        eventClick: function (info) {
+            if (info.event.url) {
+                info.jsEvent.preventDefault();
+                window.location.href = info.event.url;
+            }
+        },
+        eventDidMount: function (info) {
+            var p = info.event.extendedProps;
+            info.el.setAttribute('title',
+                info.event.title +
+                '\nStatus: ' + p.status +
+                '\nRound: '  + p.round
+            );
+        }
+    }).render();
+});
+</script>
+{% endblock %}

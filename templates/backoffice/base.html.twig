@@ -296,7 +296,6 @@
 </header>
 
 <div class="bo-overlay" id="boOverlay"></div>
-
 <aside class="bo-sidebar" id="boSidebar">
     <div class="bo-sidebar-inner">
 
@@ -325,6 +324,20 @@
                 <span>Matchs</span>
             </a>
 
+            <!-- Fixed League link -->
+            <a href="{{ path('app_league_admin_index') }}"
+               class="{% if app.request.get('_route') starts with 'app_league_admin_index' %}active{% endif %}">
+                <i class="typcn typcn-media-record-outline"></i>
+                <span>League</span>
+            </a>
+
+            <!-- Fixed Fixture link -->
+            <a href="{{ path('app_fixture_admin_index') }}"
+               class="{% if app.request.get('_route') starts with 'app_fixture_admin_index' %}active{% endif %}">
+                <i class="typcn typcn-media-record-outline"></i>
+                <span>Fixture</span>
+            </a>
+
             <a href="{{ path('app_stats') }}"
                class="{% if app.request.get('_route') == 'app_stats' %}active{% endif %}">
                 <i class="typcn typcn-chart-bar-outline"></i>
@@ -335,6 +348,43 @@
     </div>
 </aside>
 
+  {# ================== SIDEBAR ================== #}
+  <div class="az-sidebar">
+    <ul class="nav">
+      <li class="nav-item">
+        <a href="{{ path('backoffice_home') }}" class="nav-link {% if app.request.get('_route') == 'backoffice_home' %}active{% endif %}">
+          <i class="typcn typcn-chart-area-outline"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-group"></i> Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-document"></i> Pages
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="typcn typcn-cog"></i> Settings
+        </a>
+      </li>
+      
+        <li class="nav-item">
+        <a href="{{ path('app_fixture_admin_index') }}" class="nav-link">
+            <i class="typcn typcn-cog"></i> Fixtures
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('app_league_admin_index') }}" class="nav-link">
+            <i class="typcn typcn-cog"></i> Leagues
+        </a>
+    </li>
+
+    </ul>
+  </div>
 <div class="bo-layout">
     <main class="bo-main">
         <div class="bo-content-card">

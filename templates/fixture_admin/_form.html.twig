@@ -1,0 +1,11 @@
+{{ form_start(form) }}
+
+<div class="form-card">
+    {{ form_widget(form) }}
+
+    <button type="submit" class="btn-save">
+        {{ button_label|default('Save') }}
+    </button>
+</div>
+
+{{ form_end(form) }}
