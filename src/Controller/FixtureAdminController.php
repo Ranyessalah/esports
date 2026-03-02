@@ -6,13 +6,15 @@ use App\Entity\Fixture;
 use App\Form\Fixture1Type;
 use App\Repository\FixtureRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/fixture/admin')]
 final class FixtureAdminController extends AbstractController

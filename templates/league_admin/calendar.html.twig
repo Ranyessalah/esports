@@ -2,6 +2,23 @@
 
 {% block title %}League Calendar{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+#calendar-wrap {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+#calendar { min-height: 600px; }
+.cal-legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+.cal-legend span { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#555; }
+.cal-legend i    { display:inline-block; width:12px; height:12px; border-radius:3px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="az-content-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -9,62 +26,75 @@
             <h2 class="mb-1">League Calendar</h2>
             <p class="text-muted mb-0">Visual overview of all league schedules</p>
         </div>
-        <a href="{{ path('app_league_admin_index') }}" class="btn btn-outline-secondary">
-            <i class="typcn typcn-arrow-left"></i> Back to List
-        </a>
+        <a href="{{ path('app_league_admin_index') }}" class="btn btn-outline-secondary">← Back to List</a>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.css" rel="stylesheet">
-            <div id="calendar"></div>
-        </div>
+    <div class="cal-legend">
+        <span><i style="background:#10b759"></i> Active</span>
+        <span><i style="background:#f0ad4e"></i> Upcoming</span>
+        <span><i style="background:#6c757d"></i> Completed / Other</span>
+    </div>
+
+    <div id="calendar-wrap">
+        <div id="calendar"></div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.js"></script>
+{#
+  Embed data as JSON inside a <script type="application/json"> tag.
+  This completely avoids Twig/JS quoting conflicts and works even when
+  league names contain quotes, apostrophes, or special characters.
+#}
+<script id="cal-data" type="application/json">
+[{% for league in leagues %}{% if league.startDate %}{
+    "title": {{ (league.name ~ ' (' ~ league.game ~ ')')|json_encode|raw }},
+    "start": "{{ league.startDate|date('Y-m-d') }}",
+    "end":   "{{ league.endDate ? league.endDate|date('Y-m-d') : league.startDate|date('Y-m-d') }}",
+    "url":   "{{ path('app_league_admin_show', {id: league.id}) }}",
+    "color": "{{ league.status == 'active' ? '#10b759' : (league.status == 'upcoming' ? '#f0ad4e' : '#6c757d') }}",
+    "extendedProps": {
+        "status":    {{ league.status|default('unknown')|json_encode|raw }},
+        "numTeams":  {{ league.numTeams|default(0) }},
+        "prizePool": {{ league.prizePool|default(0) }}
+    }
+}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}]
+</script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
-    var calendar   = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+    var raw    = document.getElementById('cal-data').textContent;
+    var events = JSON.parse(raw);
+
+    new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView:  'dayGridMonth',
+        height:       'auto',
         headerToolbar: {
             left:   'prev,next today',
             center: 'title',
             right:  'dayGridMonth,timeGridWeek,listMonth'
         },
-        events: [
-            {% for league in leagues %}
-            {
-                title:           '{{ league.name|e('js') }} ({{ league.game|e('js') }})',
-                start:           '{{ league.startDate ? league.startDate|date('Y-m-d') : '' }}',
-                end:             '{{ league.endDate   ? league.endDate|date('Y-m-d')   : '' }}',
-                url:             '{{ path('app_league_admin_show', {id: league.id}) }}',
-                backgroundColor: '{{ league.status == "active" ? "#10b759" : (league.status == "upcoming" ? "#f0ad4e" : "#6c757d") }}',
-                borderColor:     'transparent',
-                extendedProps: {
-                    status:    '{{ league.status }}',
-                    numTeams:  {{ league.numTeams }},
-                    prizePool: {{ league.prizePool }}
-                }
-            },
-            {% endfor %}
-        ],
-        eventClick: function(info) {
+        events:            events,
+        eventBorderColor:  'transparent',
+        eventClick: function (info) {
             if (info.event.url) {
                 info.jsEvent.preventDefault();
                 window.location.href = info.event.url;
             }
         },
-        eventDidMount: function(info) {
-            info.el.title =
-                info.event.title + '\n' +
-                'Status: '     + info.event.extendedProps.status   + '\n' +
-                'Teams: '      + info.event.extendedProps.numTeams  + '\n' +
-                'Prize Pool: $'+ info.event.extendedProps.prizePool;
+        eventDidMount: function (info) {
+            var p = info.event.extendedProps;
+            info.el.setAttribute('title',
+                info.event.title +
+                '\nStatus: '      + p.status    +
+                '\nTeams: '       + p.numTeams  +
+                '\nPrize Pool: $' + p.prizePool
+            );
         }
-    });
-    calendar.render();
+    }).render();
 });
 </script>
 {% endblock %}

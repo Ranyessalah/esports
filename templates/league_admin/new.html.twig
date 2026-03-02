@@ -4,94 +4,147 @@
 
 {% block stylesheets %}
 <style>
-/* Form styling */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 6px;
-    font-size: 14px;
-}
-
+/* ── Base form ──────────────────────────────────────────────────────────── */
+.form-group { margin-bottom: 20px; }
+.form-group label { display:block; font-weight:500; color:#374151; margin-bottom:6px; font-size:14px; }
 .form-group input,
 .form-group select,
 .form-group textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-    transition: all 0.2s;
+    width:100%; padding:10px 12px; border-radius:6px;
+    border:1px solid #d1d5db; font-size:14px; transition:background .4s, border-color .2s;
 }
-
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    outline: none;
-    border-color: #6c3fd6;
-    box-shadow: 0 0 0 3px rgba(108, 63, 214, 0.1);
+    outline:none; border-color:#6c3fd6;
+    box-shadow:0 0 0 3px rgba(108,63,214,.1);
 }
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-}
-
+.form-actions { display:flex; gap:10px; margin-top:25px; padding-top:20px; border-top:1px solid #e5e7eb; }
 .btn-save {
-    background: #6c3fd6;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+    background:#6c3fd6; color:#fff; border:none; padding:10px 20px;
+    border-radius:6px; font-size:14px; font-weight:500; cursor:pointer; transition:all .2s;
 }
-
-.btn-save:hover {
-    background: #5a32b3;
-}
-
+.btn-save:hover { background:#5a32b3; }
 .btn-cancel {
-    background: #e5e7eb;
-    color: #374151;
-    padding: 10px 20px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
+    background:#e5e7eb; color:#374151; padding:10px 20px;
+    border-radius:6px; text-decoration:none; font-size:14px; font-weight:500; transition:all .2s;
 }
+.btn-cancel:hover { background:#d1d5db; color:#374151; }
 
-.btn-cancel:hover {
-    background: #d1d5db;
-    color: #374151;
+/* highlight flash when AI fills a field */
+.ai-flash { background: #ede9fe !important; border-color: #7c3aed !important; }
+
+/* ── AI Assistant Panel ─────────────────────────────────────────────────── */
+#ai-fab {
+    position:fixed; bottom:28px; right:28px; z-index:1100;
+    width:56px; height:56px; border-radius:50%;
+    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+    border:none; cursor:pointer; box-shadow:0 4px 20px rgba(124,58,237,.45);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .2s, box-shadow .2s;
 }
+#ai-fab:hover { transform:scale(1.1); box-shadow:0 6px 28px rgba(124,58,237,.6); }
+#ai-fab svg { width:26px; height:26px; fill:#fff; }
+
+#ai-panel {
+    position:fixed; bottom:96px; right:28px; z-index:1100;
+    width:370px; background:#fff; border-radius:16px;
+    box-shadow:0 12px 48px rgba(0,0,0,.18);
+    display:none; flex-direction:column; overflow:hidden;
+    border:1px solid #ede9fe;
+}
+#ai-panel.open { display:flex; animation:slideUp .25s ease; }
+@keyframes slideUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.ai-header {
+    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+    padding:14px 18px; display:flex; align-items:center; gap:10px;
+}
+.ai-dot {
+    width:8px; height:8px; border-radius:50%; background:#a7f3d0;
+    animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%,100% { box-shadow:0 0 0 3px rgba(167,243,208,.3); }
+    50%      { box-shadow:0 0 0 6px rgba(167,243,208,.1); }
+}
+.ai-header h6 { color:#fff; margin:0; font-size:14px; font-weight:600; flex:1; }
+.ai-header small { color:rgba(255,255,255,.7); font-size:11px; }
+#ai-close { background:none; border:none; color:rgba(255,255,255,.8); cursor:pointer; font-size:20px; line-height:1; padding:0; }
+#ai-close:hover { color:#fff; }
+
+#ai-messages {
+    flex:1; overflow-y:auto; padding:16px;
+    display:flex; flex-direction:column; gap:10px;
+    max-height:280px; background:#fafaf9;
+}
+.msg {
+    padding:10px 13px; border-radius:12px;
+    font-size:13px; line-height:1.5; max-width:88%;
+    animation:fadeMsg .2s ease;
+}
+@keyframes fadeMsg { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.msg.bot  { background:#ede9fe; color:#3b0764; align-self:flex-start; border-bottom-left-radius:4px; }
+.msg.user { background:#7c3aed; color:#fff;    align-self:flex-end;   border-bottom-right-radius:4px; }
+.msg.err  { background:#fee2e2; color:#991b1b; align-self:flex-start; }
+
+.typing { display:flex; align-items:center; gap:4px; padding:10px 13px;
+    background:#ede9fe; border-radius:12px; border-bottom-left-radius:4px; align-self:flex-start; }
+.typing span { width:7px; height:7px; border-radius:50%; background:#7c3aed;
+    animation:bounce .9s ease-in-out infinite; }
+.typing span:nth-child(2) { animation-delay:.15s; }
+.typing span:nth-child(3) { animation-delay:.3s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+.ai-input-area { display:flex; gap:8px; padding:12px 14px; border-top:1px solid #ede9fe; background:#fff; }
+#ai-input {
+    flex:1; border:1px solid #ddd6fe; border-radius:20px;
+    padding:9px 14px; font-size:13px; outline:none; resize:none; transition:border-color .2s;
+}
+#ai-input:focus { border-color:#7c3aed; }
+#ai-send {
+    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+    border:none; border-radius:50%; width:36px; height:36px;
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:transform .15s;
+}
+#ai-send:hover { transform:scale(1.08); }
+#ai-send svg { width:16px; height:16px; fill:#fff; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="az-content-body">
-    {# Page Header #}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">Create New League</h2>
-            <p class="text-muted mb-0">Add a new league to the system</p>
+            <p class="text-muted mb-0">Add a new league — or let AI fill it for you ✨</p>
         </div>
         <a href="{{ path('app_league_admin_index') }}" class="btn btn-secondary">
             <i class="typcn typcn-arrow-back"></i> Back to List
         </a>
     </div>
 
-    {# Form Card #}
+    {#
+      Pass the REAL Symfony-generated field IDs to JS via data attributes on a hidden div.
+      form.name.vars.id gives the actual rendered id (e.g. "league1_name").
+    #}
+    <div id="ai-field-ids" style="display:none"
+         data-name        ="{{ form.name.vars.id }}"
+         data-game        ="{{ form.game.vars.id }}"
+         data-startdate   ="{{ form.startDate.vars.id }}"
+         data-enddate     ="{{ form.endDate.vars.id }}"
+         data-numteams    ="{{ form.numTeams.vars.id }}"
+         data-maxteams    ="{{ form.maxTeams.vars.id }}"
+         data-format      ="{{ form.format.vars.id }}"
+         data-status      ="{{ form.status.vars.id }}"
+         data-prizepool   ="{{ form.prizePool.vars.id }}"
+         data-location    ="{{ form.location.vars.id }}"
+         data-description ="{{ form.description.vars.id }}"
+    ></div>
+
     <div class="card">
         <div class="card-body">
             {{ form_start(form) }}
@@ -111,7 +164,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -128,7 +180,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -152,7 +203,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -161,57 +211,242 @@
                             {{ form_errors(form.prizePool) }}
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group
-">
+                        <div class="form-group">
                             {{ form_label(form.location) }}
                             {{ form_widget(form.location) }}
                             {{ form_errors(form.location) }}
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group
-">
+                        <div class="form-group">
                             {{ form_label(form.maxTeams) }}
                             {{ form_widget(form.maxTeams) }}
                             {{ form_errors(form.maxTeams) }}
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group
-">
+                    <div class="col-md-6">
+                        <div class="form-group">
                             {{ form_label(form.banner) }}
                             {{ form_widget(form.banner) }}
                             {{ form_errors(form.banner) }}
                         </div>
-                 </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group
-">
+                        <div class="form-group">
                             {{ form_label(form.description) }}
                             {{ form_widget(form.description) }}
                             {{ form_errors(form.description) }}
                         </div>
-                             </div>
-                                  </div>
-
-
+                    </div>
+                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-save">
                         <i class="typcn typcn-tick"></i> Save League
                     </button>
-                    <a href="{{ path('app_league_admin_index') }}" class="btn-cancel">
-                        Cancel
-                    </a>
+                    <a href="{{ path('app_league_admin_index') }}" class="btn-cancel">Cancel</a>
                 </div>
             {{ form_end(form) }}
         </div>
     </div>
 </div>
+
+{# ── AI Floating Button ─────────────────────────────────────────────── #}
+<button id="ai-fab" title="AI League Assistant">
+    <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a7 7 0 0 1-7 7H9a7 7 0 0 1-7-7v-1H1a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2zm0 7a5 5 0 0 0-5 5v3a5 5 0 0 0 5 5h0a5 5 0 0 0 5-5v-3a5 5 0 0 0-5-5zm-1 4a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm2 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+</button>
+
+{# ── AI Chat Panel ──────────────────────────────────────────────────── #}
+<div id="ai-panel">
+    <div class="ai-header">
+        <div class="ai-dot"></div>
+        <h6>League AI Assistant</h6>
+        <small>Groq · llama-3.3</small>
+        <button id="ai-close">×</button>
+    </div>
+    <div id="ai-messages">
+        <div class="msg bot">
+            👋 Describe the league and I'll fill the form instantly!<br><br>
+            <em>e.g. "16-team CS:GO tournament, July 1–30, $4000 prize pool, Paris, double elimination, upcoming"</em>
+        </div>
+    </div>
+    <div class="ai-input-area">
+        <textarea id="ai-input" rows="1" placeholder="Describe your league…"></textarea>
+        <button id="ai-send">
+            <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function () {
+    // ── Panel toggle ──────────────────────────────────────────────────────────
+    const fab      = document.getElementById('ai-fab');
+    const panel    = document.getElementById('ai-panel');
+    const closeBtn = document.getElementById('ai-close');
+    fab.addEventListener('click', () => panel.classList.toggle('open'));
+    closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+    // ── Read the real Symfony field IDs from the data attributes ─────────────
+    const ids = document.getElementById('ai-field-ids').dataset;
+    // ids.name === "league1_name", ids.game === "league1_game", etc.
+
+    // ── Chat helpers ──────────────────────────────────────────────────────────
+    const msgs   = document.getElementById('ai-messages');
+    const input  = document.getElementById('ai-input');
+    const sendBtn = document.getElementById('ai-send');
+
+    function addMsg(html, cls) {
+        const d = document.createElement('div');
+        d.className = 'msg ' + cls;
+        d.innerHTML = html;
+        msgs.appendChild(d);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showTyping() {
+        const d = document.createElement('div');
+        d.className = 'typing'; d.id = 'typing';
+        d.innerHTML = '<span></span><span></span><span></span>';
+        msgs.appendChild(d);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('typing');
+        if (t) t.remove();
+    }
+
+    // ── Fill a single field and flash it ─────────────────────────────────────
+    function fill(id, value) {
+        if (!id || value === undefined || value === null || value === '') return;
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (el.tagName === 'SELECT') {
+            const v = String(value).toLowerCase().trim();
+            for (const opt of el.options) {
+                if (opt.value.toLowerCase() === v || opt.text.toLowerCase() === v) {
+                    el.value = opt.value;
+                    break;
+                }
+            }
+        } else {
+            el.value = value;
+        }
+
+        // Dispatch events so any framework listeners notice
+        el.dispatchEvent(new Event('input',  { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Purple flash
+        el.classList.add('ai-flash');
+        setTimeout(() => el.classList.remove('ai-flash'), 1000);
+    }
+
+    // ── Handle Symfony date widgets (single input OR split year/month/day) ───
+    function fillDate(baseId, dateStr) {
+        if (!dateStr || !baseId) return;
+        const single = document.getElementById(baseId);
+        if (single) {
+            // Single <input type="date"> or <input type="text">
+            fill(baseId, dateStr);
+        } else {
+            // Symfony DateType with widget=choice renders 3 selects:
+            // baseId + "_year", "_month", "_day"
+            const [y, m, d] = dateStr.split('-');
+            fill(baseId + '_year',  parseInt(y, 10));
+            fill(baseId + '_month', parseInt(m, 10));
+            fill(baseId + '_day',   parseInt(d, 10));
+        }
+    }
+
+    // ── Auto-resize chat textarea ─────────────────────────────────────────────
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+    });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+    sendBtn.addEventListener('click', send);
+
+    // ── Main: call Groq, parse JSON, fill fields ──────────────────────────────
+    async function send() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMsg(text, 'user');
+        input.value = '';
+        input.style.height = 'auto';
+        sendBtn.disabled = true;
+        showTyping();
+
+        const systemPrompt = `You extract league info from user text and return ONLY a JSON object with these keys (omit missing ones):
+name, game, startDate (YYYY-MM-DD), endDate (YYYY-MM-DD), numTeams (int), maxTeams (int),
+format (e.g. "Single Elimination","Double Elimination","Round Robin","Swiss"),
+status ("upcoming"|"active"|"completed"), prizePool (number), location (string), description (string).
+Return ONLY raw JSON. No markdown, no explanation.`;
+
+        try {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'Authorization': 'Bearer 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'
+                },
+                body: JSON.stringify({
+                    model: 'llama-3.3-70b-versatile',
+                    temperature: 0.1,
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        { role: 'user',   content: text }
+                    ]
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || 'Groq API error');
+
+            let raw = data.choices[0].message.content.trim()
+                         .replace(/^```(?:json)?\s*/i, '')
+                         .replace(/\s*```$/, '')
+                         .trim();
+
+            const p = JSON.parse(raw);
+            removeTyping();
+
+            // Fill every field using the real Symfony IDs
+            fill(ids.name,        p.name);
+            fill(ids.game,        p.game);
+            fill(ids.numteams,    p.numTeams);
+            fill(ids.maxteams,    p.maxTeams);
+            fill(ids.prizepool,   p.prizePool);
+            fill(ids.location,    p.location);
+            fill(ids.description, p.description);
+            fill(ids.format,      p.format);
+            fill(ids.status,      p.status);
+            fillDate(ids.startdate, p.startDate);
+            fillDate(ids.enddate,   p.endDate);
+
+            const filled = Object.keys(p).join(', ');
+            addMsg(`✅ Filled: <strong>${filled}</strong>.<br>Review and save when ready!`, 'bot');
+
+        } catch (err) {
+            removeTyping();
+            console.error(err);
+            addMsg(`❌ ${err.message}`, 'err');
+        }
+
+        sendBtn.disabled = false;
+    }
+})();
+</script>
 {% endblock %}

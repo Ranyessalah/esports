@@ -2,6 +2,23 @@
 
 {% block title %}Fixture Calendar{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+#calendar-wrap {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+#calendar { min-height: 600px; }
+.cal-legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+.cal-legend span { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#555; }
+.cal-legend i    { display:inline-block; width:12px; height:12px; border-radius:3px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="az-content-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -9,60 +26,79 @@
             <h2 class="mb-1">Fixture Calendar</h2>
             <p class="text-muted mb-0">Visual schedule of all matches</p>
         </div>
-        <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-outline-secondary">
-            <i class="typcn typcn-arrow-left"></i> Back to List
-        </a>
+        <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-outline-secondary">← Back to List</a>
     </div>
 
-    {# Legend #}
-    <div class="mb-3 d-flex gap-3 flex-wrap">
-        <span><span style="display:inline-block;width:14px;height:14px;background:#10b759;border-radius:3px;margin-right:4px;"></span>Completed</span>
-        <span><span style="display:inline-block;width:14px;height:14px;background:#ef4444;border-radius:3px;margin-right:4px;"></span>Live</span>
-        <span><span style="display:inline-block;width:14px;height:14px;background:#6c757d;border-radius:3px;margin-right:4px;"></span>Scheduled</span>
+    <div class="cal-legend">
+        <span><i style="background:#10b759"></i> Completed</span>
+        <span><i style="background:#ef4444"></i> Live</span>
+        <span><i style="background:#6c757d"></i> Scheduled</span>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.css" rel="stylesheet">
-            <div id="calendar"></div>
-        </div>
+    <div id="calendar-wrap">
+        <div id="calendar"></div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.3.0/main.min.js"></script>
+{#
+  ALL values go through json_encode — this handles strings, numbers, nulls,
+  and special characters safely regardless of the field type.
+#}
+<script id="cal-data" type="application/json">
+[{% set first = true %}{% for fixture in fixtures %}{% if fixture.matchDate %}{% if not first %},{% endif %}{% set first = false %}{
+    "title": {{ ('Round ' ~ fixture.round ~ ' — ' ~ (fixture.status|capitalize))|json_encode|raw }},
+    "start": {{ fixture.matchDate|date('Y-m-d\\TH:i:s')|json_encode|raw }},
+    "url":   {{ path('app_fixture_admin_show', {id: fixture.id})|json_encode|raw }},
+    "color": {{ (fixture.status == 'completed' ? '#10b759' : (fixture.status == 'live' ? '#ef4444' : '#6c757d'))|json_encode|raw }},
+    "extendedProps": {
+        "status": {{ fixture.status|default('scheduled')|json_encode|raw }},
+        "round":  {{ fixture.round|default('')|json_encode|raw }}
+    }
+}{% endif %}{% endfor %}]
+</script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
-    var calendar   = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+    var raw, events;
+
+    try {
+        raw    = document.getElementById('cal-data').textContent;
+        events = JSON.parse(raw);
+    } catch (e) {
+        console.error('Fixture calendar JSON parse error:', e);
+        console.error('Raw JSON was:', raw);
+        events = [];
+    }
+
+    new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView:  'dayGridMonth',
+        height:       'auto',
         headerToolbar: {
             left:   'prev,next today',
             center: 'title',
             right:  'dayGridMonth,timeGridWeek,listMonth'
         },
-        events: [
-            {% for fixture in fixtures %}
-            {
-                title: 'Round {{ fixture.round }} — {{ fixture.status|capitalize }}',
-                start: '{{ fixture.matchDate ? fixture.matchDate|date('Y-m-d') : '' }}T{{ fixture.matchDate ? fixture.matchDate|date('H:i:s') : '00:00:00' }}',
-                url:   '{{ path('app_fixture_admin_show', {id: fixture.id}) }}',
-                backgroundColor: '{{ fixture.status == "completed" ? "#10b759" : (fixture.status == "live" ? "#ef4444" : "#6c757d") }}',
-                borderColor: 'transparent',
-                extendedProps: { status: '{{ fixture.status }}', round: {{ fixture.round }} }
-            },
-            {% endfor %}
-        ],
-        eventClick: function(info) {
+        events:           events,
+        eventBorderColor: 'transparent',
+        eventClick: function (info) {
             if (info.event.url) {
                 info.jsEvent.preventDefault();
                 window.location.href = info.event.url;
             }
         },
-        eventDidMount: function(info) {
-            info.el.title = 'Round '+ info.event.extendedProps.round +'\nStatus: '+ info.event.extendedProps.status;
+        eventDidMount: function (info) {
+            var p = info.event.extendedProps;
+            info.el.setAttribute('title',
+                info.event.title +
+                '\nStatus: ' + p.status +
+                '\nRound: '  + p.round
+            );
         }
-    });
-    calendar.render();
+    }).render();
 });
 </script>
 {% endblock %}
