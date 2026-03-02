@@ -11,16 +11,16 @@ class Coach extends User
 {
     #[Assert\NotBlank(message: 'La spécialité est obligatoire')]
     #[ORM\Column(length: 100)]
-    private ?string $specialite = null;
+    private string $specialite = '';
 
     #[ORM\Column(type: 'boolean')]
     private bool $disponibilite = false;
 
     #[Assert\NotBlank(message: 'Le pays est obligatoire')]
     #[ORM\Column(length: 100)]
-    private ?string $pays = null;
+    private string $pays = '';
 
-    public function getSpecialite(): ?string
+    public function getSpecialite(): string
     {
         return $this->specialite;
     }
@@ -42,7 +42,7 @@ class Coach extends User
         return $this;
     }
 
-    public function getPays(): ?string
+    public function getPays(): string
     {
         return $this->pays;
     }

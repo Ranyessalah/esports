@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,42 +13,43 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/backoffice', name: 'backoffice_')]
 class BackofficeController extends AbstractController
 {
-    
-  #[Route('/user/delete/{id}', name: 'user_delete', methods: ['POST'])]
+    #[Route('/user/delete/{id}', name: 'user_delete', methods: ['POST'])]
     public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $em, Request $request): Response
     {
-        // Vérifier le token CSRF
         $submittedToken = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('delete-user-' . $id, $submittedToken)) {
             $this->addFlash('error', 'Token de sécurité invalide');
             return $this->redirectToRoute('backoffice_home');
         }
-        
+
         $user = $userRepository->find($id);
-        
+
         if (!$user) {
             $this->addFlash('error', 'Utilisateur non trouvé');
             return $this->redirectToRoute('backoffice_home');
         }
-        
-        if ($this->getUser() && $user->getId() === $this->getUser()->getId()) {
+
+        /** @var User|null $currentUser */
+        $currentUser = $this->getUser();
+
+        if ($currentUser && $user->getId() === $currentUser->getId()) {
             $this->addFlash('error', 'Vous ne pouvez pas supprimer votre propre compte');
             return $this->redirectToRoute('backoffice_home');
         }
-        
+
         try {
             $userEmail = $user->getEmail();
             $em->remove($user);
             $em->flush();
-            
+
             $this->addFlash('success', "L'utilisateur {$userEmail} a été supprimé avec succès");
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur lors de la suppression : ' . $e->getMessage());
         }
-        
+
         return $this->redirectToRoute('backoffice_home');
     }
-    
+
     #[Route('/user/toggle-block/{id}', name: 'user_toggle_block', methods: ['POST'])]
     public function toggleBlockUser(int $id, UserRepository $userRepository, EntityManagerInterface $em, Request $request): Response
     {
@@ -64,8 +66,10 @@ class BackofficeController extends AbstractController
             return $this->redirectToRoute('backoffice_home');
         }
 
-        // L'admin ne peut pas se bloquer lui-même
-        if ($this->getUser() && $user->getId() === $this->getUser()->getId()) {
+        /** @var User|null $currentUser */
+        $currentUser = $this->getUser();
+
+        if ($currentUser && $user->getId() === $currentUser->getId()) {
             $this->addFlash('error', 'Vous ne pouvez pas bloquer votre propre compte');
             return $this->redirectToRoute('backoffice_home');
         }
@@ -78,5 +82,4 @@ class BackofficeController extends AbstractController
 
         return $this->redirectToRoute('backoffice_home');
     }
- 
 }

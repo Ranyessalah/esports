@@ -18,9 +18,8 @@ class TwoFactorController extends AbstractController
     #[Route('/2fa/setup', name: 'app_2fa_setup', methods: ['GET'])]
     public function setup(TotpService $totpService): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -41,9 +40,8 @@ class TwoFactorController extends AbstractController
         TotpService $totpService,
         EntityManagerInterface $em
     ): Response {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -73,9 +71,8 @@ class TwoFactorController extends AbstractController
     #[Route('/2fa/disable', name: 'app_2fa_disable', methods: ['POST'])]
     public function disable(EntityManagerInterface $em): Response
     {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 

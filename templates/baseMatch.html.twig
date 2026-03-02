@@ -203,5 +203,12 @@ a{ text-decoration:none; }
 
 {% block javascripts %}{% endblock %}
 
+{% if app.debug %}
+<style>
+    body { padding-bottom: 50px !important; }
+    .sf-toolbar { z-index: 99999 !important; }
+</style>
+{% endif %}
+
 </body>
 </html>

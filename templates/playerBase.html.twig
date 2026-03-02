@@ -853,5 +853,11 @@
 		<!-- custom js -->
 		<script type="text/javascript" src="/assets/player/pages/dashboard/custom-dashboard.js"></script>
 		<script type="text/javascript" src="/assets/player/js/script.js "></script>
-
+	{% if app.debug %}
+		<style>
+		    body { padding-bottom: 50px !important; }
+		    .sf-toolbar { z-index: 99999 !important; }
+		</style>
+	{% endif %}
+	</body>
 </html>

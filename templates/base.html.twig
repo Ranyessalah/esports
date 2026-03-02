@@ -1580,13 +1580,13 @@
 			AOS.init({once: true, duration: 1000});
 		</script>
 
-		{# {% if app.debug %}
-								<style>
-								    /* Ensure Symfony profiler toolbar is fully visible */
-								    body { padding-bottom: 50px !important; }
-								    .sf-toolbar { z-index: 99999 !important; }
-								</style>
-								{% endif %} #}
+		{% if app.debug %}
+			<style>
+			    /* Ensure Symfony profiler toolbar is fully visible */
+			    body { padding-bottom: 50px !important; }
+			    .sf-toolbar { z-index: 99999 !important; }
+			</style>
+		{% endif %}
 
 	</body>
 </html>
