@@ -149,8 +149,8 @@ public function edit(Request $request, Equipe $equipe, EntityManagerInterface $e
  
 if ($form->isSubmitted() && $form->isValid()) {
 
-    /** @var UploadedFile $logoFile */
-    $logoFile = $form->get('logoFile')->getData();
+/** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $logoFile */
+$logoFile = $form->get('logo')->getData();
 
     // récupérer ancien logo AVANT modification
     $oldLogo = $equipe->getLogo();

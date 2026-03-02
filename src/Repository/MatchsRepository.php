@@ -16,7 +16,9 @@ class MatchsRepository extends ServiceEntityRepository
         parent::__construct($registry, Matchs::class);
     }// src/Repository/MatchsRepository.php
 // src/Repository/MatchsRepository.php
-
+/**
+ * @return Matchs[]
+ */
 public function getMatchsWithScores()
 {
     return $this->createQueryBuilder('m')
@@ -27,6 +29,11 @@ public function getMatchsWithScores()
         ->getQuery()
         ->getResult();
 }
+
+
+/**
+ * @return array<int, array{statut:string,total:int}>
+ */
 public function countMatchesByStatus(): array
 {
     return $this->createQueryBuilder('m')
@@ -36,7 +43,9 @@ public function countMatchesByStatus(): array
         ->getResult();
 }
 // src/Repository/MatchsRepository.php
-
+/**
+ * @return array<int, array{wins:int,losses:int,draws:int}>
+ */
 public function getTeamStats(): array
 {
     $qb = $this->createQueryBuilder('m')

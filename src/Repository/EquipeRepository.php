@@ -15,8 +15,10 @@ class EquipeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Equipe::class);
     }
-public function findAllWithRelations()
-{
+/**
+ * @return Equipe[]
+ */
+public function findAllWithRelations(): array{
     return $this->createQueryBuilder('e')
         ->leftJoin('e.coach', 'c')->addSelect('c')
         ->leftJoin('e.joueur', 'j')->addSelect('j')
@@ -26,7 +28,9 @@ public function findAllWithRelations()
 
 
 
-
+/**
+ * @return Equipe[]
+ */
 public function findAllWithSearch(?string $search = null, ?string $game = null, ?string $sort = null)
 {
     $qb = $this->createQueryBuilder('e')

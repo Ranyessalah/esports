@@ -1,12 +1,18 @@
 # This file is the entry point to configure your own services.
 
 parameters:
-    recaptcha.site_key: '%env(RECAPTCHA_SITE_KEY)%'
-    recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
-    facepp.api_key: '%env(FACEPP_API_KEY)%'
-    facepp.api_secret: '%env(FACEPP_API_SECRET)%'
+    # Upload directories
     logos_directory: '%kernel.project_dir%/public/uploads/logos'
     equipe_directory: '%kernel.project_dir%/public/uploads/equipes'
+
+    # Recaptcha
+    recaptcha.site_key: '%env(RECAPTCHA_SITE_KEY)%'
+    recaptcha.secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
+
+    # Face++
+    facepp.api_key: '%env(FACEPP_API_KEY)%'
+    facepp.api_secret: '%env(FACEPP_API_SECRET)%'
+
 
 services:
     _defaults:
@@ -21,20 +27,24 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Service\MailerService:
-        arguments:
-            $mailer: '@mailer'
-
-    App\Service\RecaptchaService:
-        arguments:
-            $recaptchaSecretKey: '%recaptcha.secret_key%'
-
-    App\Service\FacePlusPlusService:
-        arguments:
-            $faceppApiKey: '%facepp.api_key%'
-            $faceppApiSecret: '%facepp.api_secret%'
-
+    # ---------------- MATCH / STATS ----------------
     App\Service\StatsService:
         arguments:
             $matchsRepository: '@App\Repository\MatchsRepository'
             $equipeRepository: '@App\Repository\EquipeRepository'
+
+    # ---------------- MAILER ----------------
+    App\Service\MailerService:
+        arguments:
+            $mailer: '@mailer'
+
+    # ---------------- RECAPTCHA ----------------
+    App\Service\RecaptchaService:
+        arguments:
+            $recaptchaSecretKey: '%recaptcha.secret_key%'
+
+    # ---------------- FACE++ ----------------
+    App\Service\FacePlusPlusService:
+        arguments:
+            $faceppApiKey: '%facepp.api_key%'
+            $faceppApiSecret: '%facepp.api_secret%'

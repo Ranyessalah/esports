@@ -9,8 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatsService
 {
-    private $matchsRepository;
-    private $equipeRepository;
+    private MatchsRepository $matchsRepository;
+    private EquipeRepository $equipeRepository;
 
     public function __construct(MatchsRepository $matchsRepository, EquipeRepository $equipeRepository)
     {
@@ -18,10 +18,18 @@ class StatsService
         $this->equipeRepository = $equipeRepository;
     }
 
-    /**
-     * Calcule les statistiques pour toutes les équipes
-     * Retourne un tableau classé par nombre de victoires
-     */
+/**
+ * @return list<array{
+ *   equipe:\App\Entity\Equipe,
+ *   victoires:int,
+ *   defaites:int,
+ *   nuls:int,
+ *   matchs_joues:int,
+ *   points:int,
+ *   buts_pour:int,
+ *   buts_contre:int
+ * }>
+ */
     public function getClassementEquipes(): array
     {
         $equipes = $this->equipeRepository->findAll();
@@ -117,9 +125,9 @@ class StatsService
         return $stats;
     }
     
-    /**
-     * Calcule les statistiques pour une équipe spécifique
-     */
+ /**
+ * @return array<string,mixed>
+ */
     public function getStatsEquipe(Equipe $equipe): array
     {
         $stats = $this->getClassementEquipes();
@@ -150,6 +158,25 @@ class StatsService
 
 
 
-
+/**
+ * Convert classement stats to chart stats
+ *
+ * @param array{
+ *   equipe: \App\Entity\Equipe,
+ *   victoires:int,
+ *   defaites:int,
+ *   nuls:int
+ * } $stats
+ *
+ * @return array<int,array{wins:int,losses:int,draws:int}>
+ */
+public function buildChartStats(array $stats): array
+{
+    return [[
+        'wins' => $stats['victoires'],
+        'losses' => $stats['defaites'],
+        'draws' => $stats['nuls'],
+    ]];
+}
 
 }

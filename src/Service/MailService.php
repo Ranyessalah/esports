@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Matchs;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
@@ -17,8 +18,8 @@ class MailService
         $this->twig = $twig;
     }
 
-    public function sendMatchNotification($coachEmail, $match)
-    {
+ 
+    public function sendMatchNotification(string $coachEmail, Matchs $match): void    {
         $html = $this->twig->render('emails/match_notification.html.twig', [
             'match' => $match,
         ]);

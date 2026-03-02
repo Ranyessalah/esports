@@ -16,86 +16,91 @@ class QuickChartApi
         $this->cache = new FilesystemAdapter('charts', 3600);
     }
 
-    /**
-     * Appel API externe QuickChart
-     */
-    public function generatePerformanceChart(array $stats, string $teamName): string
-    {
-        // clé cache (évite spam API)
-        $cacheKey = md5($teamName . json_encode($stats));
+/**
+ * @param array<int,array{wins:int,losses:int,draws:int}> $stats
+ */
 
-        $item = $this->cache->getItem($cacheKey);
+public function generatePerformanceChart(array $stats, string $teamName): string
+{
+    if (empty($stats)) {
+        return '/images/chart_error.png';
+    }
 
-        if ($item->isHit()) {
-            return $item->get();
-        }
+    // 🔥 NEW STRUCTURE
+    $wins   = $stats[0]['wins'];
+    $draws  = $stats[0]['draws'];
+    $losses = $stats[0]['losses'];
 
-        $chartConfig = [
-            "type" => "doughnut",
-            "data" => [
-                "labels" => ["Victoires", "Nuls", "Défaites"],
-                "datasets" => [[
-                    "data" => [
-                        $stats['victoires'],
-                        $stats['nuls'],
-                        $stats['defaites']
-                    ],
-                    "backgroundColor" => [
-                        "#22c55e",
-                        "#facc15",
-                        "#ef4444"
-                    ]
-                ]]
-            ],
-            "options" => [
-                "plugins" => [
-                    "legend" => [
-                        "position" => "bottom"
-                    ],
-                    "title" => [
-                        "display" => true,
-                        "text" => "Performance - " . $teamName
-                    ]
+    $cacheKey = md5($teamName . json_encode($stats));
+    $item = $this->cache->getItem($cacheKey);
+
+    if ($item->isHit()) {
+        return $item->get();
+    }
+
+    $chartConfig = [
+        "type" => "doughnut",
+        "data" => [
+            "labels" => ["Victoires", "Nuls", "Défaites"],
+            "datasets" => [[
+                "data" => [
+                    $wins,
+                    $draws,
+                    $losses
+                ],
+                "backgroundColor" => [
+                    "#22c55e",
+                    "#facc15",
+                    "#ef4444"
+                ]
+            ]]
+        ],
+        "options" => [
+            "plugins" => [
+                "legend" => [
+                    "position" => "bottom"
+                ],
+                "title" => [
+                    "display" => true,
+                    "text" => "Performance - " . $teamName
                 ]
             ]
-        ];
+        ]
+    ];
 
-        try {
-            $response = $this->client->request(
-                'POST',
-                'https://quickchart.io/chart',
-                [
-                    'json' => [
-                        'width' => 650,
-                        'height' => 400,
-                        'chart' => $chartConfig
-                    ]
+    try {
+        $response = $this->client->request(
+            'POST',
+            'https://quickchart.io/chart',
+            [
+                'json' => [
+                    'width' => 650,
+                    'height' => 400,
+                    'chart' => $chartConfig
                 ]
-            );
+            ]
+        );
 
-            $imageContent = $response->getContent();
+        $imageContent = $response->getContent();
 
-        } catch (\Exception $e) {
-            // fallback si API down
-            return '/images/chart_error.png';
-        }
-
-        // Sauvegarde locale
-        $fileName = 'chart_' . uniqid() . '.png';
-        $path = __DIR__ . '/../../public/charts/' . $fileName;
-
-        if (!is_dir(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
-        }
-
-        file_put_contents($path, $imageContent);
-
-        $url = '/charts/' . $fileName;
-
-        // mise en cache
-        $item->set($url);
-        $this->cache->save($item);
-
-        return $url;
+    } catch (\Exception $e) {
+        return '/images/chart_error.png';
     }
+
+    $fileName = 'chart_' . uniqid() . '.png';
+    $path = __DIR__ . '/../../public/charts/' . $fileName;
+
+    if (!is_dir(dirname($path))) {
+        mkdir(dirname($path), 0777, true);
+    }
+
+    file_put_contents($path, $imageContent);
+
+    $url = '/charts/' . $fileName;
+
+    $item->set($url);
+    $this->cache->save($item);
+
+    return $url;
+}
 }

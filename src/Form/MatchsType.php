@@ -10,8 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
 class MatchsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -24,7 +26,6 @@ class MatchsType extends AbstractType
                     'placeholder' => 'Entrez le nom du match'
                 ]
             ])
-            // Statut fixé à "en_cours" et non modifiable
             ->add('statut', HiddenType::class, [
                 'data' => 'en_cours',
                 'disabled' => true,
@@ -37,7 +38,6 @@ class MatchsType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
             ])
-            // Scores initialisés à 0
             ->add('scoreEquipe1', HiddenType::class, [
                 'data' => 0
             ])
@@ -52,6 +52,39 @@ class MatchsType extends AbstractType
                 'class' => Equipe::class,
                 'choice_label' => 'nom',
             ]);
+    
+    
+    
+        // ⭐⭐⭐ VALIDATION LOGIC (ONLY FOR CREATION FORM)
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+    
+            $form = $event->getForm();
+            $match = $event->getData();
+    
+            if (!$match) {
+                return;
+            }
+    
+            $dateMatch = $match->getDateMatch();
+            $dateFin   = $match->getDateFinMatch();
+    
+            $now = new \DateTime();
+    
+            // RULE 1: match must be in the future
+            if ($dateMatch && $dateMatch <= $now) {
+                $form->get('dateMatch')->addError(
+                    new FormError("Le match doit être programmé dans le futur")
+                );
+            }
+    
+            // RULE 2: end > start
+            if ($dateMatch && $dateFin && $dateFin <= $dateMatch) {
+                $form->get('dateFinMatch')->addError(
+                    new FormError("La date de fin doit être après la date de début")
+                );
+            }
+    
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

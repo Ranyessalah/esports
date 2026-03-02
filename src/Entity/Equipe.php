@@ -14,6 +14,7 @@ class Equipe
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /** @phpstan-ignore property.unusedType */
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -24,10 +25,10 @@ class Equipe
         minMessage: "Le nom doit contenir au moins {{ limit }} caractères",
         maxMessage: "Le nom ne doit pas dépasser {{ limit }} caractères"
     )]
-    private ?string $nom = null;
+    private string $nom = '';
 
     #[ORM\Column(length: 255)]
-    private ?string $logo = null;
+    private string $logo = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le jeu est obligatoire")]
@@ -37,7 +38,7 @@ class Equipe
         minMessage: "Le jeu doit contenir au moins {{ limit }} caractères",
         maxMessage: "Le jeu ne doit pas dépasser {{ limit }} caractères"
     )]
-    private ?string $game = null;
+    private string $game = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La catégorie est obligatoire")]
@@ -47,7 +48,7 @@ class Equipe
         minMessage: "La catégorie doit contenir au moins {{ limit }} caractères",
         maxMessage: "La catégorie ne doit pas dépasser {{ limit }} caractères"
     )]
-    private ?string $categorie = null;
+    private string $categorie = '';
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -57,7 +58,7 @@ class Equipe
     /**
      * @var Collection<int, Player>
      */
-    #[ORM\OneToMany(targetEntity: Player::class, mappedBy: 'equipe')]
+#[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Player::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $joueur;
 
     public function __construct()
@@ -69,13 +70,13 @@ class Equipe
  
 
     public function getId(): ?int { return $this->id; }
-    public function getNom(): ?string { return $this->nom; }
+    public function getNom(): string { return $this->nom; }
     public function setNom(string $nom): static { $this->nom = $nom; return $this; }
-    public function getLogo(): ?string { return $this->logo; }
+    public function getLogo(): string { return $this->logo; }
     public function setLogo(string $logo): static { $this->logo = $logo; return $this; }
-    public function getGame(): ?string { return $this->game; }
+    public function getGame(): string { return $this->game; }
     public function setGame(string $game): static { $this->game = $game; return $this; }
-    public function getCategorie(): ?string { return $this->categorie; }
+    public function getCategorie(): string { return $this->categorie; }
     public function setCategorie(string $categorie): static { $this->categorie = $categorie; return $this; }
     public function getCoach(): ?User { return $this->coach; }
     public function setCoach(?User $coach): static { $this->coach = $coach; return $this; }

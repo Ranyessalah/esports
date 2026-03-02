@@ -78,13 +78,7 @@ public function index(MatchsRepository $matchsRepository, Request $request): Res
            
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($match);
-            $entityManager->flush();
-
-
-
-
-
- 
+            $entityManager->flush(); 
 // team 1 coaches
 $coachesTeam1 = $match->getEquipe1()->getCoach();
 
@@ -93,16 +87,8 @@ $coachesTeam2 = $match->getEquipe2()->getCoach();
 
  
         $mailService->sendMatchNotification($coachesTeam2->getEmail(), $match);
- 
 
- 
-        $mailService->sendMatchNotification($coachesTeam2->getEmail(), $match);
- 
-
-
-
-
-
+        $mailService->sendMatchNotification($coachesTeam1->getEmail(), $match);
 
             return $this->redirectToRoute('app_matchs_index', [], Response::HTTP_SEE_OTHER);
         }

@@ -27,22 +27,23 @@ final class StatsController extends AbstractController
     
   
     #[Route('/stats/equipe/{id}', name: 'app_stats_equipe')]
-public function equipeStats(
-    Equipe $equipe,
-    StatsService $statsService,
-    QuickChartApi $chartApi
-): Response
-{
-    $stats = $statsService->getStatsEquipe($equipe);
-
-    // appel API externe
-    $chart = $chartApi->generatePerformanceChart($stats, $equipe->getNom());
-
-    return $this->render('stats/equipe.html.twig', [
-        'stats' => $stats,
-        'chart' => $chart
-    ]);
-}
+    public function equipeStats(
+        Equipe $equipe,
+        StatsService $statsService,
+        QuickChartApi $chartApi
+    ): Response
+    {
+        $stats = $statsService->getStatsEquipe($equipe);
+    
+        $chartStats = $statsService->buildChartStats($stats);
+    
+        $chart = $chartApi->generatePerformanceChart($chartStats, $equipe->getNom());
+    
+        return $this->render('stats/equipe.html.twig', [
+            'stats' => $stats,
+            'chart' => $chart
+        ]);
+    }
     #[Route('/stats/equipe/client/{id}', name: 'app_stats_equipeclient')]
     public function equipeStatsclient(Equipe $equipe, StatsService $statsService): Response
     {
@@ -70,8 +71,10 @@ public function equipeStats(
         $classement = $statsService->getClassementEquipes();
     
         $top = $classement[0];
-        $chart = $chartApi->generatePerformanceChart($top, $top['equipe']->getNom());
-    
+
+        $chartStats = $statsService->buildChartStats($top);
+        
+        $chart = $chartApi->generatePerformanceChart($chartStats, $top['equipe']->getNom());
         $options = new Options();
         $options->set('defaultFont', 'DejaVu Sans');
         $options->setIsRemoteEnabled(true);

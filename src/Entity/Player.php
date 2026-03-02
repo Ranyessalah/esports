@@ -22,6 +22,7 @@ class Player extends User
     private ?string $niveau = null;
 
     #[ORM\ManyToOne(inversedBy: 'joueur')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Equipe $equipe = null;
 
     public function getPays(): string
@@ -51,9 +52,9 @@ class Player extends User
         return $this->niveau !== null ? Niveau::from($this->niveau) : null;
     }
 
-    public function setNiveau(Niveau $niveau): static
+    public function setNiveau(?Niveau $niveau): static
     {
-        $this->niveau = $niveau->value;
+        $this->niveau = $niveau?->value;
         return $this;
     }
 

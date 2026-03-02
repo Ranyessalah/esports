@@ -35,10 +35,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     protected string $email = '';
 
-    #[ORM\Column]
-    protected array $roles = [];
+/** @var string[] */
+#[ORM\Column]
+protected array $roles = [];
 
     #[Ignore]
+    #[Assert\Length(
+        min: 6,
+        minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères'
+    )]
     #[ORM\Column]
     protected string $password = '';
 

@@ -16,6 +16,7 @@ class Matchs
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    /** @phpstan-ignore property.unusedType */
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
@@ -24,19 +25,19 @@ class Matchs
         choices: ['planifie', 'annule', 'en_cours', 'termine'],
         message: "Statut invalide"
     )]
-    private ?string $statut = 'en_cours'; // statut par défaut
+    private string $statut = 'en_cours';
 
     #[ORM\Column(type: 'datetime')]
     #[Assert\NotNull(message: "La date du match est obligatoire")]
-    #[Assert\GreaterThan("now", message: "La date du match doit être dans le futur")]
-    private ?\DateTimeInterface $dateMatch = null;
- #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $dateMatch;
+
+    #[ORM\Column(type: 'datetime')]
     #[Assert\NotNull]
     #[Assert\Expression(
         "this.getDateFinMatch() > this.getDateMatch()",
         message: "La date de fin du match doit être supérieure à la date du match."
     )]
-    private ?\DateTimeInterface $dateFinMatch = null;
+    private \DateTimeInterface $dateFinMatch;
 
     #[ORM\Column(nullable: true)]
     #[Assert\PositiveOrZero(message: "Le score doit être positif ou zéro")]
@@ -64,10 +65,12 @@ class Matchs
             minMessage: "Le nom du match doit contenir au moins {{ limit }} caractères",
             maxMessage: "Le nom du match ne doit pas dépasser {{ limit }} caractères"
         )]
-    private ?string $nom_match = null;
+    private string $nom_match = '';
 
     public function __construct()
     {
+        $this->dateMatch = new \DateTime();
+        $this->dateFinMatch = new \DateTime();
         $this->scoreEquipe1 = 0;
         $this->scoreEquipe2 = 0;
         $this->statut = 'en_cours';
@@ -76,14 +79,14 @@ class Matchs
     // ================= GETTERS / SETTERS =================
     public function getId(): ?int { return $this->id; }
 
-    public function getStatut(): ?string { return $this->statut; }
-    public function setStatut(?string $statut): static { $this->statut = $statut; return $this; }
+    public function getStatut(): string { return $this->statut; }
+    public function setStatut(string $statut): static { $this->statut = $statut; return $this; }
 
-    public function getDateMatch(): ?\DateTimeInterface { return $this->dateMatch; }
-    public function setDateMatch(?\DateTimeInterface $dateMatch): static { $this->dateMatch = $dateMatch; return $this; }
+    public function getDateMatch(): \DateTimeInterface { return $this->dateMatch; }
+    public function setDateMatch(\DateTimeInterface $dateMatch): static { $this->dateMatch = $dateMatch; return $this; }
 
-    public function getDateFinMatch(): ?\DateTimeInterface { return $this->dateFinMatch; }
-    public function setDateFinMatch(?\DateTimeInterface $dateFinMatch): static { $this->dateFinMatch = $dateFinMatch; return $this; }
+    public function getDateFinMatch(): \DateTimeInterface { return $this->dateFinMatch; }
+    public function setDateFinMatch(\DateTimeInterface $dateFinMatch): static { $this->dateFinMatch = $dateFinMatch; return $this; }
 
     public function getScoreEquipe1(): ?int { return $this->scoreEquipe1; }
     public function setScoreEquipe1(?int $scoreEquipe1): static { $this->scoreEquipe1 = $scoreEquipe1; return $this; }
@@ -97,6 +100,6 @@ class Matchs
     public function getEquipe2(): ?Equipe { return $this->equipe2; }
     public function setEquipe2(?Equipe $equipe2): static { $this->equipe2 = $equipe2; return $this; }
 
-    public function getNomMatch(): ?string { return $this->nom_match; }
+    public function getNomMatch(): string { return $this->nom_match; }
     public function setNomMatch(string $nom_match): static { $this->nom_match = $nom_match; return $this; }
 }

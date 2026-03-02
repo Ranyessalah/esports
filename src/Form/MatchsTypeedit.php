@@ -12,7 +12,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-
 class MatchsTypeedit extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -32,23 +31,23 @@ class MatchsTypeedit extends AbstractType
                     'Terminé' => 'termine',
                     'Annulé' => 'annule'
                 ],
-                'data' => 'en_cours',
-             ])
+              ])
             ->add('dateMatch', DateTimeType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
+                'disabled'=> true
             ])
             ->add('dateFinMatch', DateTimeType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
+                'disabled'=> true
+
             ])
             // Scores initialisés à 0
             ->add('scoreEquipe1', HiddenType::class, [
-                'data' => 0
-            ])
+             ])
             ->add('scoreEquipe2', HiddenType::class, [
-                'data' => 0
-            ])
+             ])
             ->add('equipe1', EntityType::class, [
                 'class' => Equipe::class,
                 'choice_label' => 'nom',
