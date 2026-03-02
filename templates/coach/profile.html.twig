@@ -1,0 +1,148 @@
+{% extends 'coachBase.html.twig' %}
+
+{% block body %}
+<div class="page-header">
+    <h2 class="page-title">Mon Profil</h2>
+    <p class="page-subtitle">Mettre à jour mes informations personnelles</p>
+</div>
+
+<style>
+* { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.page-header { margin-bottom: 32px; }
+.page-title { font-size: 28px; font-weight: 700; color: #1a202c; margin: 0 0 8px 0; letter-spacing: -0.5px; }
+.page-subtitle { font-size: 14px; color: #718096; margin: 0; font-weight: 400; }
+.az-content-body { max-width: 680px; padding: 0; background: transparent; border-radius: 0; box-shadow: none; margin-top: 0; }
+.form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0; }
+.form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.form-group label { font-size: 14px; font-weight: 600; color: #2d3748; margin-bottom: 4px; letter-spacing: -0.2px; }
+.form-group input, .form-group select { padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; color: #2d3748; background-color: #ffffff; transition: all 0.2s ease; font-weight: 400; outline: none; }
+.form-group input:focus, .form-group select:focus { border-color: #4299e1; box-shadow: 0 0 0 3px rgba(66,153,225,0.1); }
+.form-group input::placeholder { color: #a0aec0; font-weight: 400; }
+.checkbox-group { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.checkbox-group input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #4299e1; }
+.checkbox-group label { font-size: 14px; font-weight: 500; color: #2d3748; cursor: pointer; margin: 0; }
+.form-actions { display: flex; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s ease; letter-spacing: -0.2px; }
+.btn i { font-size: 18px; }
+.btn-primary { color: #ffffff; background-color: #4299e1; box-shadow: 0 1px 3px rgba(66,153,225,0.2); }
+.btn-primary:hover { background-color: #3182ce; box-shadow: 0 4px 6px rgba(66,153,225,0.25); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary { background-color: #f7fafc; color: #4a5568; border: 2px solid #e2e8f0; }
+.btn-secondary:hover { background-color: #edf2f7; border-color: #cbd5e0; }
+.form-help { font-size: 13px; color: #718096; margin-top: 6px; font-weight: 400; }
+.form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 40px; }
+.radio-group { display: flex; gap: 20px; align-items: center; }
+.radio-group label { font-size: 14px; font-weight: 500; color: #2d3748; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.radio-group input[type="radio"] { accent-color: #4299e1; width: 18px; height: 18px; }
+.flash-success { background: #f0fff4; border: 1px solid #c6f6d5; color: #276749; padding: 12px 20px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; font-weight: 500; }
+.form-group ul, .checkbox-group ul, .radio-group ul { list-style: none; padding: 0; margin: 6px 0 0 0; }
+.form-group ul li, .checkbox-group ul li, .radio-group ul li, .form-error-message { color: #e53e3e; font-size: 13px; font-weight: 500; background: #fff5f5; border: 1px solid #fed7d7; padding: 8px 12px; border-radius: 6px; margin-top: 4px; }
+.form-group.has-error input, .form-group.has-error select { border-color: #e53e3e; }
+@media (max-width: 640px) { .form-card { padding: 24px 20px; } .page-title { font-size: 24px; } .form-actions { flex-direction: column; } .btn { width: 100%; } }
+</style>
+
+<div class="az-content-body">
+    {% for message in app.flashes('success') %}
+        <div class="flash-success">{{ message }}</div>
+    {% endfor %}
+
+    <div class="form-card">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            {# Email #}
+            <div class="form-group">
+                {{ form_label(form.email, 'Email') }}
+                {{ form_widget(form.email, {'attr': {'placeholder': 'exemple@domaine.com'}}) }}
+                {{ form_errors(form.email) }}
+                <small class="form-help">L'adresse email sera utilisée pour la connexion</small>
+            </div>
+
+            {# Mot de passe #}
+            <div class="form-group">
+                {{ form_label(form.plainPassword.first, 'Mot de passe') }}
+                {{ form_widget(form.plainPassword.first, {'attr': {'placeholder': 'Laisser vide pour ne pas modifier'}}) }}
+                {{ form_errors(form.plainPassword.first) }}
+                <small class="form-help">Minimum 8 caractères recommandés</small>
+            </div>
+
+            {# Confirmer mot de passe #}
+            <div class="form-group">
+                {{ form_label(form.plainPassword.second, 'Confirmer le mot de passe') }}
+                {{ form_widget(form.plainPassword.second, {'attr': {'placeholder': 'Confirmer le mot de passe'}}) }}
+                {{ form_errors(form.plainPassword.second) }}
+            </div>
+
+            {{ form_errors(form.plainPassword) }}
+
+            {# Pays #}
+            <div class="form-group">
+                {{ form_label(form.pays, 'Pays') }}
+                {{ form_widget(form.pays) }}
+                {{ form_errors(form.pays) }}
+            </div>
+
+            {# Spécialité #}
+            <div class="form-group">
+                {{ form_label(form.specialite, 'Spécialité') }}
+                {{ form_widget(form.specialite) }}
+                {{ form_errors(form.specialite) }}
+            </div>
+
+            {# Disponibilité #}
+            <div class="form-group">
+                {{ form_label(form.disponibilite, 'Disponibilité') }}
+                <div class="radio-group">
+                    {{ form_widget(form.disponibilite) }}
+                </div>
+                {{ form_errors(form.disponibilite) }}
+            </div>
+
+            {# Boutons #}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="ti-check"></i>
+                    Enregistrer les modifications
+                </button>
+                <a href="{{ path('dashboard_coach') }}" class="btn btn-secondary">
+                    <i class="ti-arrow-left"></i>
+                    Retour
+                </a>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    {# ── 2FA Section ── #}
+    <div class="form-card" style="margin-top:24px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <i class="fa fa-shield" style="color:#fff;font-size:1.1rem;"></i>
+            </div>
+            <div>
+                <h3 style="margin:0;font-size:16px;font-weight:600;color:#1a202c;">Authentification à deux facteurs (2FA)</h3>
+                <p style="margin:0;font-size:13px;color:#718096;">Protégez votre compte avec Google Authenticator</p>
+            </div>
+        </div>
+
+        {% if app.user.isTotpEnabled %}
+            <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:#f0fff4;border:1px solid #c6f6d5;border-radius:8px;margin-bottom:16px;">
+                <i class="fa fa-check-circle" style="color:#38a169;font-size:1.1rem;"></i>
+                <span style="color:#276749;font-size:14px;font-weight:500;">2FA activée — votre compte est protégé</span>
+            </div>
+            <form method="post" action="{{ path('app_2fa_disable') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver la 2FA ?');">
+                <button type="submit" class="btn" style="background:#fff5f5;color:#e53e3e;border:2px solid #fed7d7;width:100%;">
+                    <i class="fa fa-times-circle"></i> Désactiver la 2FA
+                </button>
+            </form>
+        {% else %}
+            <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;margin-bottom:16px;">
+                <i class="fa fa-exclamation-triangle" style="color:#d97706;font-size:1.1rem;"></i>
+                <span style="color:#92400e;font-size:14px;font-weight:500;">2FA non activée — votre compte est moins sécurisé</span>
+            </div>
+            <a href="{{ path('app_2fa_setup') }}" class="btn btn-primary" style="width:100%;text-decoration:none;">
+                <i class="fa fa-shield"></i> Activer la 2FA
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

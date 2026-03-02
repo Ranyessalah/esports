@@ -1,0 +1,107 @@
+ 
+
+    <div class="page-header">
+        <h2>Créer un match</h2>
+        <a href="{{ path('app_matchs_index_admin') }}" class="back-btn">← Retour</a>
+    </div>
+
+    {{ form_start(form, { attr:{ class:'match-creation-form', novalidate:'novalidate' } }) }}
+
+    <!-- CONFIG -->
+    <div class="form-section">
+        <h3>Configuration du match</h3>
+        <label>Statut</label>
+        {{ form_widget(form.statut, { attr:{ class:'form-select' } }) }}
+        <div class="form-error">{{ form_errors(form.statut) }}</div>
+    </div>
+
+    <!-- DATE -->
+    <div class="form-section">
+        <h3>Date et heure</h3>
+
+        <div class="dates-container">
+
+            <div class="team-card">
+                <h4>Début</h4>
+                {{ form_widget(form.dateMatch, {
+                    attr: {
+                        class: 'datetime-input',
+                        type: 'datetime-local'
+                    }
+                }) }}
+                <div class="form-error">{{ form_errors(form.dateMatch) }}</div>
+            </div>
+
+            <div class="team-card">
+                <h4>Fin</h4>
+                {{ form_widget(form.dateFinMatch, {
+                    attr: {
+                        class: 'datetime-input',
+                        type: 'datetime-local'
+                    }
+                }) }}
+                <div class="form-error">{{ form_errors(form.dateFinMatch) }}</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ÉQUIPES & SCORE -->
+    <div class="form-section">
+        <h3>Équipes & score</h3>
+
+        <div class="teams-container">
+
+            <div class="team-card">
+                <h4>Équipe 1</h4>
+                {{ form_widget(form.equipe1, { attr:{ class:'team-input' } }) }}
+
+                <div class="score-controls">
+                    <button type="button" class="score-btn minus" onclick="changeScore(1,-1)">−</button>
+                    <div class="score-display" id="display1">0</div>
+                    <button type="button" class="score-btn plus" onclick="changeScore(1,1)">+</button>
+                </div>
+
+                {{ form_widget(form.scoreEquipe1, { attr:{ id:'scoreInput1', type:'hidden' } }) }}
+            </div>
+
+            <div class="vs"><span>VS</span></div>
+
+            <div class="team-card">
+                <h4>Équipe 2</h4>
+                {{ form_widget(form.equipe2, { attr:{ class:'team-input' } }) }}
+
+                <div class="score-controls">
+                    <button type="button" class="score-btn minus" onclick="changeScore(2,-1)">−</button>
+                    <div class="score-display" id="display2">0</div>
+                    <button type="button" class="score-btn plus" onclick="changeScore(2,1)">+</button>
+                </div>
+
+                {{ form_widget(form.scoreEquipe2, { attr:{ id:'scoreInput2', type:'hidden' } }) }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('app_matchs_index_admin') }}" class="btn btn-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary">Créer le match</button>
+    </div>
+
+    {{ form_end(form) }}
+
+</div>
+
+<script>
+function changeScore(team, delta) {
+    const display = document.getElementById('display'+team);
+    const input = document.getElementById('scoreInput'+team);
+
+    let value = parseInt(display.textContent) || 0;
+    value = Math.max(0, value + delta);
+
+    display.textContent = value;
+    input.value = value;
+}
+</script>
+ 

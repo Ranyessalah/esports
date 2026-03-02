@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^2.18",
@@ -12,18 +12,30 @@
         "doctrine/orm": "^3.6",
         "dompdf/dompdf": "^3.1",
         "knplabs/knp-paginator-bundle": "^6.10",
+        "endroid/qr-code": "^5.0",
+        "knpuniversity/oauth2-client-bundle": "*",
+        "league/oauth2-google": "*",
+        "spomky-labs/otphp": "^11.4",
         "symfony/asset": "6.4.*",
+        "symfony/cache": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
+        "symfony/expression-language": "6.4.*",
+        "symfony/filesystem": "6.4.*",
         "symfony/flex": "^2",
         "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/google-mailer": "6.4.*",
+        "symfony/http-client": "6.4.*",
+        "symfony/mailer": "6.4.*",
         "symfony/runtime": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/translation": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -74,6 +86,13 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.65"
+        "ahmed-bhs/doctrine-doctor": "^1.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "6.4.*",
+        "symfony/css-selector": "6.4.*",
+        "symfony/maker-bundle": "^1.65",
+        "symfony/phpunit-bridge": "^8.0",
+        "symfony/web-profiler-bundle": "6.4.*"
     }
 }

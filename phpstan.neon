@@ -1,0 +1,6 @@
+parameters:
+    level: 5        # Niveau de vérification (0-9)
+    paths:
+        - src       # On analyse seulement le code source
+        - templates 
+    ignoreErrors: [] # On peut y ajouter des erreurs à ignorer si nécessaire

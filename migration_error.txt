@@ -1,0 +1,148 @@
+﻿php : [debug] Notified event "console.command" to 
+listener "Symfony\Bundle\FrameworkBundle\EventList
+ener\ConsoleProfilerListener::initialize".
+Au caractère Ligne:1 : 1
++ php bin/console make:migration -vvv 2>&1 | 
+Out-File -FilePath .\migra ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([deb 
+   ug] Notifie...r::initialize".:String) [], Rem  
+  oteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[debug] Notified event "console.command" to 
+listener "Symfony\Component\HttpKernel\EventListen
+er\DebugHandlersListener::configure".
+[debug] Notified event "console.command" to 
+listener "Doctrine\Bundle\MigrationsBundle\EventLi
+stener\SchemaFilterListener::onConsoleCommand".
+Linting Generated Files With:
+Bundled PHP-CS-Fixer & Bundled PHP-CS-Fixer Configuration
+
+[critical] Error thrown while running command 
+"make:migration -vvv". Message: "The metadata 
+storage is not up to date, please run the 
+sync-metadata-storage command to fix this issue."
+[debug] Notified event "console.error" to 
+listener "Symfony\Bundle\FrameworkBundle\EventList
+ener\SuggestMissingPackageSubscriber::onConsoleErr
+or".
+[debug] Notified event "console.error" to 
+listener "Symfony\Bundle\MakerBundle\Event\Console
+ErrorSubscriber::onConsoleError".
+[debug] Notified event "console.error" to 
+listener "Symfony\Component\Console\EventListener\
+ErrorListener::onConsoleError".
+[debug] Notified event "console.error" to 
+listener "Symfony\Bundle\FrameworkBundle\EventList
+ener\ConsoleProfilerListener::catch".
+[debug] Command "make:migration -vvv" exited with 
+code "1"
+[debug] Notified event "console.terminate" to 
+listener "Symfony\Bundle\MakerBundle\Event\Console
+ErrorSubscriber::onConsoleTerminate".
+[debug] Notified event "console.terminate" to 
+listener "Symfony\Component\Console\EventListener\
+ErrorListener::onConsoleTerminate".
+[debug] Notified event "console.terminate" to 
+listener "Symfony\Bundle\FrameworkBundle\EventList
+ener\ConsoleProfilerListener::profile".
+
+In MetadataStorageError.php line 13:
+                                                  
+      
+  [Doctrine\Migrations\Exception\MetadataStorageEr
+ror]  
+  The metadata storage is not up to date, please  
+      
+   run the sync-metadata-storage command to fix   
+      
+  this issue.                                     
+      
+                                                  
+      
+
+Exception trace:
+  at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\doctrine\migrations\s
+rc\Exception\MetadataStorageError.php:13
+ Doctrine\Migrations\Exception\MetadataStorageErro
+r::notUpToDate() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\doctrine\migrations\src\Metadata
+\Storage\TableMetadataStorage.php:245
+ Doctrine\Migrations\Metadata\Storage\TableMetadat
+aStorage->checkInitialization() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\doctrine\migrations\src\Metadata
+\Storage\TableMetadataStorage.php:81
+ Doctrine\Migrations\Metadata\Storage\TableMetadat
+aStorage->getExecutedMigrations() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\doctrine\migrations\src\Version\
+CurrentMigrationStatusCalculator.php:25
+ Doctrine\Migrations\Version\CurrentMigrationStatu
+sCalculator->getExecutedUnavailableMigrations() 
+at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\doctrine\migrations\s
+rc\Tools\Console\Command\DiffCommand.php:129
+ Doctrine\Migrations\Tools\Console\Command\DiffCom
+mand->execute() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\console\Command\Command.
+php:326
+ Symfony\Component\Console\Command\Command->run() 
+at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\symfony\console\Comma
+nd\LazyCommand.php:76
+ Symfony\Component\Console\Command\LazyCommand->ru
+n() at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\symfony\maker-bundle\
+src\Maker\MakeMigration.php:120
+ Symfony\Bundle\MakerBundle\Maker\MakeMigration->g
+enerate() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\maker-bundle\src\Command
+\MakerCommand.php:107
+ Symfony\Bundle\MakerBundle\Command\MakerCommand->
+execute() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\console\Command\Command.
+php:326
+ Symfony\Component\Console\Command\Command->run() 
+at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\symfony\console\Appli
+cation.php:1106
+ Symfony\Component\Console\Application->doRunComma
+nd() at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\symfony\framework-bun
+dle\Console\Application.php:126
+ Symfony\Bundle\FrameworkBundle\Console\Applicatio
+n->doRunCommand() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\console\Application.php:
+324
+ Symfony\Component\Console\Application->doRun() 
+at C:\Users\ranes\OneDrive\Desktop\projet 
+2\esports (1)\esports\vendor\symfony\framework-bun
+dle\Console\Application.php:80
+ Symfony\Bundle\FrameworkBundle\Console\Applicatio
+n->doRun() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\console\Application.php:
+175
+ Symfony\Component\Console\Application->run() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports (
+1)\esports\vendor\symfony\runtime\Runner\Symfony\C
+onsoleApplicationRunner.php:49
+ Symfony\Component\Runtime\Runner\Symfony\ConsoleA
+pplicationRunner->run() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports 
+(1)\esports\vendor\autoload_runtime.php:29
+ require_once() at 
+C:\Users\ranes\OneDrive\Desktop\projet 2\esports 
+(1)\esports\bin\console:15
+
+make:migration [--formatted] [--nowdoc] 
+[--configuration [CONFIGURATION]]
+

@@ -12,16 +12,19 @@ class Player extends User
 {
     #[Assert\NotBlank(message: 'Le pays est obligatoire')]
     #[ORM\Column(length: 100)]
-    private ?string $pays = null;
+    private string $pays = '';
 
     #[ORM\Column(type: 'boolean')]
     private bool $statut = true;
 
-    #[Assert\NotNull(message: 'Veuillez choisir un niveau')]
-    #[ORM\Column(enumType: Niveau::class)]
-    private ?Niveau $niveau = null;
+    #[Assert\NotBlank(message: 'Veuillez choisir un niveau')]
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private ?string $niveau = null;
 
-    public function getPays(): ?string
+    #[ORM\ManyToOne(inversedBy: 'joueur')]
+    private ?Equipe $equipe = null;
+
+    public function getPays(): string
     {
         return $this->pays;
     }
@@ -45,12 +48,24 @@ class Player extends User
 
     public function getNiveau(): ?Niveau
     {
-        return $this->niveau;
+        return $this->niveau !== null ? Niveau::from($this->niveau) : null;
     }
 
     public function setNiveau(Niveau $niveau): static
     {
-        $this->niveau = $niveau;
+        $this->niveau = $niveau->value;
+        return $this;
+    }
+
+    public function getEquipe(): ?Equipe
+    {
+        return $this->equipe;
+    }
+
+    public function setEquipe(?Equipe $equipe): static
+    {
+        $this->equipe = $equipe;
+
         return $this;
     }
 }
