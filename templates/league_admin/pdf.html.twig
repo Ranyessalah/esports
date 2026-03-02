@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Leagues Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; margin: 0; padding: 20px; }
+        h1   { text-align: center; color: #6366f1; margin-bottom: 6px; }
+        .meta{ text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
+        table{ width: 100%; border-collapse: collapse; }
+        thead th { background: #6366f1; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; }
+        tbody td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; }
+        tbody tr:nth-child(even) { background: #f9fafb; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+        .badge-success   { background: #d1fae5; color: #065f46; }
+        .badge-warning   { background: #fef3c7; color: #92400e; }
+        .badge-secondary { background: #f3f4f6; color: #374151; }
+        .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <h1>🏆 Leagues Report</h1>
+    <p class="meta">Generated on {{ "now"|date("Y-m-d H:i") }} — Total: {{ leagues|length }} league(s)</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Game</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Teams</th>
+                <th>Status</th>
+                <th>Prize Pool</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for league in leagues %}
+            <tr>
+                <td>{{ league.id }}</td>
+                <td><strong>{{ league.name }}</strong></td>
+                <td>{{ league.game }}</td>
+                <td>{{ league.startDate ? league.startDate|date('Y-m-d') : '-' }}</td>
+                <td>{{ league.endDate   ? league.endDate|date('Y-m-d')   : '-' }}</td>
+                <td>{{ league.numTeams }}</td>
+                <td>
+                    <span class="badge badge-{{ league.status == 'active' ? 'success' : (league.status == 'upcoming' ? 'warning' : 'secondary') }}">
+                        {{ league.status }}
+                    </span>
+                </td>
+                <td>${{ league.prizePool|number_format(2) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" style="text-align:center;color:#aaa;">No leagues found</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="footer">Exported by League Admin — {{ "now"|date("Y") }}</p>
+</body>
+</html>

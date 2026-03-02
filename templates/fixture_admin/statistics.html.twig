@@ -1,0 +1,98 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Fixture Statistics{% endblock %}
+
+{% block content %}
+<div class="az-content-body">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Fixture Statistics</h2>
+            <p class="text-muted mb-0">Total fixtures: <strong>{{ total }}</strong></p>
+        </div>
+        <a href="{{ path('app_fixture_admin_index') }}" class="btn btn-outline-secondary">
+            <i class="typcn typcn-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {# Status – Pie #}
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Fixtures by Status</div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="chartStatus" style="max-height:250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {# Round – Bar #}
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Fixtures per Round</div>
+                <div class="card-body">
+                    <canvas id="chartRound" style="max-height:250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {# Monthly – Line #}
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header fw-bold">Fixtures per Month</div>
+                <div class="card-body">
+                    <canvas id="chartMonth" style="max-height:250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const palette = ['#10b981','#ef4444','#6c757d','#6366f1','#f59e0b','#3b82f6'];
+
+// Status Pie
+new Chart(document.getElementById('chartStatus'), {
+    type: 'pie',
+    data: {
+        labels: [{% for k,v in byStatus %}'{{ k }}',{% endfor %}],
+        datasets: [{ data: [{% for k,v in byStatus %}{{ v }},{% endfor %}], backgroundColor: palette }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } } }
+});
+
+// Round Bar
+new Chart(document.getElementById('chartRound'), {
+    type: 'bar',
+    data: {
+        labels: [{% for k,v in byRound %}'{{ k }}',{% endfor %}],
+        datasets: [{
+            label: 'Fixtures',
+            data: [{% for k,v in byRound %}{{ v }},{% endfor %}],
+            backgroundColor: 'rgba(99,102,241,0.7)',
+            borderColor: 'rgba(99,102,241,1)',
+            borderWidth: 1
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+});
+
+// Monthly Line
+new Chart(document.getElementById('chartMonth'), {
+    type: 'line',
+    data: {
+        labels: [{% for k,v in byMonth %}'{{ k }}',{% endfor %}],
+        datasets: [{
+            label: 'Fixtures',
+            data: [{% for k,v in byMonth %}{{ v }},{% endfor %}],
+            fill: true,
+            backgroundColor: 'rgba(16,185,129,0.15)',
+            borderColor: 'rgba(16,185,129,1)',
+            tension: 0.3,
+            pointBackgroundColor: '#10b981'
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}
